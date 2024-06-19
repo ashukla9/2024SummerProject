@@ -148,11 +148,28 @@ data_2015_no = data_2010_df.drop(columns = ['Country', 'Year'])
 ## Which of these variables, if any, follow a normal distribution? ##
 #test variables for normality using Kolmogorov–Smirnov Test
 # Shapiro-Wilks Test more appropriate for <50 sample points
-
+print('')
+print('Which of these variables follow a normal distribution?')
+print('')
+from scipy.stats import shapiro
 from scipy.stats import kstest
 from tabulate import tabulate
+import statsmodels.api as sm
 
 def test_normality(data, alpha=0.05):
+    results = []
+    
+    for column in data.columns:
+        
+        col_data = data[column]
+        
+        stat, p_value = shapiro(col_data)
+        
+        normal = p_value > alpha
+        results.append([column, round(p_value, 3), normal])
+    return results
+
+def test_normality_ks(data, alpha=0.05):
     results = []
     
     for column in data.columns:
@@ -162,17 +179,38 @@ def test_normality(data, alpha=0.05):
         stat, p_value = kstest(col_data, 'norm')
         
         normal = p_value > alpha
-        results.append([column, normal])
+        results.append([column, round(p_value, 3), normal])
     return results
 
 normality_results_15 = test_normality(data_2015_no)
 normality_results_10 = test_normality(data_2010_no)
+normality_kresults_15 = test_normality_ks(data_2015_no)
+normality_kresults_10 = test_normality_ks(data_2010_no)
 
-headers = ["Variable", "Normal Distribution"]
-print(tabulate(normality_results_10, headers, tablefmt="pretty"))
+sm.qqplot(data_2015_no["Unemployment rate - Female"], line='s')  # 's' indicates standardized line (slope = 1, intercept = mean)
+plt.title('Q-Q Plot of GDP Data')
+plt.xlabel('Theoretical Quantiles')
+plt.ylabel('Sample Quantiles')
+plt.show()
+
+print('Normality results for 2010')
+headers = ["Variable", "Shapiro-Wilk p-value", "Shapiro-Wilk Normal?", "K-S p-value", "K-S Normal?"]
+combined_results_10 = []
+
+for (name, p_value, normal), (_, k_p_value, k_normal) in zip(normality_results_10, normality_kresults_10):
+    combined_results_10.append([name, p_value, normal, k_p_value, k_normal])
+
+print(tabulate(combined_results_10, headers, tablefmt="pretty"))
 print('')
-headers = ["Variable", "Normal Distribution"]
-print(tabulate(normality_results_15, headers, tablefmt="pretty"))
+
+# Print results for 2015 data
+print('Normality results for 2015')
+combined_results_15 = []
+
+for (name, p_value, normal), (_, k_p_value, k_normal) in zip(normality_results_15, normality_kresults_15):
+    combined_results_15.append([name, p_value, normal, k_p_value, k_normal])
+
+print(tabulate(combined_results_15, headers, tablefmt="pretty"))
 #%%
 ## What variables are strongly correlated with GDP in 2010? 
 ## 2015? ##
@@ -181,14 +219,20 @@ print(tabulate(normality_results_15, headers, tablefmt="pretty"))
 # Assault rate correlation is off - could be because there 
 # was not much data provided and the imputations skewed the data
 
+print('')
+print('What variables are strongly correlated with GDP in 2010?')
+print('')
+
 corr_2015 = data_2015_no.corr()['GDP per capita (US dollars)'].drop('GDP per capita (US dollars)')
 corr_2010 = data_2010_no.corr()['GDP per capita (US dollars)'].drop('GDP per capita (US dollars)')
 
 filter_2015 = corr_2015[corr_2015.abs() > 0.05]
 filter_2010 = corr_2010[corr_2010.abs() > 0.05]
 
-print("Correlation of variables with GDP:")
 print(filter_2010)
+print('')
+print('')
+print('What variables are strongly correlated with GDP in 2015?')
 print('')
 print(filter_2015)
 #%%
@@ -196,6 +240,10 @@ print(filter_2015)
 # Testing whether distributions of GDP in 2015 vs 2010 had equal variance
 # Assuming non-normality as per previous tests so will use Fligner-Killeen Test
 # Otherwise could use Levene's Test, Bartlett's Test
+
+print('')
+print('Do the distributions of GDP in 2010 vs. 2015 have equal variance?')
+print('')
 
 from scipy.stats import fligner
 
@@ -208,6 +256,10 @@ else:
     print("Fail to reject the null hypothesis: Variances are equal.")
 #%%
 ## Does the GDP of country A differ from 2010 to 2015 by a statistically significant amount? ##
+#Not a significant amount of data so t-test may not produce accurate results
+print('')
+print('Does the GDP of country A differ from 2010 to 2015 by a statistically significant amount?')
+print('')
 from scipy.stats import ttest_rel
 
 #Example of Paired T-Test using Czechia - could be replicated with any country
@@ -231,6 +283,11 @@ else:
 #Example of One-Sided T-Test using Czechia and Mexico
 #Only two data points per group so will use Mann-Whitney Test
 #as we most likely cannot assume normality
+
+print('')
+print('Does the GDP of country A and country B differ by a statistically significant amount?')
+print('')
+
 from scipy.stats import mannwhitneyu
 
 gdp_czechia=[]
@@ -255,10 +312,14 @@ else:
 ## significant amount over all years? ##
 #Example of Kruskal-Wallis test between three regions
 #Use ANOVA when data is normally distributed
+print('')
+print('Does the GDP differ between regions A, B, and C by a statistically significant amount?')
+print('')
 from scipy.stats import kruskal
+import scikit_posthocs as sp
 
 gdp.rename(columns={np.nan: 'Country'}, inplace=True)
-gdp = gdp.drop(index = 0)
+#gdp = gdp.drop(index = 0)
 gdp['Value'] = gdp['Value'].apply(clean_and_convert_to_float)
         
 region_a_gdp = gdp[(gdp['Country'] == 'Africa') & (gdp['Series'] == 'GDP per capita (US dollars)')]['Value']
@@ -270,12 +331,26 @@ f_statistic, p_value = kruskal(region_a_gdp, region_b_gdp, region_c_gdp)
 alpha = 0.05
 if p_value < alpha:
     print("Reject the null hypothesis: There is a significant difference in GDPs between the regions.")
+    data_melted = gdp[(gdp['Country'].isin(['Africa', 'Asia', 'Americas'])) & 
+                      (gdp['Series'] == 'GDP per capita (US dollars)')].melt(id_vars=['Country'], 
+                                                                            value_vars=['Value'], 
+                                                                            var_name='Series', 
+                                                                            value_name='Value')
+    nemenyi_test = sp.posthoc_nemenyi(data_melted, val_col='Value', group_col='Country')
+    print("Nemenyi's test results:")
+    print(nemenyi_test)
+    print('')
+    print('There is a significant difference between the GDP of the Americas and Africa')
 else:
     print("Fail to reject the null hypothesis: No significant difference in GDPs between the regions.")
 #%%
 ## Is the number of women in parliament (can be any variable) statistically significant 
 ## in determining whether a country will have a high GDP in 2015? ##
 # Univariate Linear Regression example
+
+print('')
+print('Is the number of women in parliament statistically significant in determining whether a country will have a high GDP in 2015?')
+print('')
 
 import statsmodels.api as sm
 
@@ -291,6 +366,10 @@ print(summary) #t value demonstrates that this is not significant
 #%%
 ## What variables are most significant in determining a country’s GDP in 2015? ##
 # Multivariate Linear Regression example
+
+print('')
+print('What variables are most significant in determining a country’s GDP in 2015?')
+print('')
 
 print(data_2015_df.columns)
 X = data_2015_df[['Current health expenditure (% of GDP)',
@@ -345,7 +424,21 @@ model = sm.OLS(y, X)
 results = model.fit()
 
 print(results.summary())
+
+p_values = model.pvalues
+
+alpha = 0.05
+
+significant_vars = p_values[p_values < alpha].index
+print("Statistically significant variables at alpha = 0.05:")
+print(significant_vars)
+
 #seems the most significant variables are related to labour force participation
+#%%
+#print dataframes to .csvs for use in other applications
+data_2015_df.to_csv('data_2015.csv', index=False)
+data_2010_df.to_csv('data_2010.csv', index=False)
+gdp.to_csv('gdp_data.csv', index=False)
 #%%
 ## WORKING ON CLUSTERING ##
 # ## Suppose we were to cluster these countries. What variables would define each cluster? ##
