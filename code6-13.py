@@ -256,16 +256,18 @@ else:
     print("Fail to reject the null hypothesis: Variances are equal.")
 #%%
 ## Does the GDP of country A differ from 2010 to 2015 by a statistically significant amount? ##
-#Not a significant amount of data so t-test may not produce accurate results
+#Not a significant amount of data so may not produce accurate results
+
 print('')
 print('Does the GDP of country A differ from 2010 to 2015 by a statistically significant amount?')
 print('')
-from scipy.stats import ttest_rel
+from scipy.stats import wilcoxon
 
-#Example of Paired T-Test using Czechia - could be replicated with any country
+#Example of Wilcoxon test using Czechia - could be replicated with any country
+#If data was normally distributed would use paired t-test
 GDP_2015 = data_2015_df.loc[data_2015_df['Country'] == 'Czechia', 'GDP per capita (US dollars)'].values[0]
 GDP_2010 = data_2010_df.loc[data_2010_df['Country'] == 'Czechia', 'GDP per capita (US dollars)'].values[0]
-t_stat, p_value = ttest_rel(GDP_2010, GDP_2015)
+t_stat, p_value = wilcoxon(GDP_2010, GDP_2015)
 
 print('Czechian GDP in 2015:', GDP_2015)
 print('Czechian GDP in 2010:', GDP_2010)
@@ -319,7 +321,7 @@ from scipy.stats import kruskal
 import scikit_posthocs as sp
 
 gdp.rename(columns={np.nan: 'Country'}, inplace=True)
-#gdp = gdp.drop(index = 0)
+gdp = gdp.drop(index = 0)
 gdp['Value'] = gdp['Value'].apply(clean_and_convert_to_float)
         
 region_a_gdp = gdp[(gdp['Country'] == 'Africa') & (gdp['Series'] == 'GDP per capita (US dollars)')]['Value']
@@ -425,7 +427,7 @@ results = model.fit()
 
 print(results.summary())
 
-p_values = model.pvalues
+p_values = results.pvalues
 
 alpha = 0.05
 
