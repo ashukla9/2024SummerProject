@@ -29,7 +29,34 @@ def read_csv_files_in_directory(directory_path):
 directory = r"C:\Users\anyas\Desktop\Summer Project\Modified CSV Files"
 imputed_dfs = read_csv_files_in_directory(directory)
 
+gdp_2015_data = pd.read_csv(r"C:\Users\anyas\Desktop\Summer Project\data_2015.csv")
+gdp_2015_copy = gdp_2015_data.copy()
 all_gdp_data = pd.read_csv(r"C:\Users\anyas\Desktop\Summer Project\gdp_data.csv")
+#%%
+## What countries are anomalies?  ##
+
+from sklearn.ensemble import IsolationForest
+
+# Extract the country labels
+countries = gdp_2015_data['Country']
+gdp_2015_copy = gdp_2015_copy.drop(columns='Year')
+
+# Identify numerical columns
+numerical_cols = gdp_2015_data.select_dtypes(include=['float64', 'int64']).columns
+
+# Initialize the Isolation Forest model
+iso_forest = IsolationForest(contamination='auto', random_state=42)
+
+# Fit the model
+gdp_2015_data['Anomaly'] = iso_forest.fit_predict(gdp_2015_data[numerical_cols])
+
+print("Outliers are:")
+for index, row in gdp_2015_data.iterrows():
+    if row['Anomaly'] == -1:
+        print(row['Country'])
+#%%      
+anomalies = gdp_2015_data['Anomaly']
+gdp_2015_data = gdp_2015_data.drop(columns={'Anomaly'})
 #%%
 #Create histograms of the data to explore the distribution
 #GDP Data is pretty obviously skewed
@@ -347,57 +374,67 @@ if p_value < alpha:
 else:
     print("Fail to reject the null hypothesis: No significant difference in GDPs between the regions.")
 #%%
-# Looked through the correlations between all variables
-# Decided to drop these as they are most likely collinear
-imputed_dfs_copy = imputed_dfs.copy()
-del imputed_dfs_copy['Employment_by_industry__Agriculture_percent_Female']
-del imputed_dfs_copy['Employment_by_industry__Agriculture_percent_Male']
-del imputed_dfs_copy['Employment_by_industry__Industry_percent_Female']
-del imputed_dfs_copy['Employment_by_industry__Industry_percent_Male']
-del imputed_dfs_copy['Employment_by_industry__Services_percent_Female']
-del imputed_dfs_copy['Employment_by_industry__Services_percent_Male']
-del imputed_dfs_copy['Unemployment_rate_-_Male']
-del imputed_dfs_copy['Unemployment_rate_-_Female']
-del imputed_dfs_copy['Life_expectancy_at_birth_for_females_years']
-del imputed_dfs_copy['Life_expectancy_at_birth_for_males_years']
-del imputed_dfs_copy['Domestic_general_government_health_expenditure_percent_of_total_government_expenditure']
-del imputed_dfs_copy['International_migrant_stock__Female_percent_total_Population']
-del imputed_dfs_copy['International_migrant_stock__Male_percent_total_Population']
-del imputed_dfs_copy['Labour_force_participation_-_Female']
-del imputed_dfs_copy['Labour_force_participation_-_Male']
-del imputed_dfs_copy['Other_of_concern_to_UNHCR_number']
-del imputed_dfs_copy['Gross_enrollment_ratio_-_Lower_secondary_level_male']
-del imputed_dfs_copy['Gross_enrollment_ratio_-_Lower_secondary_level_female']
-del imputed_dfs_copy['Gross_enrollment_ratio_-_Primary_male']
-del imputed_dfs_copy['Gross_enrollment_ratio_-_Upper_secondary_level_female']
-del imputed_dfs_copy['Gross_enrollment_ratio_-_Primary_female']
-del imputed_dfs_copy['Gross_enrollment_ratio_-_Upper_secondary_level_male']
-del imputed_dfs_copy['Infant_mortality_for_both_sexes_per_1,000_live_births']
-#%%
-del imputed_dfs_copy['Students_enrolled_in_primary_education_thousands']
-del imputed_dfs_copy['All_staff_compensation_as_percent_of_total_expenditure_in_public_institutions_percent']
-#%%
-for first_key in imputed_dfs_copy:
-    correlations = find_correlations(imputed_dfs_copy, imputed_dfs_copy.get(first_key).iloc[:,0])
-    print("Significant correlations for variable ", first_key)
-    for next_key, value in correlations.items():
-        if abs(value) >= .7 and first_key != next_key:
-            print("Correlation with variable", next_key)
-            print("Value: ", value)
-            print('')
+
+columns=['Country', 'Year',
+'GDP in constant 2015 prices (millions of US dollars)',         
+'Employment by industry: Agriculture (%) Female',
+'Employment by industry: Agriculture (%) Male',
+'Employment by industry: Industry (%) Female',
+'Employment by industry: Industry (%) Male',
+'Employment by industry: Services (%) Female',
+'Employment by industry: Services (%) Male',
+'Life expectancy at birth for females (years)',
+'Life expectancy at birth for males (years)',
+'Gross enrollment ratio - Lower secondary level (female)',
+'Gross enrollment ratio - Lower secondary level (male)',
+'Gross enrollment ratio - Primary (female)',
+'Gross enrollment ratio - Upper secondary level (female)',
+'Gross enrollment ratio - Upper secondary level (male)',
+'International migrant stock: Female (% total Population)',
+'International migrant stock: Male (% total Population)',
+'Labour force participation - Female',
+'Labour force participation - Male',
+'Unemployment rate - Female',
+'Unemployment rate - Male', 
+'Infant mortality for both sexes (per 1,000 live births)',
+'International migrant stock: Both sexes (% total population)',
+'Other of concern to UNHCR (number)',
+'Total population of concern to UNHCR (number)',
+'Students enrolled in upper secondary education (thousands)',
+'Students enrolled in lower secondary education (thousands)',
+'Employment by industry: Services (%) Male and Female'
+]
+gdp_2015_data = gdp_2015_data.drop(columns=columns)
+
+# Values greater than 10 are generally seen as collinear
+from statsmodels.stats.outliers_influence import variance_inflation_factor
+from statsmodels.tools.tools import add_constant
+
+df = pd.DataFrame(gdp_2015_data)
+
+X = add_constant(df)
+
+# Calculate VIF for each predictor
+vif_data = pd.DataFrame()
+vif_data['Feature'] = X.columns
+vif_data['VIF'] = [variance_inflation_factor(X.values, i) for i in range(X.shape[1])]
+
+# Print VIF data
+print(vif_data)
+
 #%%
 from sklearn.preprocessing import MinMaxScaler
 
 scaler = MinMaxScaler()
+scaled_data = scaler.fit_transform(gdp_2015_data)
+scaled_df = pd.DataFrame(scaled_data, columns=gdp_2015_data.columns)
 
-scaled_df_dict = {}
+cols = gdp_2015_copy.columns
+numerical_cols = gdp_2015_copy.select_dtypes(include=['float64', 'int64']).columns
+gdp_2015_copy[numerical_cols] = scaler.fit_transform(gdp_2015_copy[numerical_cols])
+kscaled_df = pd.DataFrame(gdp_2015_copy, columns = cols)
 
-for key, df in imputed_dfs_copy.items():
-    scaled_data = scaler.fit_transform(df)
-    scaled_df = pd.DataFrame(scaled_data, columns=df.columns)
-    scaled_df_dict[key] = scaled_df
-
-target_variable = scaled_df_dict.get('GDP_in_constant_2015_prices_millions_of_US_dollars')
+target_variable = gdp_2015_data['GDP in current prices (millions of US dollars)']
 #%%
 ## Is the number of women in parliament (can be any variable) statistically significant 
 ## in determining whether a country will have a high GDP? ##
@@ -409,8 +446,8 @@ print('')
 
 import statsmodels.api as sm
 
-X = scaled_df_dict.get("Seats_held_by_women_in_national_parliament,_as_of_February_percent")['Seats held by women in national parliament, as of February (%)']
-y = scaled_df_dict.get('GDP_in_current_prices_millions_of_US_dollars')['GDP in current prices (millions of US dollars)']
+X = scaled_df['Seats held by women in national parliament, as of February (%)']
+y = target_variable
 X = sm.add_constant(X)
 
 model = sm.OLS(y, X).fit()
@@ -419,49 +456,34 @@ summary = model.summary()
 print(summary)
 print('The R squared value of this summary shows that this variable is insignificant.')
 #%%
-data = data.reset_index()
+target_column = 'GDP in current prices (millions of US dollars)'
+predictors = scaled_df.columns.drop(target_column)
 #%%
 ## What variables are most significant in determining a country’s GDP? ##
+## Suppose a country wanted to improve its GDP. What variables should it focus on? ##
 # Multivariate Linear Regression example
 
-## TAKING A LONG TIME TO RUN - MIGHT DO THIS MANUALLY ##
 import pandas as pd
 import itertools
 import statsmodels.api as sm
 
-# Add 'Country' and 'Year' columns to each DataFrame in the dictionary
-for key in scaled_df_dict:
-    value = scaled_df_dict.get(key)
-    value['Country'] = data['Country']
-    value['Year'] = data['Year']
-
-# Function to get the combined DataFrame for selected features
-def get_combined_df(keys, df_dict):
-    combined_df = df_dict[keys[0]].set_index(['Country', 'Year'])
-    for key in keys[1:]:
-        combined_df = combined_df.join(df_dict[key].set_index(['Country', 'Year']), how='inner')
-    return combined_df
-
 # Function to calculate AIC for different combinations of features
-def calculate_aic(df_dict, target_column):
-    features = list(df_dict.keys())
+def calculate_aic(df, target_column):
     best_aic = float('inf')
     best_model = None
     best_features = None
     
-    # Iterate over all combinations of features
-    for i in range(1, len(features) + 1):
-        print(i)
-        for combo in itertools.combinations(features, i):
-            X = get_combined_df(combo, df_dict)
-            y = scaled_df_dict.get(target_column).set_index(['Country', 'Year'])
-            # Ensure the index aligns
-            X, y = X.align(y, join='inner', axis=0)
+    # Iterate over all combinations of predictors
+    # best model uses 4 predictors
+    # takes a long time to run over all the features
+    # CHANGE VALUE
+    for i in range(1, 5):
+        for combo in itertools.combinations(predictors, i):
+            X = df[list(combo)]
+            y = df[target_column]
             
-            # Add constant to the model
             X = sm.add_constant(X)
             
-            # Fit the model
             model = sm.OLS(y, X).fit()
             aic = model.aic
             
@@ -469,100 +491,93 @@ def calculate_aic(df_dict, target_column):
                 best_aic = aic
                 best_model = model
                 best_features = combo
-                
+
     return best_model, best_aic, best_features
 
-# Calculate AIC and find the best model
-target_column = 'GDP_in_constant_2015_prices_millions_of_US_dollars'
-best_model, best_aic, best_features = calculate_aic(scaled_df_dict, target_column)
+best_model, best_aic, best_features = calculate_aic(scaled_df, target_column)
 
-# Print the best model summary
 print(f"Best model features: {best_features}")
 print(f"Best AIC: {best_aic}")
 if best_model:
     print(best_model.summary())
 else:
     print("No valid model found.")
+    
+print("\nCoefficients:")
+print(model.params)
 #%%
+## Suppose we were to cluster these countries. What variables would define each cluster? ##
 
-# p_values = results.pvalues
+from sklearn.decomposition import PCA
 
-# alpha = 0.05
+countries = gdp_2015_copy['Country']
+pca = PCA()
+X_k = kscaled_df.drop(columns="Country")
+pca.fit(X_k)
 
-# significant_vars = p_values[p_values < alpha].index
-# print("Statistically significant variables at alpha = 0.05:")
-# print(significant_vars)
+# Get explained variance ratio
+explained_variance = pca.explained_variance_ratio_
 
-#seems the most significant variables are related to labour force participation
-# #%%
-# #print dataframes to .csvs for use in other applications
-# data_2015_df.to_csv('data_2015.csv', index=False)
-# data_2010_df.to_csv('data_2010.csv', index=False)
-# gdp.to_csv('gdp_data.csv', index=False)
-# #%%
-# ## WORKING ON CLUSTERING ##
-# # ## Suppose we were to cluster these countries. What variables would define each cluster? ##
+# Plotting the scree plot
+plt.figure(figsize=(10, 6))
+plt.plot(range(1, len(explained_variance) + 1), explained_variance, marker='o', linestyle='--')
+plt.title('Scree Plot')
+plt.xlabel('Principal Component')
+plt.ylabel('Explained Variance Ratio')
+plt.xticks(np.arange(1, len(explained_variance) + 1))
+plt.grid(True)
+plt.show()
+#%%
+from sklearn.cluster import KMeans
 
-# # from sklearn.decomposition import PCA
+pca = PCA(n_components=5)
+X_pca = pca.fit_transform(X_k)
 
-# # pca = PCA()
-# # pca.fit(X)
+inertia = []
 
-# # # Get explained variance ratio
-# # explained_variance = pca.explained_variance_ratio_
+# Define range of clusters (adjust as needed)
+k_range = range(1, 50)
 
-# # # Plotting the scree plot
-# # plt.figure(figsize=(10, 6))
-# # plt.plot(range(1, len(explained_variance) + 1), explained_variance, marker='o', linestyle='--')
-# # plt.title('Scree Plot')
-# # plt.xlabel('Principal Component')
-# # plt.ylabel('Explained Variance Ratio')
-# # plt.xticks(np.arange(1, len(explained_variance) + 1))
-# # plt.grid(True)
-# # plt.show()
-# # #%%
-# # from sklearn.cluster import KMeans
+for k in k_range:
+    kmeans = KMeans(n_clusters=k, random_state=0)
+    kmeans.fit(X_pca)
+    inertia.append(kmeans.inertia_)
 
-# # pca = PCA(n_components=7)
-# # X_pca = pca.fit_transform(X)
+# Plot the inertia values
+plt.plot(k_range, inertia, marker='o')
+plt.xlabel('Number of Clusters (k)')
+plt.ylabel('Inertia')
+plt.title('Elbow Method for Optimal k')
+plt.xticks(k_range)
+plt.show()
+#%%
+kmeans = KMeans(n_clusters=7, random_state=0)
 
-# # inertia = []
+# Fit the model to the scaled data
+kmeans.fit(X_pca)
 
-# # # Define range of clusters (adjust as needed)
-# # k_range = range(1, 11)
+# Predict the cluster labels
+cluster_labels = kmeans.labels_
 
-# # for k in k_range:
-# #     kmeans = KMeans(n_clusters=k, random_state=0)
-# #     kmeans.fit(X_pca)
-# #     inertia.append(kmeans.inertia_)
+# Assign cluster labels back to the original dataframe
+kscaled_df.loc[:, 'Cluster'] = cluster_labels
 
-# # # Plot the inertia values
-# # plt.plot(k_range, inertia, marker='o')
-# # plt.xlabel('Number of Clusters (k)')
-# # plt.ylabel('Inertia')
-# # plt.title('Elbow Method for Optimal k')
-# # plt.xticks(k_range)
-# # plt.show()
-# # #%%
-# # kmeans = KMeans(n_clusters=2, random_state=0)
+cluster_means = kscaled_df.groupby('Cluster').mean()
 
-# # # Fit the model to the scaled data
-# # kmeans.fit(X_pca)
+loadings = pca.components_.T * np.sqrt(pca.explained_variance_)
 
-# # # Predict the cluster labels
-# # cluster_labels = kmeans.labels_
+# Create a DataFrame for the loadings
+loadings_df = pd.DataFrame(loadings, columns=['PC1', 'PC2', 'PC3', 'PC4', 'PC5'], index=numerical_cols)
 
-# # # Assign cluster labels back to the original dataframe
-# # data_2015_df.loc[:, 'Cluster'] = cluster_labels
+for pc in loadings_df.columns:
+    print(f"\nTop 5 variables for {pc}:")
+    print(loadings_df[pc].abs().sort_values(ascending=False).head(5))
 
-# # cluster_means = data_2015_df.groupby('Cluster').mean()
-
-# # # Alternatively, you can visualize the clusters
-# # import matplotlib.pyplot as plt
-
-# # plt.scatter(X_pca[:, 0], X_pca[:, 1], c=cluster_labels, cmap='viridis', alpha=0.5)
-# # plt.xlabel('GDP')
-# # plt.ylabel('Population')
-# # plt.title('Clustering of Countries')
-# # plt.colorbar()
-# # plt.show()
+# Alternatively, you can visualize the clusters
+plt.figure(figsize=(14, 10))
+plt.scatter(X_pca[:, 0], X_pca[:, 1], c=cluster_labels, cmap='viridis', alpha=0.5)
+for i, country in enumerate(countries):
+    plt.annotate(country, (X_pca[i, 0], X_pca[i, 1]), fontsize=8)
+plt.title('Clustering of Countries')
+plt.colorbar()
+plt.show()
