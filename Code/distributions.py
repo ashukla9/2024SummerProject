@@ -29,7 +29,7 @@ data15 = {
 
 df15 = pd.DataFrame(data15)
 
-hist_data15 = {dist: np.histogram(data15[dist], bins=num_bins, range=(data15[dist].min(), data15[dist].max())) for dist in data15}
+hist_data15 = {dist: np.histogram(data15[dist], bins=num_bins) for dist in data15}
 observed_frequencies15 = {dist: hist_data15[dist][0] for dist in hist_data15}
 num_draws = 100
 
@@ -47,7 +47,7 @@ data100 = {
 }
 
 df100 = pd.DataFrame(data100)
-hist_data100 = {dist: np.histogram(data100[dist], bins=num_bins, range=(data100[dist].min(), data100[dist].max())) for dist in data100}
+hist_data100 = {dist: np.histogram(data100[dist], bins=num_bins) for dist in data100}
 observed_frequencies100 = {dist: hist_data100[dist][0] for dist in hist_data100}
 num_draws = 1000
 
@@ -65,7 +65,7 @@ data1000 = {
 }
 
 df1000 = pd.DataFrame(data1000)
-hist_data1000 = {dist: np.histogram(data1000[dist], bins=num_bins, range=(data1000[dist].min(), data1000[dist].max())) for dist in data1000}
+hist_data1000 = {dist: np.histogram(data1000[dist], bins=num_bins) for dist in data1000}
 observed_frequencies1000 = {dist: hist_data1000[dist][0] for dist in hist_data1000}
 #%%
 import pandas as pd
@@ -108,7 +108,7 @@ create_histograms(df1000)
 def plot_categorical_histograms(df):
     for dist, freq in df.items():
         plt.figure(figsize=(8, 6))
-        plt.bar(range(num_bins), freq, edgecolor='black')
+        plt.bar(range(len(df)), freq, edgecolor='black')
         plt.title(f'Histogram of {dist}')
         plt.xlabel('Bins')
         plt.ylabel('Frequency')
@@ -218,91 +218,82 @@ print("Empirical P-Value:", empirical_p_value)
 country_counts = gdp['Country'].value_counts().to_frame()
 country_counts_array = country_counts.values
 
+crime = pd.read_csv(r"C:\Users\anyas\Desktop\Summer Project\Crime_Data_from_2020_to_Present.csv")
+#%%
+crime_statuscounts = crime['Status Desc'].value_counts().to_frame()
+crime_area = crime['AREA NAME'].value_counts().to_frame()
+
+plot_categorical_histograms(crime_statuscounts)
+plot_categorical_histograms(crime_area)
 #%%
 import numpy as np
 import scipy.stats as stats
 import pandas as pd
 
-## TESTING TO FIND DISTRIBUTIONS OF CATEGORICAL DATA ##
-def find_cat_dist(dataframe):
-    for col in dataframe:
+## TESTING TO FIND DISTRIBUTIONS OF CATEGORICAL DATA - ESTIMATING PARAMS FROM DATA ##
+def find_cat1_dist(dataframe):
+   for col in dataframe:
         output = []
-        results = []
         observed_counts = dataframe[col]
         for dist in python_dists:
-            # Estimate the distribution parameters from the data
+            total_observations = np.sum(observed_counts)
+            
+            bin_edges = np.linspace(min(observed_counts), max(observed_counts), len(observed_counts) + 1)
             params = dist.fit(observed_counts)
-
-            dist_obj = dist(*params[:-2], loc=params[-2], scale=params[-1])
-            
-
-            expected_counts = dist_obj.pdf(observed_counts) * observed_counts.shape[0]
-            expected_counts *= np.sum(observed_counts) / np.sum(expected_counts)
-
-            chi_squared_stat, p_value = stats.chisquare(f_obs=observed_counts, f_exp=expected_counts)
-
+            if dist == gamma:
+                print(params)
+            num_params = len(params)
+            bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
+            expected_probs = np.diff(dist.cdf(bin_edges, *params))
+            expected_counts = expected_probs * total_observations
+            dof = len(observed_counts) - 1 - num_params
+            # if dist == weibull_min:
+            #     print(expected_counts)
+            #     print(observed_counts)
+            expected_counts = expected_counts * np.sum(observed_counts) / np.sum(expected_counts)
+            chi_squared_stat, p_value = stats.chisquare(f_obs=observed_counts, f_exp=expected_counts, ddof = dof)
+            #print(p_value)
             output.append(
-                p_value > alpha
+                p_value > 0.05
             )
-
-
-        results_df = pd.DataFrame(results)
-        if any(output):
-            true_indices = [dist_names[index] for index, value in enumerate(output) if value]
-            print(f"The following distributions match your data for column {col}: " + ", ".join(true_indices))
-        else:
-            print(f"No distributions match the data for column {col}.")
-    
-find_cat_dist(country_counts)
-#%%
-
-## EVERYTHING BELOW IS JUST TESTING TO SEE IF I CAN GET
-## CATEGORICAL DISTRIBUTIONS TO WORK BETTER ##
-
-mean = 0
-std_dev = 1
-n_samples = 1000
-
-continuous_data = np.random.normal(loc=mean, scale=std_dev, size=n_samples)
-
-bins = [-np.inf, -1.5, -0.5, 0.5, 1.5, np.inf]
-labels = ['Very Low', 'Low', 'Medium', 'High', 'Very High']
-
-categorical_data = pd.cut(continuous_data, bins=bins, labels=labels)
-
-df = pd.DataFrame(categorical_data, columns=['Category'])
-
-df = df['Category'].value_counts().to_frame()
-
-new_order = ['Very Low', 'Low', 'Medium', 'High', 'Very High']
-df = df.reindex(new_order)
-
-print(df.head())
-#%%
-def find_cat_dist(dataframe):
-    for col in dataframe:
-        output = []
-        results = []
-        observed_counts = dataframe[col]
-        for dist in python_dists:
-            params = dist.fit(observed_counts)
             
-            dist_obj = dist(*params[:-2], loc=params[-2], scale=params[-1])
-            
-            expected_counts = dist_obj.pdf(observed_counts) * observed_counts.shape[0]
-            expected_counts *= np.sum(observed_counts) / np.sum(expected_counts)
-            print(expected_counts)
-            chi_squared_stat, p_value = stats.chisquare(f_obs=observed_counts, f_exp=expected_counts)
-
-            output.append(
-                p_value > alpha
-            )
-
-        results_df = pd.DataFrame(results)
+            plt.figure()
+            plt.bar(range(len(observed_counts)), observed_counts, alpha=0.5, label='Observed')
+            plt.plot(range(len(expected_counts)), expected_counts, 'r-', label='Expected')
+            plt.title(f'{dist.name} distribution fit for column {col}')
+            plt.xlabel('Bins')
+            plt.ylabel('Counts')
+            plt.legend()
+            plt.show()
+                
         if any(output):
             true_indices = [dist_names[index] for index, value in enumerate(output) if value]
             print(f"The following distributions match your data for column {col}: " + ", ".join(true_indices))
         else:
             print(f"No distributions match the data for column {col}.")
 
-find_cat_dist(df)
+#find_cat1_dist(observed_frequencies15)
+#find_cat1_dist(observed_frequencies100)
+#find_cat1_dist(observed_frequencies1000)
+#find_cat1_dist(country_counts)
+#%%
+find_cat1_dist(crime_statuscounts)
+#find_cat1_dist(crime_area)
+
+#%%
+## DESCRIPTION OF CONTINUOUS DATASET ##
+# Mean
+# Mode
+# Median
+# Variance
+# Standard deviation
+# Outliers as per IQR
+# Min and max, range
+# Skew (right, left, normal)
+# Kurtosis (heavy/light tailed)
+# #%%
+# ## DESCRIPTION OF CATEGORICAL DATASET ##
+# Feature with highest vs. lowest counts
+# Range of counts
+# Best fit distributions
+# Distributions that this dataset could be drawn from
