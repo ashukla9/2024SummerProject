@@ -502,9 +502,6 @@ if best_model:
     print(best_model.summary())
 else:
     print("No valid model found.")
-    
-print("\nCoefficients:")
-print(model.params)
 #%%
 ## Suppose we were to cluster these countries. What variables would define each cluster? ##
 
