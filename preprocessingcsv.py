@@ -20,6 +20,7 @@ file7 = r"C:\Users\anyas\Desktop\Summer Project\SYB66_317_202310_Seats held by w
 file8 = r"C:\Users\anyas\Desktop\Summer Project\SYB66_327_202310_International Migrants and Refugees.csv"  
 file9 = r"C:\Users\anyas\Desktop\Summer Project\SYB66_329_202310_Labour Force and Unemployment.csv"  
 file10 = r"C:\Users\anyas\Desktop\Summer Project\SYB66_328_202310_Intentional homicides and other crimes.csv"  
+file11 = r"C:\Users\anyas\Desktop\Summer Project\SYB66_1_202310_Population, Surface Area and Density (1).csv"
 
 health_spending = pd.read_csv(file1, encoding = 'ISO-8859-1')
 employment = pd.read_csv(file2, encoding = 'ISO-8859-1')
@@ -31,9 +32,10 @@ women_gov = pd.read_csv(file7, encoding = 'ISO-8859-1')
 migrants = pd.read_csv(file8, encoding = 'ISO-8859-1')
 unemployment = pd.read_csv(file9, encoding = 'ISO-8859-1')
 homicides = pd.read_csv(file10, encoding = 'ISO-8859-1')
+pop = pd.read_csv(file11, encoding = 'ISO-8859-1')
 
 datasets = [health_spending, employment, gdp, education_spending, population_growth,
-            education, women_gov, migrants, unemployment, homicides]
+            education, women_gov, migrants, unemployment, homicides, pop]
 
 transformed_datasets = []
 
@@ -69,6 +71,9 @@ merged_df = merged_df.drop(columns={'Kidnapping at the national level, rate per 
 #Filling in the value for both years
 merged_df['Current health expenditure (% of GDP)'].fillna(6.2, inplace=True)
 
+if 'Country' in merged_df.index.names:
+    merged_df.reset_index(inplace=True)
+
 def conditional_fill(group, value):
     if group[value].notna().any():
         group[value] = group[value].ffill().bfill()
@@ -82,7 +87,6 @@ def clean_and_convert_to_float(value):
         return value 
 
 for column in merged_df.columns:
-    merged_df = merged_df.groupby('Country').apply(lambda group: conditional_fill(group, column))
     if column != 'Country':
         merged_df[column] = merged_df[column].apply(clean_and_convert_to_float)
 #%%
@@ -91,28 +95,33 @@ for column in merged_df.columns:
 from sklearn.impute import KNNImputer
 
 countries = merged_df['Country']
-numeric_data = merged_df.drop(columns=['Country'])
-
+numeric_data = merged_df.drop(columns=['Country', 'Surface area (thousand km2)'])
 imputer = KNNImputer(n_neighbors=2)
 
 imputed_data = imputer.fit_transform(numeric_data)
+    
 imputed_df = pd.DataFrame(imputed_data, columns=numeric_data.columns)
 imputed_df.insert(0, 'Country', countries)
 #%%
+print(imputed_df.columns)
+#%%
 import os
+# Define column groups for splitting
+column_groups = {
+    'Population': ['Country', 'Year',
+       'Population aged 0 to 14 years old (percentage)',
+       'Population aged 60+ years old (percentage)', 'Population density',
+       'Population mid-year estimates (millions)',
+       'Population mid-year estimates for females (millions)',
+       'Population mid-year estimates for males (millions)',
+       'Sex ratio (males per 100 females)'
+    ] 
+}
 
-def split_dataframe_to_csv(df, output_dir):
-    os.makedirs(output_dir, exist_ok=True)
+# Split and save to CSV
+target_folder = r"C:\Users\anyas\Desktop\Summer Project\Modified CSV Files"
     
-    variable_columns = [col for col in df.columns if col not in ['Country', 'Year']]
-    
-    for column in variable_columns:
-        df_variable = df[['Country', 'Year', column]]
-        
-        file_name = f"{column.replace(' ', '_').replace('%', 'percent').replace('/', '_per_').replace(':', '_').replace('(', '').replace(')', '')}.csv"
-        file_path = os.path.join(output_dir, file_name)
-        
-        df_variable.to_csv(file_path, index=False)
-        print(f"Saved {file_path}")
-
-split_dataframe_to_csv(imputed_df, r"C:\Users\anyas\Desktop\Summer Project\Modified CSV Files")
+for group_name, columns in column_groups.items():
+    split_df = imputed_df[columns]
+    file_path = os.path.join(target_folder, f'{group_name}.csv')
+    split_df.to_csv(file_path, index=False)
