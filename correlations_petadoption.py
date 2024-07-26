@@ -70,31 +70,31 @@ merged_pets['Outcome_Type'] = merged_pets['Outcome_Type'].apply(outcome)
 merged_pets = merged_pets.drop(columns={'Outcome Subtype'})
 merged_pets['Intake Name'] = merged_pets['Intake Name'].fillna('None')
 merged_pets = merged_pets.dropna()
-#%%
-## ANOVA CORRELATIONS - CONTINUOUS / CATEGORICAL VARIABLES ##
-## DIRECT CORRELATIONS ##
-import statsmodels.api as sm
-from statsmodels.formula.api import ols
-import datetime as dt
-from statsmodels.stats.multicomp import pairwise_tukeyhsd
+# #%%
+# ## ANOVA CORRELATIONS - CONTINUOUS / CATEGORICAL VARIABLES ##
+# ## DIRECT CORRELATIONS ##
+# import statsmodels.api as sm
+# from statsmodels.formula.api import ols
+# import datetime as dt
+# from statsmodels.stats.multicomp import pairwise_tukeyhsd
 
-## low p-value in any of these tests - sign that there is association between groups ##
+# ## low p-value in any of these tests - sign that there is association between groups ##
 
-# standardize the dates so that it can be treated as a continuous variable
-def anova_tukey(column, x):
-    merged_pets[column] = (merged_pets[x] - merged_pets[x].min()).dt.days
-    merged_pets[column] = pd.to_numeric(merged_pets[column], errors='coerce')
-    model = ols(f'{column} ~ C(Outcome_Type)', data=merged_pets).fit()
-    anova_table = sm.stats.anova_lm(model, typ=2)
-    print('ANOVA results for Date of Intake/Outcome Type')
-    print(anova_table)
-    tukey = pairwise_tukeyhsd(endog=merged_pets[column], groups=merged_pets['Outcome_Type'], alpha=0.05)
-    print(tukey)
-    print('')
+# # standardize the dates so that it can be treated as a continuous variable
+# def anova_tukey(column, x):
+#     merged_pets[column] = (merged_pets[x] - merged_pets[x].min()).dt.days
+#     merged_pets[column] = pd.to_numeric(merged_pets[column], errors='coerce')
+#     model = ols(f'{column} ~ C(Outcome_Type)', data=merged_pets).fit()
+#     anova_table = sm.stats.anova_lm(model, typ=2)
+#     print('ANOVA results for Date of Intake/Outcome Type')
+#     print(anova_table)
+#     tukey = pairwise_tukeyhsd(endog=merged_pets[column], groups=merged_pets['Outcome_Type'], alpha=0.05)
+#     print(tukey)
+#     print('')
 
-anova_tukey('DateNumeric_Intake', 'DateTime_x')
-anova_tukey('DateNumeric_Outtake', 'DateTime_y')
-anova_tukey('DateNumeric_Birth', 'Date of Birth')
+# anova_tukey('DateNumeric_Intake', 'DateTime_x')
+# anova_tukey('DateNumeric_Outtake', 'DateTime_y')
+# anova_tukey('DateNumeric_Birth', 'Date of Birth')
 #%%
 ## CHI SQUARED CORRELATIONS - CATEGORICAL / CATEGORICAL VARIABLES ##
 ## DIRECT CORRELATIONS ##

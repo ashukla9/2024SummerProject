@@ -26,8 +26,9 @@ for col in merged_df.columns:
         if merged_df[col[:-10]].equals(merged_df[col]):
             merged_df.drop(columns=col, inplace=True)
 
-airbnb_df = merged_df.select_dtypes(include=[int, float])
-airbnb_df = airbnb_df.dropna(subset=['price_duplicate'])
+# airbnb_df = merged_df.select_dtypes(include=[int, float])
+#airbnb_df = airbnb_df.dropna(subset=['price_duplicate'])
+airbnb_df = merged_df.dropna(subset=['price_duplicate'])
 mean_A = airbnb_df['host_response_rate'].mean()
 mean_B = airbnb_df['host_acceptance_rate'].mean()
 # Replace NaN values in column 'A' with the mean of column 'A'
@@ -35,12 +36,15 @@ airbnb_df['host_response_rate'].fillna(mean_A, inplace=True)
 airbnb_df['host_acceptance_rate'].fillna(mean_B, inplace=True)
 airbnb_df['beds'].fillna(0, inplace=True)
 #deleting calculated_host_listings_shared_rooms as all values are 0... doesn't really tell us much about the target variable
-airbnb_df.drop(columns={'calendar_updated', 'license', 'neighbourhood_group', 'neighbourhood_group_cleansed', 'scrape_id', 'calculated_host_listings_count_shared_rooms'}, inplace=True)
+airbnb_df.drop(columns={'calendar_updated', 'license', 'price', 'neighbourhood_group', 'neighbourhood_group_cleansed', 'scrape_id', 'calculated_host_listings_count_shared_rooms'}, inplace=True)
 airbnb_df = airbnb_df.dropna(subset='review_scores_rating')
 airbnb_df.rename(columns={'price_duplicate': 'price'}, inplace=True)
-airbnb_df.drop(columns='price').to_csv(r'C:\Users\anyas\Desktop\Summer Project\listings1.csv', index=False)
-airbnb_df.to_csv(r'C:\Users\anyas\Desktop\Summer Project\listings2.csv', columns=['id', 'price'], index=False)
-
+airbnb_df = airbnb_df.drop(columns={'name', 'neighborhood_overview', 'picture_url', 'host_about', 'listing_url', 'last_scraped', 'host_url', 'host_thumbnail_url', 'host_picture_url'})
+airbnb_df['host_since'] = pd.to_datetime(airbnb_df['host_since']).dt.year.astype(str)
+airbnb_df['first_review'] = pd.to_datetime(airbnb_df['first_review']).dt.year.astype(str)
+airbnb_df['last_review'] = pd.to_datetime(airbnb_df['last_review']).dt.year.astype(str)
+# airbnb_df.drop(columns='price').to_csv(r'C:\Users\anyas\Desktop\Summer Project\listings1.csv', index=False)
+# airbnb_df.to_csv(r'C:\Users\anyas\Desktop\Summer Project\listings2.csv', columns=['id', 'price'], index=False)
 ## Adding indirect variables ##
 
 cairbnb_df = airbnb_df.copy()
@@ -108,11 +112,133 @@ df_2010.set_index(['Country', 'Year'], inplace=True)
 cdf_2015.set_index(['Country', 'Year'], inplace=True)
 cdf_2010.set_index(['Country', 'Year'], inplace=True)
 #%%
+
+## ANIMAL SHELTER PREPROCESSING ##
+
+
+pet_outtake = pd.read_csv(r"C:\Users\anyas\Desktop\Summer Project\Correlation CSVs\Austin_Animal_Center_Outcomes_20240703.csv")
+pet_intake = pd.read_csv(r"C:\Users\anyas\Desktop\Summer Project\Correlation CSVs\Austin_Animal_Center_Intakes_20240703.csv")
+pet_outtake['DateTime'] = pd.to_datetime(pet_outtake['DateTime'])
+pet_intake['DateTime'] = pd.to_datetime(pet_intake['DateTime'])
+pet_outtake['Date of Birth'] = pd.to_datetime(pet_outtake['Date of Birth'])
+df1_unique = pet_intake.drop_duplicates(subset='Animal ID')
+df2_unique = pet_outtake.drop_duplicates(subset='Animal ID')
+merged_pets = pd.merge(df1_unique, df2_unique, on='Animal ID', how='inner')
+merged_pets = merged_pets.drop(columns={'Name_y', 'Breed_y', 'Color_y', 'Animal Type_y'})
+merged_pets.rename(columns={'Outcome Type': 'Outcome_Type'}, inplace=True)
+merged_pets.rename(columns={'Name_x': 'Intake Name'}, inplace=True)
+merged_pets.rename(columns={'MonthYear_x': 'Intake Month/Year'}, inplace=True)
+merged_pets.rename(columns={'MonthYear_y': 'Outtake Month/Year'}, inplace=True)
+merged_pets.rename(columns={'Animal Type_x': 'Intake Animal Type'}, inplace=True)
+merged_pets.rename(columns={'Breed_x': 'Intake Breed'}, inplace=True)
+merged_pets.rename(columns={'Color_x': 'Intake Color'}, inplace=True)
+
+def outcome(outcome):
+    if outcome == 'Adoption':
+        return 'Adoption'
+    elif outcome == 'Euthanasia':
+        return 'Euthanasia'
+    elif outcome == 'Return to Owner':
+        return 'Return to Owner'
+    else:
+        return 'Other Outcome'
+
+merged_pets['Outcome_Type'] = merged_pets['Outcome_Type'].apply(outcome)
+
+merged_pets = merged_pets.drop(columns={'Outcome Subtype'})
+merged_pets['Intake Name'] = merged_pets['Intake Name'].fillna('None')
+merged_pets = merged_pets.dropna()
+#%%
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+
+import gensim.downloader as api
+
+# Using smallest model for my machine but there are much larger models available
+model = api.load('glove-wiki-gigaword-100')
+
+# Check the dimension of word vectors
+print("Vector size:", model.vector_size)
+#%%
+airbnb_df['description'] = airbnb_df['description'].fillna('')
+stop_words = set(stopwords.words('english'))
+
+def preprocess(text):
+    text = text.lower()
+    doc = word_tokenize(text)
+    doc = [word for word in doc if word not in stop_words]
+    doc = [word for word in doc if word.isalpha()]
+    return doc
+
+# Function to check if document has vector representation
+def has_vector_representation(word2vec_model, doc):
+    """Check if at least one word of the document is in the word2vec dictionary."""
+    return any(word in word2vec_model.key_to_index for word in doc)
+
+# Function to compute the document vector
+def document_vector(word2vec_model, doc):
+    # Remove out-of-vocabulary words
+    doc = [word for word in doc if word in word2vec_model.key_to_index]
+    return np.mean(word2vec_model[doc], axis=0)
+
+# Preprocess descriptions
+airbnb_df['processed_descriptions'] = airbnb_df['description'].apply(preprocess)
+
+# Filter out descriptions with no vector representations
+filtered_indices = [i for i, doc in enumerate(airbnb_df['processed_descriptions']) if has_vector_representation(model, doc)]
+
+# Compute document vectors for each description
+filtered_docs = [airbnb_df['processed_descriptions'].iloc[i] for i in filtered_indices]
+document_vectors = np.array([document_vector(model, doc) for doc in filtered_docs])
+
+# Create a DataFrame with the document vectors
+doc_vec_df = pd.DataFrame(document_vectors, index=filtered_indices)
+
+# Initialize a DataFrame with the same index as airbnb_df and fill with NaNs
+doc_vec_full_df = pd.DataFrame(index=airbnb_df.index, columns=range(document_vectors.shape[1]))
+
+# Insert the computed document vectors into the appropriate rows
+doc_vec_full_df.iloc[filtered_indices] = doc_vec_df.values
+# Concatenate the document vectors DataFrame with the original DataFrame
+airbnb_df = pd.concat([airbnb_df, doc_vec_full_df], axis=1)
+airbnb_df.columns = airbnb_df.columns.astype(str)
+# Optionally drop the 'processed_descriptions' column
+airbnb_df.drop(columns=['processed_descriptions', 'description'], inplace=True)
+#%%
+from scipy.stats import chi2_contingency
+import math
+
 def find_correlations(target_df, threshold=0.5):
-    
+    target_df = target_df.select_dtypes(['float', 'int'])
+
     correlations = target_df.corrwith(target_df[target_column])
     correlations = correlations[(correlations.abs() > threshold)]
     print(correlations)
+    
+    # cat_features = target_df.select_dtypes(exclude=['float', 'int']).columns
+
+    # for col in cat_features:
+    #     contingency_table = pd.crosstab(target_df[col], target_df[target_column])
+    #     chi2, p, dof, ex = chi2_contingency(contingency_table)
+    
+    #     n = contingency_table.sum().sum()
+    #     min_dim = min(contingency_table.shape) - 1
+    #     cramers_v = math.sqrt(chi2 / (n * min_dim))
+        
+    #     alpha = 0.05
+    #     if p < alpha:
+    #         print("Reject the null hypothesis. There is an association between Outcome_Type and", col)
+    #         if cramers_v < .3:
+    #             print("There is a weak association.")
+    #             print(f"Cramer's V: {cramers_v}")
+    #         elif cramers_v < .5:
+    #             print("There is a moderate association.")
+    #             print(f"Cramer's V: {cramers_v}")
+    #         else:
+    #             print("There is a strong association.")
+    #             print(f"Cramer's V: {cramers_v}")
+    #     else:
+    #         print("Fail to reject the null hypothesis. There is no association between Outcome_Type and", col)
 #%%
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 
@@ -140,7 +266,7 @@ def vif_delete(X_train, X_test):
 #%%
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.metrics import mean_squared_error, r2_score, confusion_matrix
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import ElasticNetCV, LinearRegression, LassoCV, RidgeCV, HuberRegressor
 from sklearn.feature_selection import SelectFromModel
@@ -162,7 +288,6 @@ def detect_outliers_dep(y_train):
 def anomaly_detection(X_train, y_train):
     from sklearn.ensemble import IsolationForest
     y_outliers = detect_outliers_dep(y_train)
-    
     X_train = X_train.drop(index=y_train.index[y_outliers[0]]).reset_index(drop=True)
     y_train = y_train.drop(index=y_train.index[y_outliers[0]]).reset_index(drop=True)
 
@@ -176,23 +301,93 @@ def anomaly_detection(X_train, y_train):
 
     return X_train_clean, y_train_clean
 
-def remove_constant_columns(df):
-    constant_columns = [col for col in df.columns if df[col].nunique() <= 1]
-    df_cleaned = df.drop(columns=constant_columns)
+def remove_constant_columns(X_train, X_test):
+    constant_columns = [col for col in X_train.columns if X_train[col].nunique() <= 1]
+    X_train = X_train.drop(columns=constant_columns)
+    X_test = X_test.drop(columns=constant_columns)
     print(f'Removed constant columns: {constant_columns}')
-    return df_cleaned
+    return X_train, X_test
 
-def preprocessing(df, target_column, outliers=False):
+def cat_encoding(X_train, X_test, y_train):
+    from category_encoders import CatBoostEncoder
+
+    ## Grouping variables into an other category can be helpful
+    ## But better for larger datasets
+    
+    # This can be modified depending on threshold
+    # threshold = 1
+    
+    # def replace_rare_categories(df, column, rare_categories):
+    #     df[column] = df[column].apply(lambda x: 'other' if x in rare_categories else x)
+    #     return df
+    
+    # for col in X_train.select_dtypes(exclude=['float', 'int']).columns:
+    #     category_counts = X_train[col].value_counts()
+    #     rare_categories = category_counts[category_counts <= threshold].index
+    #     X_train = replace_rare_categories(X_train, col, rare_categories)
+    #     X_test = replace_rare_categories(X_test, col, rare_categories)
+
+    cat_features = X_train.select_dtypes(include=['object', 'category']).columns.tolist()
+    
+    encoder = CatBoostEncoder(cols = cat_features, return_df = True, drop_invariant = True)
+    X_train_encoded = encoder.fit_transform(X_train, y_train)
+    
+    X_test_encoded = encoder.transform(X_test)
+    return X_train_encoded, X_test_encoded
+
+def target_encoding(X_train, X_test, y_train):
+    from sklearn.preprocessing import TargetEncoder
+
+    ## Grouping variables into an other category can be helpful
+    ## But better for larger datasets
+    
+    # This can be modified depending on threshold
+    # threshold = 1
+    
+    # def replace_rare_categories(df, column, rare_categories):
+    #     df[column] = df[column].apply(lambda x: 'other' if x in rare_categories else x)
+    #     return df
+    
+    # for col in X_train.select_dtypes(exclude=['float', 'int']).columns:
+    #     category_counts = X_train[col].value_counts()
+    #     rare_categories = category_counts[category_counts <= threshold].index
+    #     X_train = replace_rare_categories(X_train, col, rare_categories)
+    #     X_test = replace_rare_categories(X_test, col, rare_categories)
+
+    encoder = TargetEncoder(smooth=0.1, target_type = 'multiclass')
+    X_train_encoded = encoder.fit_transform(X_train, y_train)
+    
+    X_test_encoded = encoder.transform(X_test)
+    
+    feature_names = encoder.feature_names_in_
+    
+    if encoder.target_type_ == 'multiclass':
+        column_names = []
+        for feature in feature_names:
+            for class_label in encoder.classes_:
+                column_names.append(f"{feature}_class_{class_label}")
+    else:
+        column_names = feature_names
+    
+    X_train_encoded_df = pd.DataFrame(X_train_encoded, columns=column_names)
+    X_test_encoded_df = pd.DataFrame(X_test_encoded, columns=column_names)
+
+    return X_train_encoded_df, X_test_encoded_df
+
+def preprocessing(df, target_column, outliers=False, category = None):
     X = df.drop(columns=target_column)
     y = df[target_column]
     
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-    
-    X_train = remove_constant_columns(X_train)
-    
-    if outliers == True:
+    if category is None:
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+        X_train, X_test = remove_constant_columns(X_train, X_test)
+        X_train, X_test = cat_encoding(X_train, X_test, y_train)
         X_train, y_train = anomaly_detection(X_train, y_train)
-    
+    else:
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+        X_train, X_test = remove_constant_columns(X_train, X_test)
+        X_train, X_test = target_encoding(X_train, X_test, y_train)
+        
     scaler = StandardScaler()
     
     train_indices = X_train.index
@@ -296,6 +491,39 @@ def model_results(model, X_train, y_train, y_test, y_train_pred, y_test_pred, mo
     print(top_10_features)
     
     plot_residuals(y_train, y_test, y_train_pred, y_test_pred, model_name)
+
+def cat_model_results(model, X_train, y_train, y_test, y_train_pred, y_test_pred, model_name):
+    train_accuracy = accuracy_score(y_train, y_train_pred)
+    test_accuracy = accuracy_score(y_test, y_test_pred)
+    
+    print(model_name + " Summary Statistics")
+    print("================================")
+    print("Classification Report (Train):")
+    print(classification_report(y_train, y_train_pred))
+    print("Classification Report (Test):")
+    print(classification_report(y_test, y_test_pred))
+    
+    coefficients = model.coef_[0]
+    intercept = model.intercept_
+    
+    print(f"Intercept: {intercept}")
+    print("Coefficients:")
+    for feature, coef in zip(X_train.columns, coefficients):
+        print(f"  {feature}: {coef}")
+    
+    feature_names = X_train.columns
+        
+    coef_series = pd.Series(coefficients, index=feature_names)
+    sorted_coef_series = coef_series.abs().sort_values(ascending=False)
+    
+    if len(sorted_coef_series) < 10:
+        top_10_features = coef_series.loc[sorted_coef_series.index]
+    else:
+        top_10_features = coef_series.loc[sorted_coef_series.head(10).index]
+    
+    # Print the top features with their original signs
+    print("Top features most associated with the target outcome based on absolute value of coefficient:")
+    print(top_10_features)
     
 def lin_reg(X_train, X_test, y_train, y_test, vif=False):
     
@@ -355,9 +583,121 @@ def huber(X_train, X_test, y_train, y_test, vif = False):
     
     model_results(best_model, X_train, y_train, y_test, y_train_pred, y_test_pred, 'Huber Regression')
 
+from sklearn.linear_model import LogisticRegressionCV
+
+def logistic_regression_cv(X_train, X_test, y_train, y_test):
+    best_model = LogisticRegressionCV(cv=5, max_iter=1000).fit(X_train, y_train)
+    
+    y_train_pred = best_model.predict(X_train)
+    y_test_pred = best_model.predict(X_test)
+    
+    cat_model_results(best_model, X_train, y_train, y_test, y_train_pred, y_test_pred, 'Logistic Regression CV')
+
+from catboost import CatBoostRegressor, CatBoostClassifier
+import shap
+from sklearn.metrics import classification_report, accuracy_score
+from sklearn.metrics import precision_score, recall_score, f1_score, confusion_matrix
+from catboost import Pool, EFstrType
+
+def catboost(df, target_column, cat_model):
+    X = df.drop(columns=target_column)
+    y = df[target_column]
+    
+    X = X.fillna('')
+    
+    cat_features = X.select_dtypes(include=['object', 'category']).columns.tolist()
+    
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    
+    if cat_model == 'Regressor':
+        #Change loss function depending on classification type
+        model = CatBoostRegressor(
+        iterations=100,
+        depth=6,
+        learning_rate=0.1,
+        loss_function='RMSE',
+        verbose=False
+        )
+        
+        model.fit(X_train, y_train, cat_features = cat_features)
+        
+        y_train_pred = model.predict(X_train)
+        y_test_pred = model.predict(X_test)
+        
+        # Evaluate the model using regression metrics
+        train_mse = mean_squared_error(y_train, y_train_pred)
+        test_mse = mean_squared_error(y_test, y_test_pred)
+        train_r2 = r2_score(y_train, y_train_pred)
+        test_r2 = r2_score(y_test, y_test_pred)
+        
+        print("CatBoost" + " Summary Statistics")
+        print("================================")
+        print(f"Train MSE: {train_mse}")
+        print(f"Test MSE: {test_mse}")
+        print(f"Train R-squared: {train_r2}")
+        print(f"Test R-squared: {test_r2}")
+    else:
+        #Change loss function depending on classification type
+        model = CatBoostClassifier(
+        iterations=100,
+        depth=6,
+        learning_rate=0.1,
+        loss_function='MultiClass',
+        verbose=False
+        )
+    
+        model.fit(X_train, y_train, cat_features = cat_features)
+        
+        y_train_pred = model.predict(X_train)
+        y_test_pred = model.predict(X_test)
+        
+        # Classification Report
+        print("Classification Report (Train):")
+        print(classification_report(y_train, y_train_pred))
+        print("Classification Report (Test):")
+        print(classification_report(y_test, y_test_pred))
+    
+    # Feature importances
+    feature_importances = model.get_feature_importance()
+    
+    # Create a DataFrame for feature importances
+    importance_df = pd.DataFrame({
+        'Feature': X_train.columns,
+        'Importance': feature_importances
+    }).sort_values(by='Importance', ascending=False)
+    
+    print("Feature Importances:")
+    print(importance_df)
+    
+    # Compute SHAP values
+    if cat_model == "Regressor":
+        explainer = shap.TreeExplainer(model)
+        shap_values = explainer.shap_values(X_test)
+        
+        # Plot SHAP summary
+        shap.summary_plot(shap_values, X_test, feature_names=X_test.columns)
+        
+        # Plot SHAP dependency for a specific subcategory feature
+        for cat_feature in cat_features:
+            shap.dependence_plot(cat_feature, shap_values, X_test, interaction_index=None)
+        
+    else:
+        pool = Pool(X_test, y_test, cat_features=cat_features)
+        shap_values = model.get_feature_importance(pool, type=EFstrType.ShapValues)
+        shap_values_transposed = shap_values.transpose(1, 0, 2)
+        
+        shap.summary_plot(list(shap_values_transposed[:,:,:-1]), features=X, class_names=y.unique(), plot_type='bar')
+        
+        # # Plot SHAP dependency for specific categorical features for each class
+        # for cat_feature in cat_features:
+        #     for i, class_name in enumerate(model.classes_):
+        #         print(f"SHAP dependency plot for feature '{cat_feature}' and class '{class_name}':")
+        #         shap.dependence_plot(cat_feature, shap_values_transposed[:,:,:-1][i], X_test, interaction_index=None)
+
 #%%
 target_column = 'price'
 find_correlations(airbnb_df)
+catboost(airbnb_df, target_column, 'Regressor')
 X_train, X_test, y_train, y_test = preprocessing(airbnb_df, target_column, outliers=True)
 lin_reg(X_train.copy(), X_test.copy(), y_train, y_test, vif=True)
 elastic_net(X_train, X_test, y_train, y_test)
@@ -367,7 +707,8 @@ huber(X_train.copy(), X_test.copy(), y_train, y_test, vif = True)
 #%%
 target_column = 'price'
 find_correlations(cairbnb_df)
-X_train, X_test, y_train, y_test = preprocessing(cairbnb_df, target_column, outliers = True)
+catboost(cairbnb_df, target_column, 'Regressor')
+X_train, X_test, y_train, y_test = preprocessing(cairbnb_df, target_column)
 lin_reg(X_train.copy(), X_test.copy(), y_train, y_test, vif=True)
 elastic_net(X_train, X_test, y_train, y_test)
 randomized_lasso(X_train, X_test, y_train, y_test)
@@ -376,9 +717,16 @@ huber(X_train.copy(), X_test.copy(), y_train, y_test, vif = True)
 #%%
 target_column = 'GDP in current prices (millions of US dollars)'
 find_correlations(df_2015)
+catboost(df_2015, target_column, 'Regressor')
 X_train, X_test, y_train, y_test = preprocessing(df_2015, target_column, outliers = True)
 lin_reg(X_train.copy(), X_test.copy(), y_train, y_test, vif=True)
 elastic_net(X_train, X_test, y_train, y_test)
 randomized_lasso(X_train, X_test, y_train, y_test)
 ridge(X_train, X_test, y_train, y_test)
 huber(X_train.copy(), X_test.copy(), y_train, y_test, vif = True)
+#%%
+target_column = 'Outcome_Type'
+# find_correlations(merged_pets)
+catboost(merged_pets, target_column, 'Classifier')
+X_train, X_test, y_train, y_test = preprocessing(merged_pets, target_column, outliers = True, category="log")
+logistic_regression_cv(X_train, X_test, y_train, y_test)
