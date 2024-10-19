@@ -1,0 +1,102 @@
+[
+    {
+        "\ufeffDataset": "california_schools",
+        "Natural Language Query": "What are the webpages for the Los Angeles County school that has between 2,000 and 3,000 test takers?",
+        "LLM Query": "SELECT Website\nFROM schools s\nJOIN satscores ss ON s.CDSCode = ss.cds\nWHERE s.County = 'Los Angeles' AND ss.NumTstTakr BETWEEN 2000 AND 3000;",
+        "Gold Query": "SELECT T2.Website FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T1.NumTstTakr BETWEEN 2000 AND 3000 AND T2.County = 'Los Angeles'",
+        "Correct": "TRUE",
+        "Error Type": "",
+        "GPT Response": "TRUE",
+        "LLM Explanation": "TRUE\n\nThe SQL query correctly answers the natural language query. It selects the 'Website' column from the 'schools' table where the 'County' is 'Los Angeles' and the number of test takers ('NumTstTakr' in the 'satscores' table) is between 2000 and 3000. The join condition ensures that the data is correctly matched between the 'schools' and 'satscores' tables based on the 'CDSCode' and 'cds' columns respectively. The result is a list of websites for schools in Los Angeles County that had between 2000 and 3000 test takers."
+    },
+    {
+        "\ufeffDataset": "california_schools",
+        "Natural Language Query": "Give the names of the schools with the percent eligible for free meals in K-12 is more than 0.1 and test takers whose test score is greater than or equal to 1500?",
+        "LLM Query": "SELECT \"School Name\"\nFROM frpm\nJOIN satscores ON frpm.CDSCode = satscores.cds\nWHERE \"Percent (%) Eligible Free (K-12)\" > 0.1 AND NumGE1500 > 0",
+        "Gold Query": "SELECT T2.`School Name` FROM satscores AS T1 INNER JOIN frpm AS T2 ON T1.cds = T2.CDSCode WHERE CAST(T2.`Free Meal Count (K-12)` AS REAL) / T2.`Enrollment (K-12)` > 0.1 AND T1.NumGE1500 > 0",
+        "Correct": "TRUE",
+        "Error Type": "",
+        "GPT Response": "FALSE",
+        "LLM Explanation": "FALSE\n\nExplanation: The SQL query does not correctly answer the natural language query because it does not filter for test takers whose test score is greater than or equal to 1500. The SQL query filters for the number of test takers who scored greater than 0, not 1500. The correct SQL query should have `NumGE1500 >= 1500` instead of `NumGE1500 > 0`."
+    },
+    {
+        "\ufeffDataset": "california_schools",
+        "Natural Language Query": "Consider the average difference between K-12 enrollment and 15-17 enrollment of schools that are locally funded, list the names and DOC type of schools which has a difference above this average.",
+        "LLM Query": "SELECT s.School, s.DOCTYPE FROM schools s JOIN frpm f ON s.CDSCode = f.CDSCode WHERE (f.'Enrollment (K-12)' - f.'Enrollment (Ages 5-17)') > (SELECT AVG(f2.'Enrollment (K-12)' - f2.'Enrollment (Ages 5-17)') FROM frpm f2 JOIN schools s2 ON f2.CDSCode = s2.CDSCode WHERE s2.FundingType = 'Local') AND s.FundingType = 'Local'",
+        "Gold Query": "SELECT T2.School, T2.DOC FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.FundingType = 'Locally funded' AND (T1.`Enrollment (K-12)` - T1.`Enrollment (Ages 5-17)`) > (SELECT AVG(T3.`Enrollment (K-12)` - T3.`Enrollment (Ages 5-17)`) FROM frpm AS T3 INNER JOIN schools AS T4 ON T3.CDSCode = T4.CDSCode WHERE T4.FundingType = 'Locally funded')",
+        "Correct": "FALSE",
+        "Error Type": "Wrong keyword (local vs. locally funded)",
+        "GPT Response": "FALSE",
+        "LLM Explanation": "FALSE\n\nExplanation: The SQL query is correctly structured to answer the natural language query, but the result is an empty DataFrame. This means that there are no schools in the database that meet the criteria specified in the query: being locally funded and having a difference between K-12 enrollment and 15-17 enrollment above the average. It's also possible that there's an issue with the data or the way the fields are named or formatted. For example, the 'Enrollment (K-12)' and 'Enrollment (Ages 5-17)' fields are enclosed in single quotes, which might not be correct depending on the SQL dialect being used."
+    },
+    {
+        "\ufeffDataset": "california_schools",
+        "Natural Language Query": "Which active district has the highest average score in Reading?",
+        "LLM Query": "SELECT dname, AVG(AvgScrRead) as AverageReadingScore\nFROM satscores\nJOIN schools ON satscores.cds = schools.CDSCode\nWHERE StatusType = 'Active'\nGROUP BY dname\nORDER BY AverageReadingScore DESC\nLIMIT 1;",
+        "Gold Query": "SELECT T1.District FROM schools AS T1 INNER JOIN satscores AS T2 ON T1.CDSCode = T2.cds WHERE T1.StatusType = 'Active' ORDER BY T2.AvgScrRead DESC LIMIT 1",
+        "Correct": "FALSE",
+        "Error Type": "Selects dname (department name)",
+        "GPT Response": "TRUE",
+        "LLM Explanation": "TRUE\n\nThe SQL query correctly answers the natural language query. The query is asking for the active district with the highest average score in Reading. The SQL query does the following:\n\n1. Joins the 'satscores' and 'schools' tables on the 'cds' and 'CDSCode' columns respectively. This is done to combine relevant data from both tables.\n2. Filters the data to only include rows where 'StatusType' is 'Active'. This is done to only consider active districts.\n3. Groups the data by 'dname' (district name). This is done to calculate average scores for each district.\n4. Calculates the average 'AvgScrRead' (average score in Reading) for each district.\n5."
+    },
+    {
+        "\ufeffDataset": "california_schools",
+        "Natural Language Query": "Please list the phone numbers of the schools with the top 3 SAT excellence rate.",
+        "LLM Query": "SELECT Phone \nFROM schools \nWHERE CDSCode IN (\n  SELECT cds \n  FROM satscores \n  ORDER BY NumGE1500 / enroll12 DESC \n  LIMIT 3\n)",
+        "Gold Query": "SELECT T1.Phone FROM schools AS T1 INNER JOIN satscores AS T2 ON T1.CDSCode = T2.cds ORDER BY CAST(T2.NumGE1500 AS REAL) / T2.NumTstTakr DESC LIMIT 3",
+        "Correct": "FALSE",
+        "Error Type": "Doesn't cast values to REAL",
+        "GPT Response": "FALSE",
+        "LLM Explanation": "FALSE\n\nExplanation: The SQL query is incorrect because it is trying to perform an operation (division) in the ORDER BY clause without using a derived table or a subquery. The division operation NumGE1500 / enroll12 is not valid in the ORDER BY clause like this. \n\nA correct query might look like this:\n\n```sql\nSELECT Phone \nFROM schools \nWHERE CDSCode IN (\n  SELECT cds \n  FROM (\n    SELECT cds, NumGE1500 / enroll12 as rate\n    FROM satscores\n  ) as temp\n  ORDER BY rate DESC \n  LIMIT 3\n)\n```\n\nThis query first creates a derived table with the rate of SAT excellence (NumGE1500 / enroll12) for each"
+    },
+    {
+        "\ufeffDataset": "california_schools",
+        "Natural Language Query": "Among the schools with an SAT excellence rate of over 0.3, what is the highest eligible free rate for students aged 5-17?",
+        "LLM Query": "SELECT MAX(`Percent (%) Eligible Free (Ages 5-17)`) \nFROM frpm\nWHERE `CDSCode` IN (\n    SELECT `cds` \n    FROM satscores \n    WHERE `NumGE1500` / `NumTstTakr` > 0.3\n);",
+        "Gold Query": "SELECT MAX(CAST(T1.`Free Meal Count (Ages 5-17)` AS REAL) / T1.`Enrollment (Ages 5-17)`) FROM  frpm AS T1 INNER JOIN satscores AS T2 ON T1.CDSCode = T2.cds WHERE CAST(T2.NumGE1500 AS REAL) / T2.NumTstTakr > 0.3",
+        "Correct": "FALSE",
+        "Error Type": "Doesn't cast values to REAL",
+        "GPT Response": "FALSE",
+        "LLM Explanation": "FALSE\n\nThe SQL query is technically correct, but the result \"None\" suggests that there are no schools in the database that meet the criteria specified in the subquery (i.e., schools with an SAT excellence rate of over 0.3). This could be due to a number of reasons, such as:\n\n1. There are no schools in the satscores table with an SAT excellence rate of over 0.3.\n2. The schools that do have an SAT excellence rate of over 0.3 do not have corresponding entries in the frpm table.\n3. There are errors in the data, such as missing or incorrect values, that are preventing the query from returning the expected results.\n\nWithout more information about the data in the"
+    },
+    {
+        "\ufeffDataset": "california_schools",
+        "Natural Language Query": "In chartered schools with charter number 00D2, what are the names of all the administrators? Include the name of the school and the city to which it belongs",
+        "LLM Query": "SELECT schools.School, schools.City, schools.AdmFName1, schools.AdmLName1, schools.AdmFName2, schools.AdmLName2, schools.AdmFName3, schools.AdmLName3\nFROM schools\nWHERE schools.Charter = 1 AND schools.CharterNum = '00D2';",
+        "Gold Query": "SELECT AdmFName1, AdmLName1, School, City FROM schools WHERE Charter = 1 AND CharterNum = '00D2'",
+        "Correct": "TRUE",
+        "Error Type": "",
+        "GPT Response": "TRUE",
+        "LLM Explanation": "TRUE\n\nThe SQL response correctly answers the natural language query. The query is asking for the names of all administrators in chartered schools with charter number '00D2', along with the name of the school and the city it belongs to. The SQL query correctly selects these fields (School, City, AdmFName1, AdmLName1, AdmFName2, AdmLName2, AdmFName3, AdmLName3) from the 'schools' table where the school is a charter school (Charter = 1) and the charter number is '00D2'. The result set includes the school name, city, and names of up to three administrators, which aligns with the natural"
+    },
+    {
+        "\ufeffDataset": "california_schools",
+        "Natural Language Query": "How many schools with an average score in Math greater than 400 in the SAT test are exclusively virtual?",
+        "LLM Query": "SELECT COUNT(*) \nFROM satscores \nJOIN schools ON satscores.cds = schools.CDSCode \nWHERE AvgScrMath > 400 AND Virtual = 'Yes';",
+        "Gold Query": "SELECT COUNT(DISTINCT T2.School) FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.Virtual = 'F' AND T1.AvgScrMath > 400",
+        "Correct": "FALSE",
+        "Error Type": "Wrong coding for Virtual",
+        "GPT Response": "FALSE",
+        "LLM Explanation": "FALSE\n\nExplanation: The SQL query is correct in its structure and should theoretically return the correct result. However, the result of the query is 0, which means that there are no schools in the database that meet the criteria of having an average Math SAT score greater than 400 and being exclusively virtual. This could be due to the data in the database not containing any schools that meet these criteria, or it could be due to incorrect data or a mistake in the database. It's also possible that the 'Virtual' field in the database doesn't use 'Yes' to indicate a school is virtual, and uses a different value instead."
+    },
+    {
+        "\ufeffDataset": "california_schools",
+        "Natural Language Query": "What is the phone number of the school that has the highest average score in Math?",
+        "LLM Query": "SELECT schools.Phone\nFROM schools\nJOIN satscores ON schools.CDSCode = satscores.cds\nORDER BY satscores.AvgScrMath DESC\nLIMIT 1;",
+        "Gold Query": "SELECT T1.Phone FROM schools AS T1 INNER JOIN satscores AS T2 ON T1.CDSCode = T2.cds ORDER BY T2.AvgScrMath DESC LIMIT 1",
+        "Correct": "TRUE",
+        "Error Type": "",
+        "GPT Response": "TRUE",
+        "LLM Explanation": "TRUE\n\nExplanation: The SQL query correctly answers the natural language query. It joins the 'schools' and 'satscores' tables on the common 'CDSCode' field, orders the results by the 'AvgScrMath' field in descending order (which means the highest scores come first), and then limits the result to just the first row. This will give the phone number of the school with the highest average math score. The result \"(408) 366-7700\" is the phone number of the school with the highest average math score."
+    },
+    {
+        "\ufeffDataset": "california_schools",
+        "Natural Language Query": "Among the schools with the SAT test takers of over 500, please list the schools that are magnet schools or offer a magnet program.",
+        "LLM Query": "SELECT schools.School, satscores.NumTstTakr, schools.Magnet\nFROM schools\nJOIN satscores ON schools.CDSCode = satscores.cds\nWHERE satscores.NumTstTakr > 500 AND schools.Magnet = 1;",
+        "Gold Query": "SELECT T2.School FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.Magnet = 1 AND T1.NumTstTakr > 500",
+        "Correct": "TRUE",
+        "Error Type": "",
+        "GPT Response": "TRUE",
+        "LLM Explanation": "TRUE\n\nExplanation: The SQL query correctly answers the natural language query. It selects the school name, number of SAT test takers, and magnet status from the 'schools' table joined with the 'satscores' table on the common column 'CDSCode'. It then filters the results to only include schools where the number of SAT test takers is greater than 500 and the school is a magnet school (indicated by 'Magnet' = 1). The result set includes the school names, number of test takers, and magnet status, which matches the request of the natural language query."
+    }
+]

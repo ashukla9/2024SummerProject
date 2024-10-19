@@ -1,0 +1,51 @@
+,Gold Queries
+0,"SELECT date ,  zip_code FROM weather WHERE min_dew_point_f  <  (SELECT min(min_dew_point_f) FROM weather WHERE zip_code  =  94107)"
+1,"SELECT date ,  zip_code FROM weather WHERE min_dew_point_f  <  (SELECT min(min_dew_point_f) FROM weather WHERE zip_code  =  94107)"
+2,"SELECT T1.id ,  T2.installation_date FROM trip AS T1 JOIN station AS T2 ON T1.end_station_id  =  T2.id"
+3,"SELECT T1.id ,  T2.installation_date FROM trip AS T1 JOIN station AS T2 ON T1.end_station_id  =  T2.id"
+4,SELECT T1.id FROM trip AS T1 JOIN station AS T2 ON T1.start_station_id  =  T2.id ORDER BY T2.dock_count DESC LIMIT 1
+5,SELECT T1.id FROM trip AS T1 JOIN station AS T2 ON T1.start_station_id  =  T2.id ORDER BY T2.dock_count DESC LIMIT 1
+6,"SELECT count(*) FROM trip AS T1 JOIN station AS T2 ON T1.end_station_id  =  T2.id WHERE T2.city !=  ""San Francisco"""
+7,"SELECT count(*) FROM trip AS T1 JOIN station AS T2 ON T1.end_station_id  =  T2.id WHERE T2.city != ""San Francisco"""
+8,"SELECT date FROM weather WHERE zip_code  =  94107 AND EVENTS != ""Fog"" AND EVENTS != ""Rain"""
+9,"SELECT date FROM weather WHERE zip_code  =  94107 AND EVENTS != ""Fog"" AND EVENTS != ""Rain"""
+10,SELECT id FROM station WHERE lat  >  37.4 EXCEPT SELECT station_id FROM status GROUP BY station_id HAVING min(bikes_available)  <  7
+11,SELECT id FROM station WHERE lat  >  37.4 EXCEPT SELECT station_id FROM status GROUP BY station_id HAVING min(bikes_available)  <  7
+12,"SELECT T1.name FROM station AS T1 JOIN status AS T2 ON T1.id  =  T2.station_id GROUP BY T2.station_id HAVING avg(bikes_available)  >  10 EXCEPT SELECT name FROM station WHERE city  =  ""San Jose"""
+13,"SELECT T1.name FROM station AS T1 JOIN status AS T2 ON T1.id  =  T2.station_id GROUP BY T2.station_id HAVING avg(bikes_available)  >  10 EXCEPT SELECT name FROM station WHERE city  =  ""San Jose"""
+14,"SELECT name ,  lat ,  city FROM station ORDER BY lat LIMIT 1"
+15,"SELECT name ,  lat ,  city FROM station ORDER BY lat LIMIT 1"
+16,"SELECT date ,  mean_temperature_f ,  mean_humidity FROM weather ORDER BY max_gust_speed_mph DESC LIMIT 3"
+17,"SELECT date ,  mean_temperature_f ,  mean_humidity FROM weather ORDER BY max_gust_speed_mph DESC LIMIT 3"
+18,"SELECT city ,  COUNT(*) FROM station GROUP BY city HAVING COUNT(*)  >=  15"
+19,"SELECT city ,  COUNT(*) FROM station GROUP BY city HAVING COUNT(*)  >=  15"
+20,"SELECT start_station_id ,  start_station_name FROM trip GROUP BY start_station_name HAVING COUNT(*)  >=  200"
+21,"SELECT start_station_id ,  start_station_name FROM trip GROUP BY start_station_name HAVING COUNT(*)  >=  200"
+22,SELECT zip_code FROM weather GROUP BY zip_code HAVING avg(mean_visibility_miles)  <  10
+23,SELECT zip_code FROM weather GROUP BY zip_code HAVING avg(mean_visibility_miles)  <  10
+24,SELECT city FROM station GROUP BY city ORDER BY max(lat) DESC
+25,SELECT city FROM station GROUP BY city ORDER BY max(lat) DESC
+26,"SELECT date ,  cloud_cover FROM weather ORDER BY cloud_cover DESC LIMIT 5"
+27,"SELECT date ,  cloud_cover FROM weather ORDER BY cloud_cover DESC LIMIT 5"
+28,"SELECT id ,  duration FROM trip ORDER BY duration DESC LIMIT 3"
+29,"SELECT id ,  duration FROM trip ORDER BY duration DESC LIMIT 3"
+30,"SELECT T1.name ,  T1.long ,  avg(T2.duration) FROM station AS T1 JOIN trip AS T2 ON T1.id  =  T2.start_station_id GROUP BY T2.start_station_id"
+31,"SELECT T1.name ,  T1.long ,  avg(T2.duration) FROM station AS T1 JOIN trip AS T2 ON T1.id  =  T2.start_station_id GROUP BY T2.start_station_id"
+32,"SELECT T1.name ,  T1.lat ,  min(T2.duration) FROM station AS T1 JOIN trip AS T2 ON T1.id  =  T2.end_station_id GROUP BY T2.end_station_id"
+33,"SELECT T1.name ,  T1.lat ,  min(T2.duration) FROM station AS T1 JOIN trip AS T2 ON T1.id  =  T2.end_station_id GROUP BY T2.end_station_id"
+34,SELECT DISTINCT start_station_name FROM trip WHERE duration  <  100
+35,SELECT DISTINCT start_station_name FROM trip WHERE duration  <  100
+36,SELECT DISTINCT zip_code FROM weather EXCEPT SELECT DISTINCT zip_code FROM weather WHERE max_dew_point_f  >=  70
+37,SELECT DISTINCT zip_code FROM weather EXCEPT SELECT DISTINCT zip_code FROM weather WHERE max_dew_point_f  >=  70
+38,SELECT id FROM trip WHERE duration  >=  (SELECT avg(duration) FROM trip WHERE zip_code  =  94103)
+39,SELECT id FROM trip WHERE duration  >=  (SELECT avg(duration) FROM trip WHERE zip_code  =  94103)
+40,SELECT date FROM weather WHERE mean_sea_level_pressure_inches BETWEEN 30.3 AND 31
+41,SELECT date FROM weather WHERE mean_sea_level_pressure_inches BETWEEN 30.3 AND 31
+42,"SELECT date ,  max_temperature_f - min_temperature_f FROM weather ORDER BY max_temperature_f - min_temperature_f LIMIT 1"
+43,"SELECT date ,  max_temperature_f - min_temperature_f FROM weather ORDER BY max_temperature_f - min_temperature_f LIMIT 1"
+44,"SELECT DISTINCT T1.id ,  T1.name FROM station AS T1 JOIN status AS T2 ON T1.id  =  T2.station_id WHERE T2.bikes_available  >  12"
+45,"SELECT DISTINCT T1.id ,  T1.name FROM station AS T1 JOIN status AS T2 ON T1.id  =  T2.station_id WHERE T2.bikes_available  >  12"
+46,SELECT zip_code FROM weather GROUP BY zip_code HAVING avg(mean_humidity)  <  70 INTERSECT SELECT zip_code FROM trip GROUP BY zip_code HAVING count(*)  >=  100
+47,SELECT zip_code FROM weather GROUP BY zip_code HAVING avg(mean_humidity)  <  70 INTERSECT SELECT zip_code FROM trip GROUP BY zip_code HAVING count(*)  >=  100
+48,"SELECT name FROM station WHERE city  =  ""Palo Alto"" EXCEPT SELECT end_station_name FROM trip GROUP BY end_station_name HAVING count(*)  >  100"
+49,"SELECT name FROM station WHERE city  =  ""Palo Alto"" EXCEPT SELECT end_station_name FROM trip GROUP BY end_station_name HAVING count(*)  >  100"

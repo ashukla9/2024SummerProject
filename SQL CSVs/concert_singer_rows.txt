@@ -1,0 +1,26 @@
+Here is the first row of all tables in the database:
+
+Table: stadium
+
+First row: (1, 'Raith Rovers', "Stark's Park", 10104, 4812, 1294, 2106)
+
+----------------------------------------
+
+Table: singer
+
+First row: (1, 'Joe Sharp', 'Netherlands', 'You', '1992', 52, 'F')
+
+----------------------------------------
+
+Table: concert
+
+First row: (1, 'Auditions', 'Free choice', '1', '2014')
+
+----------------------------------------
+
+Table: singer_in_concert
+
+First row: (1, '2')
+
+----------------------------------------
+

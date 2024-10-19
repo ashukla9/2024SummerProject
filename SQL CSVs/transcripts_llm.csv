@@ -1,0 +1,687 @@
+,Natural Language Query,Generated SQL Query,Result
+0,what are all the addresses including line 1 and line 2?,"SELECT line_1, line_2 FROM Addresses;","                       line_1    line_2
+   2294 Grant Square Apt. 235  Apt. 370
+3999 Aufderhar Ways Suite 593  Apt. 388
+67942 Carlotta Ferry Apt. 686  Apt. 583
+    0144 Lamar Plaza Apt. 346 Suite 703
+  858 Peggie Bypass Suite 212  Apt. 335
+             16998 Mraz Lodge  Apt. 689
+             193 Marlin Brook  Apt. 406
+    202 Hessel Views Apt. 468  Apt. 305
+            0643 Muller Vista Suite 383
+              7081 Eda Center Suite 830
+ 9283 Schulist Falls Apt. 037 Suite 239
+    979 Haag Shores Suite 656  Apt. 468
+          492 Wilkinson Route Suite 865
+   186 Evan Motorway Apt. 409 Suite 079
+     74046 Metz Walk Apt. 113 Suite 674"
+1,What is the first and second line for all addresses?,"SELECT line_1, line_2 FROM Addresses;","                       line_1    line_2
+   2294 Grant Square Apt. 235  Apt. 370
+3999 Aufderhar Ways Suite 593  Apt. 388
+67942 Carlotta Ferry Apt. 686  Apt. 583
+    0144 Lamar Plaza Apt. 346 Suite 703
+  858 Peggie Bypass Suite 212  Apt. 335
+             16998 Mraz Lodge  Apt. 689
+             193 Marlin Brook  Apt. 406
+    202 Hessel Views Apt. 468  Apt. 305
+            0643 Muller Vista Suite 383
+              7081 Eda Center Suite 830
+ 9283 Schulist Falls Apt. 037 Suite 239
+    979 Haag Shores Suite 656  Apt. 468
+          492 Wilkinson Route Suite 865
+   186 Evan Motorway Apt. 409 Suite 079
+     74046 Metz Walk Apt. 113 Suite 674"
+2,How many courses in total are listed?,SELECT COUNT(*) FROM Courses;," COUNT(*)
+       15"
+3,How many courses are there?,SELECT COUNT(course_id) FROM Courses;," COUNT(course_id)
+               15"
+4,How is the math course described?,"SELECT course_description 
+FROM Courses 
+WHERE course_name = 'math';","course_description
+                 q"
+5,What are the descriptions for all the math courses?,"SELECT course_description 
+FROM Courses 
+WHERE course_name LIKE '%math%';","course_description
+                 q"
+6,What is the zip code of the address in the city Port Chelsea?,"SELECT zip_postcode 
+FROM Addresses 
+WHERE city = 'Port Chelsea';","zip_postcode
+         148"
+7,What is the zip code for Port Chelsea?,"SELECT zip_postcode 
+FROM Addresses 
+WHERE city = 'Port Chelsea';","zip_postcode
+         148"
+8,Which department offers the most number of degrees? List department name and id.,"SELECT department_id, department_name
+FROM Departments
+WHERE department_id IN (
+  SELECT department_id
+  FROM Degree_Programs
+  GROUP BY department_id
+  ORDER BY COUNT(degree_program_id) DESC
+  LIMIT 1
+)"," department_id department_name
+             8      statistics"
+9,What is the name and id of the department with the most number of degrees ?,"SELECT department_id, department_name
+FROM Departments
+WHERE department_id IN (
+  SELECT department_id
+  FROM Degree_Programs
+  GROUP BY department_id
+  ORDER BY COUNT(*) DESC
+  LIMIT 1
+)"," department_id department_name
+             8      statistics"
+10,How many departments offer any degree?,"SELECT COUNT(DISTINCT department_id) 
+FROM Degree_Programs;"," COUNT(DISTINCT department_id)
+                            10"
+11,How many different departments offer degrees?,"SELECT COUNT(DISTINCT department_id) 
+FROM Degree_Programs;"," COUNT(DISTINCT department_id)
+                            10"
+12,How many different degree names are offered?,SELECT COUNT(DISTINCT degree_summary_name) FROM Degree_Programs;," COUNT(DISTINCT degree_summary_name)
+                                   3"
+13,How many different degrees are offered?,SELECT COUNT(DISTINCT degree_program_id) FROM Degree_Programs;," COUNT(DISTINCT degree_program_id)
+                                15"
+14,How many degrees does the engineering department offer?,"SELECT COUNT(degree_program_id) 
+FROM Degree_Programs 
+WHERE department_id = (SELECT department_id FROM Departments WHERE department_name = 'engineering');"," COUNT(degree_program_id)
+                        0"
+15,How many degrees does the engineering department have?,"SELECT COUNT(degree_program_id) 
+FROM Degree_Programs 
+WHERE department_id = (SELECT department_id FROM Departments WHERE department_name = 'engineering');"," COUNT(degree_program_id)
+                        0"
+16,What are the names and descriptions of all the sections?,"SELECT section_name, section_description 
+FROM Sections;","section_name section_description
+           a                 non
+           b          voluptatem
+           c                 qui
+           d            voluptas
+           e                  ex
+           f          doloremque
+           g           provident
+           h                  et
+           j                quis
+           k            nesciunt
+           l                  ad
+           o                  et
+           p             facilis
+           u       reprehenderit
+           y                 qui"
+17,What are the names and descriptions for all the sections?,"SELECT section_name, section_description 
+FROM Sections;","section_name section_description
+           a                 non
+           b          voluptatem
+           c                 qui
+           d            voluptas
+           e                  ex
+           f          doloremque
+           g           provident
+           h                  et
+           j                quis
+           k            nesciunt
+           l                  ad
+           o                  et
+           p             facilis
+           u       reprehenderit
+           y                 qui"
+18,What are the names and id of courses having at most 2 sections?,"SELECT course_id, course_name
+FROM Courses
+WHERE course_id IN (
+    SELECT course_id
+    FROM Sections
+    GROUP BY course_id
+    HAVING COUNT(section_id) <= 2
+)"," course_id course_name
+         1          ds
+         2        math
+         4          en
+         5          fr
+         6          la
+         7         cal
+         8         nlp
+         9          dl
+        10          ml
+        12          db
+        14          pl"
+19,What are the names and ids of every course with less than 2 sections?,"SELECT course_id, course_name
+FROM Courses
+WHERE course_id NOT IN (
+  SELECT course_id
+  FROM Sections
+  GROUP BY course_id
+  HAVING COUNT(section_id) >= 2
+)"," course_id course_name
+         2        math
+         3          os
+         4          en
+         6          la
+         7         cal
+         9          dl
+        10          ml
+        11          ai
+        12          db
+        13          rs
+        15         oop"
+20,List the section_name in reversed lexicographical order.,"SELECT section_name 
+FROM Sections 
+ORDER BY section_name DESC;","section_name
+           y
+           u
+           p
+           o
+           l
+           k
+           j
+           h
+           g
+           f
+           e
+           d
+           c
+           b
+           a"
+21,What are the names of the sections in reverse alphabetical order?,"SELECT section_name 
+FROM Sections 
+ORDER BY section_name DESC;","section_name
+           y
+           u
+           p
+           o
+           l
+           k
+           j
+           h
+           g
+           f
+           e
+           d
+           c
+           b
+           a"
+22,What is the semester which most student registered in? Show both the name and the id.,"SELECT semester_id, semester_name
+FROM Semesters
+WHERE semester_id IN (
+  SELECT semester_id
+  FROM Student_Enrolment
+  GROUP BY semester_id
+  ORDER BY COUNT(*) DESC
+  LIMIT 1
+)"," semester_id semester_name
+           2   summer 2010"
+23,"For each semester, what is the name and id of the one with the most students registered?","SELECT semester_id, semester_name, MAX(student_count) 
+FROM (
+  SELECT s.semester_id, s.semester_name, COUNT(se.student_id) as student_count
+  FROM Semesters s
+  JOIN Student_Enrolment se ON s.semester_id = se.semester_id
+  GROUP BY s.semester_id, s.semester_name
+) AS subquery
+GROUP BY semester_id, semester_name;"," semester_id semester_name  MAX(student_count)
+           1   spring 2010                   1
+           2   summer 2010                   4
+           4   winter 2010                   1
+           5   spring 2018                   1
+           6   spring 2012                   1
+           9   spring 2015                   1
+          12   spring 2018                   1
+          13     fall 2018                   3
+          15   spring 2019                   2"
+24,What is the description of the department whose name has the substring the computer?,"SELECT department_description 
+FROM Departments 
+WHERE department_name LIKE '%the computer%';","Empty DataFrame
+Columns: [department_description]
+Index: []"
+25,What is the department description for the one whose name has the word computer?,"SELECT department_description 
+FROM Departments 
+WHERE department_name LIKE '%computer%';","department_description
+                 error"
+26,"Who are enrolled in 2 degree programs in one semester? List the first name, middle name and last name and the id.","SELECT first_name, middle_name, last_name, student_id
+FROM Students
+WHERE student_id IN (
+  SELECT student_id
+  FROM Student_Enrolment
+  GROUP BY student_id, semester_id
+  HAVING COUNT(degree_program_id) = 2
+)","first_name middle_name last_name  student_id
+     Frida       Aisha      Huel           7"
+27,"What are the first, middle, and last names, along with the ids, of all students who enrolled in 2 degree programs in one semester?","SELECT Students.first_name, Students.middle_name, Students.last_name, Students.student_id
+FROM Students
+JOIN Student_Enrolment ON Students.student_id = Student_Enrolment.student_id
+GROUP BY Students.student_id, Student_Enrolment.semester_id
+HAVING COUNT(DISTINCT Student_Enrolment.degree_program_id) = 2;","first_name middle_name last_name  student_id
+     Frida       Aisha      Huel           7"
+28,"Who is enrolled in a Bachelor degree program? List the first name, middle name, last name.","SELECT Students.first_name, Students.middle_name, Students.last_name
+FROM Students
+JOIN Student_Enrolment ON Students.student_id = Student_Enrolment.student_id
+JOIN Degree_Programs ON Student_Enrolment.degree_program_id = Degree_Programs.degree_program_id
+WHERE Degree_Programs.degree_summary_name LIKE '%Bachelor%';","first_name middle_name    last_name
+      Reva       Golda      Osinski
+     Frida       Aisha         Huel
+      Reva       Golda      Osinski
+    Jarvis     Aaliyah      Carroll
+     Frida       Aisha         Huel
+    Jarvis     Aaliyah      Carroll
+    Milton      Vaughn Christiansen
+  Stanford        Mona       Rogahn"
+29,"What are the first, middle, and last names for everybody enrolled in a Bachelors program?","SELECT Students.first_name, Students.middle_name, Students.last_name
+FROM Students
+JOIN Student_Enrolment ON Students.student_id = Student_Enrolment.student_id
+JOIN Degree_Programs ON Student_Enrolment.degree_program_id = Degree_Programs.degree_program_id
+WHERE Degree_Programs.degree_summary_name LIKE 'Bachelors%';","Empty DataFrame
+Columns: [first_name, middle_name, last_name]
+Index: []"
+30,Find the kind of program which most number of students are enrolled in?,"SELECT degree_summary_name
+FROM Degree_Programs
+WHERE degree_program_id IN (
+    SELECT degree_program_id
+    FROM Student_Enrolment
+    GROUP BY degree_program_id
+    ORDER BY COUNT(student_id) DESC
+    LIMIT 1
+)","degree_summary_name
+           Bachelor"
+31,What is the degree summary name that has the most number of students enrolled?,"SELECT degree_summary_name
+FROM Degree_Programs
+WHERE degree_program_id IN (
+    SELECT degree_program_id
+    FROM Student_Enrolment
+    GROUP BY degree_program_id
+    ORDER BY COUNT(student_id) DESC
+    LIMIT 1
+)","degree_summary_name
+           Bachelor"
+32,Find the program which most number of students are enrolled in. List both the id and the summary.,"SELECT degree_program_id, degree_summary_name
+FROM Degree_Programs
+WHERE degree_program_id IN (
+  SELECT degree_program_id
+  FROM Student_Enrolment
+  GROUP BY degree_program_id
+  ORDER BY COUNT(*) DESC
+  LIMIT 1
+)"," degree_program_id degree_summary_name
+                 9            Bachelor"
+33,What is the program id and the summary of the degree that has the most students enrolled?,"SELECT degree_program_id, degree_summary_name
+FROM Degree_Programs
+WHERE degree_program_id IN (
+  SELECT degree_program_id
+  FROM Student_Enrolment
+  GROUP BY degree_program_id
+  ORDER BY COUNT(*) DESC
+  LIMIT 1
+)"," degree_program_id degree_summary_name
+                 9            Bachelor"
+34,"Which student has enrolled for the most times in any program? List the id, first name, middle name, last name, the number of enrollments and student id.","SELECT student_id, first_name, middle_name, last_name, COUNT(degree_program_id) AS number_of_enrollments
+FROM Students
+JOIN Student_Enrolment ON Students.student_id = Student_Enrolment.student_id
+GROUP BY student_id, first_name, middle_name, last_name
+ORDER BY number_of_enrollments DESC
+LIMIT 1;","An error occurred: Execution failed on sql 'SELECT student_id, first_name, middle_name, last_name, COUNT(degree_program_id) AS number_of_enrollments
+FROM Students
+JOIN Student_Enrolment ON Students.student_id = Student_Enrolment.student_id
+GROUP BY student_id, first_name, middle_name, last_name
+ORDER BY number_of_enrollments DESC
+LIMIT 1;': ambiguous column name: student_id"
+35,"What is the first, middle, and last name, along with the id and number of enrollments, for the student who enrolled the most in any program?","SELECT first_name, middle_name, last_name, student_id, COUNT(student_enrolment_id) AS number_of_enrollments
+FROM Students
+JOIN Student_Enrolment ON Students.student_id = Student_Enrolment.student_id
+GROUP BY Students.student_id
+ORDER BY number_of_enrollments DESC
+LIMIT 1;","An error occurred: Execution failed on sql 'SELECT first_name, middle_name, last_name, student_id, COUNT(student_enrolment_id) AS number_of_enrollments
+FROM Students
+JOIN Student_Enrolment ON Students.student_id = Student_Enrolment.student_id
+GROUP BY Students.student_id
+ORDER BY number_of_enrollments DESC
+LIMIT 1;': ambiguous column name: student_id"
+36,Which semesters do not have any student enrolled? List the semester name.,"SELECT semester_name
+FROM Semesters
+WHERE semester_id NOT IN (SELECT semester_id FROM Student_Enrolment)","semester_name
+    fall 2010
+  spring 2013
+  spring 2014
+  spring 2016
+  spring 2017
+  winter 2018"
+37,What is the name of the semester with no students enrolled?,"SELECT semester_name 
+FROM Semesters 
+WHERE semester_id NOT IN (SELECT semester_id FROM Student_Enrolment)","semester_name
+    fall 2010
+  spring 2013
+  spring 2014
+  spring 2016
+  spring 2017
+  winter 2018"
+38,What are all the course names of the courses which ever have students enrolled in?,"SELECT DISTINCT course_name 
+FROM Courses 
+WHERE course_id IN (
+    SELECT course_id 
+    FROM Student_Enrolment_Courses
+)","course_name
+       math
+         os
+         en
+         la
+        nlp
+         ml
+         ai
+         db
+         rs
+         pl"
+39,What are the names of all courses that have some students enrolled?,"SELECT Courses.course_name
+FROM Courses
+INNER JOIN Student_Enrolment_Courses
+ON Courses.course_id = Student_Enrolment_Courses.course_id
+GROUP BY Courses.course_name
+HAVING COUNT(Student_Enrolment_Courses.student_course_id) > 0;","course_name
+         ai
+         db
+         en
+         la
+       math
+         ml
+        nlp
+         os
+         pl
+         rs"
+40,What's the name of the course with most number of enrollments?,"SELECT course_name
+FROM Courses
+WHERE course_id = (
+  SELECT course_id
+  FROM Student_Enrolment_Courses
+  GROUP BY course_id
+  ORDER BY COUNT(*) DESC
+  LIMIT 1
+)","course_name
+         pl"
+41,What is the name of the course with the most students enrolled?,"SELECT course_name
+FROM Courses
+WHERE course_id = (
+  SELECT course_id
+  FROM Student_Enrolment_Courses
+  GROUP BY course_id
+  ORDER BY COUNT(student_enrolment_id) DESC
+  LIMIT 1
+)","course_name
+         pl"
+42,Find the last name of the students who currently live in the state of North Carolina but have not registered in any degree program.,"SELECT Students.last_name
+FROM Students
+JOIN Addresses ON Students.current_address_id = Addresses.address_id
+LEFT JOIN Student_Enrolment ON Students.student_id = Student_Enrolment.student_id
+WHERE Addresses.state_province_county = 'North Carolina' AND Student_Enrolment.degree_program_id IS NULL;","Empty DataFrame
+Columns: [last_name]
+Index: []"
+43,What are the last name of the students who live in North Carolina but have not registered in any degree programs?,"SELECT Students.last_name
+FROM Students
+JOIN Addresses ON Students.current_address_id = Addresses.address_id
+LEFT JOIN Student_Enrolment ON Students.student_id = Student_Enrolment.student_id
+WHERE Addresses.state_province_county = 'North Carolina' AND Student_Enrolment.degree_program_id IS NULL;","Empty DataFrame
+Columns: [last_name]
+Index: []"
+44,Show the date and id of the transcript with at least 2 course results.,"SELECT transcript_id, transcript_date
+FROM Transcripts
+WHERE transcript_id IN (
+    SELECT transcript_id
+    FROM Transcript_Contents
+    GROUP BY transcript_id
+    HAVING COUNT(student_course_id) >= 2
+)"," transcript_id     transcript_date
+             5 2013-06-30 13:01:40
+             6 2010-12-13 10:55:15
+             8 1975-05-06 12:04:47
+            15 1998-11-22 12:18:29"
+45,What is the date and id of the transcript with at least 2 courses listed?,"SELECT transcript_id, transcript_date
+FROM Transcripts
+WHERE transcript_id IN (
+    SELECT transcript_id
+    FROM Transcript_Contents
+    GROUP BY transcript_id
+    HAVING COUNT(student_course_id) >= 2
+)"," transcript_id     transcript_date
+             5 2013-06-30 13:01:40
+             6 2010-12-13 10:55:15
+             8 1975-05-06 12:04:47
+            15 1998-11-22 12:18:29"
+46,What is the phone number of the man with the first name Timmothy and the last name Ward?,"SELECT cell_mobile_number 
+FROM Students 
+WHERE first_name = 'Timmothy' AND last_name = 'Ward';","cell_mobile_number
+ (096)889-8954x524"
+47,What is the mobile phone number of the student named Timmothy Ward ?,"SELECT cell_mobile_number 
+FROM Students 
+WHERE first_name = 'Timmothy' AND last_name = 'Ward';","cell_mobile_number
+ (096)889-8954x524"
+48,"Who is the first student to register? List the first name, middle name and last name.","SELECT first_name, middle_name, last_name 
+FROM Students 
+ORDER BY date_first_registered 
+LIMIT 1;","first_name middle_name last_name
+  Timmothy        Anna      Ward"
+49,"What is the first, middle, and last name of the first student to register?","SELECT first_name, middle_name, last_name 
+FROM Students 
+ORDER BY date_first_registered 
+LIMIT 1;","first_name middle_name last_name
+  Timmothy        Anna      Ward"
+50,"Who is the earliest graduate of the school? List the first name, middle name and last name.","SELECT first_name, middle_name, last_name
+FROM Students
+WHERE date_left IS NOT NULL
+ORDER BY date_left ASC
+LIMIT 1;","first_name middle_name last_name
+  Timmothy        Anna      Ward"
+51,"What is the first, middle, and last name of the earliest school graduate?","SELECT first_name, middle_name, last_name
+FROM Students
+WHERE date_left IS NOT NULL
+ORDER BY date_left ASC
+LIMIT 1;","first_name middle_name last_name
+  Timmothy        Anna      Ward"
+52,Whose permanent address is different from his or her current address? List his or her first name.,"SELECT first_name 
+FROM Students 
+WHERE permanent_address_id <> current_address_id;","first_name
+  Timmothy
+    Hobart
+    Warren
+    Jarvis
+  Stanford
+     Frida
+   Delaney
+      Reva
+     Helga
+     Gregg
+     Orrin
+      Deon
+     Jordy
+      Jett"
+53,What is the first name of the student whose permanent address is different from his or her current one?,"SELECT first_name 
+FROM Students 
+WHERE permanent_address_id <> current_address_id;","first_name
+  Timmothy
+    Hobart
+    Warren
+    Jarvis
+  Stanford
+     Frida
+   Delaney
+      Reva
+     Helga
+     Gregg
+     Orrin
+      Deon
+     Jordy
+      Jett"
+54,Which address holds the most number of students currently? List the address id and all lines.,"SELECT current_address_id, line_1, line_2, line_3
+FROM Students
+JOIN Addresses ON Students.current_address_id = Addresses.address_id
+GROUP BY current_address_id, line_1, line_2, line_3
+ORDER BY COUNT(*) DESC
+LIMIT 1;"," current_address_id            line_1    line_2 line_3
+                  9 0643 Muller Vista Suite 383   None"
+55,"What is the id, line 1, and line 2 of the address with the most students?","SELECT address_id, line_1, line_2
+FROM Addresses
+WHERE address_id IN (
+  SELECT current_address_id
+  FROM Students
+  GROUP BY current_address_id
+  ORDER BY COUNT(*) DESC
+  LIMIT 1
+)"," address_id            line_1    line_2
+          9 0643 Muller Vista Suite 383"
+56,"On average, when were the transcripts printed?","SELECT AVG(transcript_date) 
+FROM Transcripts;"," AVG(transcript_date)
+          1989.933333"
+57,What is the average transcript date?,"SELECT AVG(transcript_date) 
+FROM Transcripts;"," AVG(transcript_date)
+          1989.933333"
+58,When is the first transcript released? List the date and details.,"SELECT MIN(transcript_date) AS First_Transcript_Date, other_details
+FROM Transcripts;","First_Transcript_Date other_details
+  1975-05-06 12:04:47          None"
+59,"What is the earliest date of a transcript release, and what details can you tell me?","SELECT MIN(transcript_date) AS earliest_transcript_date, other_details
+FROM Transcripts;","earliest_transcript_date other_details
+     1975-05-06 12:04:47          None"
+60,How many transcripts are released?,SELECT COUNT(transcript_id) FROM Transcripts;," COUNT(transcript_id)
+                   15"
+61,How many transcripts are listed?,SELECT COUNT(transcript_id) FROM Transcripts;," COUNT(transcript_id)
+                   15"
+62,What is the last transcript release date?,SELECT MAX(transcript_date) FROM Transcripts;,"MAX(transcript_date)
+ 2013-06-30 13:01:40"
+63,When was the last transcript released?,SELECT MAX(transcript_date) FROM Transcripts;,"MAX(transcript_date)
+ 2013-06-30 13:01:40"
+64,How many times at most can a course enrollment result show in different transcripts? Also show the course enrollment id.,"SELECT student_enrolment_id, COUNT(transcript_id) AS times_in_transcripts
+FROM Transcript_Contents
+GROUP BY student_enrolment_id
+ORDER BY times_in_transcripts DESC
+LIMIT 1;","An error occurred: Execution failed on sql 'SELECT student_enrolment_id, COUNT(transcript_id) AS times_in_transcripts
+FROM Transcript_Contents
+GROUP BY student_enrolment_id
+ORDER BY times_in_transcripts DESC
+LIMIT 1;': no such column: student_enrolment_id"
+65,What is the maximum number of times that a course shows up in different transcripts and what is that course's enrollment id?,"SELECT course_id, student_enrolment_id, COUNT(*) AS times_in_transcripts
+FROM Student_Enrolment_Courses 
+JOIN Transcript_Contents ON Student_Enrolment_Courses.student_course_id = Transcript_Contents.student_course_id
+GROUP BY course_id, student_enrolment_id
+ORDER BY times_in_transcripts DESC
+LIMIT 1;"," course_id  student_enrolment_id  times_in_transcripts
+         6                     2                     4"
+66,"Show the date of the transcript which shows the least number of results, also list the id.","SELECT transcript_id, transcript_date
+FROM Transcripts
+WHERE transcript_id = (
+  SELECT transcript_id
+  FROM Transcript_Contents
+  GROUP BY transcript_id
+  HAVING COUNT(*) = (
+    SELECT MIN(COUNT(*))
+    FROM Transcript_Contents
+    GROUP BY transcript_id
+  )
+)
+LIMIT 1;","An error occurred: Execution failed on sql 'SELECT transcript_id, transcript_date
+FROM Transcripts
+WHERE transcript_id = (
+  SELECT transcript_id
+  FROM Transcript_Contents
+  GROUP BY transcript_id
+  HAVING COUNT(*) = (
+    SELECT MIN(COUNT(*))
+    FROM Transcript_Contents
+    GROUP BY transcript_id
+  )
+)
+LIMIT 1;': misuse of aggregate function COUNT()"
+67,What is the date and id of the transcript with the least number of results?,"SELECT transcript_id, transcript_date
+FROM Transcripts
+WHERE transcript_id = (
+  SELECT transcript_id
+  FROM Transcript_Contents
+  GROUP BY transcript_id
+  ORDER BY COUNT(*) ASC
+  LIMIT 1
+)"," transcript_id     transcript_date
+             2 1975-10-28 15:16:51"
+68,Find the semester when both Master students and Bachelor students got enrolled in.,"SELECT Semesters.semester_name
+FROM Semesters
+INNER JOIN Student_Enrolment ON Semesters.semester_id = Student_Enrolment.semester_id
+INNER JOIN Degree_Programs ON Student_Enrolment.degree_program_id = Degree_Programs.degree_program_id
+WHERE Degree_Programs.degree_summary_name IN ('Master', 'Bachelor')
+GROUP BY Semesters.semester_name
+HAVING COUNT(DISTINCT Degree_Programs.degree_summary_name) = 2;","semester_name
+    fall 2018"
+69,What is the id of the semester that had both Masters and Bachelors students enrolled?,"SELECT semester_id 
+FROM Student_Enrolment 
+WHERE degree_program_id IN (
+    SELECT degree_program_id 
+    FROM Degree_Programs 
+    WHERE degree_summary_name IN ('Masters', 'Bachelors')
+) 
+GROUP BY semester_id 
+HAVING COUNT(DISTINCT degree_program_id) = 2;","Empty DataFrame
+Columns: [semester_id]
+Index: []"
+70,How many different addresses do the students currently live?,SELECT COUNT(DISTINCT current_address_id) FROM Students;," COUNT(DISTINCT current_address_id)
+                                  9"
+71,What are the different addresses that have students living there?,"SELECT DISTINCT line_1, line_2, line_3, city, zip_postcode, state_province_county, country
+FROM Addresses
+WHERE address_id IN (SELECT current_address_id FROM Students)
+OR address_id IN (SELECT permanent_address_id FROM Students);","                       line_1    line_2 line_3            city zip_postcode state_province_county         country
+   2294 Grant Square Apt. 235  Apt. 370   None    Port Chelsea          148              Virginia         Iceland
+3999 Aufderhar Ways Suite 593  Apt. 388   None Lake Laishafurt          943              Kentucky         Burundi
+             16998 Mraz Lodge  Apt. 689   None      North Omer          902              Kentucky       Gibraltar
+             193 Marlin Brook  Apt. 406   None     Herzoghaven          068              Arkansas    Cook Islands
+            0643 Muller Vista Suite 383   None  Port Elvisfurt          777         NorthCarolina           Gabon
+              7081 Eda Center Suite 830   None  Rutherfordtown          839              Delaware Kyrgyz Republic
+    979 Haag Shores Suite 656  Apt. 468   None    Prohaskafort          590           SouthDakota         Lesotho
+   186 Evan Motorway Apt. 409 Suite 079   None  Lake Careyberg          895              Kentucky   New Caledonia
+     74046 Metz Walk Apt. 113 Suite 674   None     Port Oceane          669               Wyoming  Norfolk Island
+67942 Carlotta Ferry Apt. 686  Apt. 583   None    Goodwinhaven          541                Kansas    Saudi Arabia
+    0144 Lamar Plaza Apt. 346 Suite 703   None   Port Evanston          847            Washington          Angola
+  858 Peggie Bypass Suite 212  Apt. 335   None   Michelleburgh          446                Hawaii           Haiti
+    202 Hessel Views Apt. 468  Apt. 305   None    Mariliehaven          638                 Idaho         Croatia
+ 9283 Schulist Falls Apt. 037 Suite 239   None     South Palma          400          WestVirginia         Bermuda"
+72,List all the student details in reversed lexicographical order.,"SELECT * FROM Students
+ORDER BY first_name DESC, middle_name DESC, last_name DESC;"," student_id  current_address_id  permanent_address_id first_name middle_name    last_name  cell_mobile_number                email_address       ssn date_first_registered           date_left other_student_details
+          3                   9                     5     Warren      Violet    Gleichner         07661787471     johns.unique@example.net         3   2007-08-29 23:25:41 2007-03-31 09:53:19               facilis
+          1                  10                    15   Timmothy        Anna         Ward   (096)889-8954x524    erwin.zboncak@example.com       965   1971-02-05 07:28:23 1971-05-17 19:28:49                  quia
+          6                   6                     3   Stanford        Mona       Rogahn        436.613.7683        skassulke@example.net       248   1997-03-20 16:47:25 2016-04-09 12:27:04                   qui
+          9                   2                    15       Reva       Golda      Osinski       (507)365-8405           qo'kon@example.com        39   2017-01-04 08:10:25 1990-09-01 05:03:27              nesciunt
+         12                  14                     9      Orrin        Neal       Kemmer  (982)153-1469x1733           beth42@example.org   6274274   2005-12-15 08:42:10 2006-08-04 17:26:49                   non
+          5                   9                     9     Milton      Vaughn Christiansen        171-642-5684        lhartmann@example.org             1973-05-19 19:12:46 2007-11-28 12:50:21               laborum
+         14                  12                    11      Jordy     Osborne       Rempel  (605)919-3594x3661         gracie29@example.com  34458427   2004-12-24 12:36:46 1999-08-24 00:07:10                    et
+         15                   2                     9       Jett     Alberta    Jaskolski   877.549.9067x8723            mya88@example.org       156   1982-06-19 13:15:18 1982-06-11 00:25:39                 omnis
+          4                   7                    11     Jarvis     Aaliyah      Carroll         09700166582        jillian26@example.net 141072406   2014-03-28 05:48:23 2007-08-02 04:12:58                 atque
+          2                  12                     5     Hobart      Lorenz   Balistreri      1-009-710-5151      swift.kolby@example.com    304246   1976-10-26 02:33:06 2013-10-05 17:41:28                 autem
+         10                  15                    14      Helga       Cleve         Mohr        677.401.9382        nya.lesch@example.net        43   2009-09-25 00:14:25 2017-07-09 21:38:43                 rerum
+         11                  14                     4      Gregg      Mossie      Schuppe       (462)246-7921           nbruen@example.org       494   1989-05-24 23:31:29 1975-10-09 00:49:27                 omnis
+          7                  15                     3      Frida       Aisha         Huel  1-879-796-8987x164 baumbach.lucious@example.org       668   2018-03-13 09:56:22 1997-11-16 08:54:33               dolorum
+         13                   9                     8       Deon    Brooklyn      Weimann (213)445-0399x85208            jhuel@example.com     68095   1986-02-24 21:12:23 2014-05-30 23:32:02             assumenda
+          8                   1                     5    Delaney        Judd    Ankunding         03174364122           dell43@example.net       402   1982-02-14 08:46:35 2004-12-08 05:29:11            voluptatem"
+73,What other details can you tell me about students in reverse alphabetical order?,"SELECT first_name, middle_name, last_name, cell_mobile_number, email_address, ssn, date_first_registered, date_left, other_student_details 
+FROM Students 
+ORDER BY last_name DESC, first_name DESC, middle_name DESC;","first_name middle_name    last_name  cell_mobile_number                email_address       ssn date_first_registered           date_left other_student_details
+      Deon    Brooklyn      Weimann (213)445-0399x85208            jhuel@example.com     68095   1986-02-24 21:12:23 2014-05-30 23:32:02             assumenda
+  Timmothy        Anna         Ward   (096)889-8954x524    erwin.zboncak@example.com       965   1971-02-05 07:28:23 1971-05-17 19:28:49                  quia
+     Gregg      Mossie      Schuppe       (462)246-7921           nbruen@example.org       494   1989-05-24 23:31:29 1975-10-09 00:49:27                 omnis
+  Stanford        Mona       Rogahn        436.613.7683        skassulke@example.net       248   1997-03-20 16:47:25 2016-04-09 12:27:04                   qui
+     Jordy     Osborne       Rempel  (605)919-3594x3661         gracie29@example.com  34458427   2004-12-24 12:36:46 1999-08-24 00:07:10                    et
+      Reva       Golda      Osinski       (507)365-8405           qo'kon@example.com        39   2017-01-04 08:10:25 1990-09-01 05:03:27              nesciunt
+     Helga       Cleve         Mohr        677.401.9382        nya.lesch@example.net        43   2009-09-25 00:14:25 2017-07-09 21:38:43                 rerum
+     Orrin        Neal       Kemmer  (982)153-1469x1733           beth42@example.org   6274274   2005-12-15 08:42:10 2006-08-04 17:26:49                   non
+      Jett     Alberta    Jaskolski   877.549.9067x8723            mya88@example.org       156   1982-06-19 13:15:18 1982-06-11 00:25:39                 omnis
+     Frida       Aisha         Huel  1-879-796-8987x164 baumbach.lucious@example.org       668   2018-03-13 09:56:22 1997-11-16 08:54:33               dolorum
+    Warren      Violet    Gleichner         07661787471     johns.unique@example.net         3   2007-08-29 23:25:41 2007-03-31 09:53:19               facilis
+    Milton      Vaughn Christiansen        171-642-5684        lhartmann@example.org             1973-05-19 19:12:46 2007-11-28 12:50:21               laborum
+    Jarvis     Aaliyah      Carroll         09700166582        jillian26@example.net 141072406   2014-03-28 05:48:23 2007-08-02 04:12:58                 atque
+    Hobart      Lorenz   Balistreri      1-009-710-5151      swift.kolby@example.com    304246   1976-10-26 02:33:06 2013-10-05 17:41:28                 autem
+   Delaney        Judd    Ankunding         03174364122           dell43@example.net       402   1982-02-14 08:46:35 2004-12-08 05:29:11            voluptatem"
+74,Describe the section h.,SELECT SELECT * FROM Sections WHERE section_name = 'h';,"An error occurred: Execution failed on sql 'SELECT SELECT * FROM Sections WHERE section_name = 'h';': near ""SELECT"": syntax error"
+75,What is the description for the section named h?,"SELECT section_description 
+FROM Sections 
+WHERE section_name = 'h';","section_description
+                 et"
+76,Find the first name of the students who permanently live in the country Haiti or have the cell phone number 09700166582 .,"SELECT first_name 
+FROM Students 
+JOIN Addresses ON Students.permanent_address_id = Addresses.address_id 
+WHERE Addresses.country = 'Haiti' OR Students.cell_mobile_number = '09700166582';","first_name
+    Hobart
+    Warren
+    Jarvis
+   Delaney"
+77,What are the first names of the students who live in Haiti permanently or have the cell phone number 09700166582 ?,"SELECT first_name 
+FROM Students 
+JOIN Addresses ON Students.permanent_address_id = Addresses.address_id 
+WHERE Addresses.country = 'Haiti' OR Students.cell_mobile_number = '09700166582';","first_name
+    Hobart
+    Warren
+    Jarvis
+   Delaney"

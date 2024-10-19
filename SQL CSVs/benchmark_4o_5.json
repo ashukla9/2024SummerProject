@@ -1,0 +1,492 @@
+[
+    {
+        "\ufeffDataset": "bike_1",
+        "Natural Language Query": "What are the ids of stations that have latitude above 37.4 and never had bike availability below 7?",
+        "LLM Query": "SELECT station.id\nFROM station\nWHERE lat > 37.4 AND id NOT IN (\n    SELECT station_id\n    FROM status\n    WHERE bikes_available < 7\n)",
+        "Gold Query": "SELECT id FROM station WHERE lat  >  37.4 EXCEPT SELECT station_id FROM status GROUP BY station_id HAVING min(bikes_available)  <  7",
+        "Correct": "TRUE",
+        "Error Type": "",
+        "GPT Response": "TRUE",
+        "LLM Explanation": "TRUE.\n\nExplanation:\nThe SQL query correctly answers the natural language query. Let's break down the query and the requirements:\n\n1. **Natural Language Query**: \"What are the ids of stations that have latitude above 37.4 and never had bike availability below 7?\"\n\n2. **SQL Query**:\n   ```sql\n   SELECT station.id\n   FROM station\n   WHERE lat > 37.4 AND id NOT IN (\n       SELECT station_id\n       FROM status\n       WHERE bikes_available < 7\n   );\n   ```\n\n3. **Explanation**:\n   - The outer query selects the `id` from the `station` table where the latitude (`lat`) is greater than 37.4.\n   - The `"
+    },
+    {
+        "\ufeffDataset": "tracking_grants_for_research",
+        "Natural Language Query": "What is the total grant amount of the organisations described as research?",
+        "LLM Query": "SELECT SUM(Grants.grant_amount)\nFROM Grants\nJOIN Organisations ON Grants.organisation_id = Organisations.organisation_id\nJOIN Organisation_Types ON Organisations.organisation_type = Organisation_Types.organisation_type\nWHERE Organisation_Types.organisation_type_description = 'Research';",
+        "Gold Query": "SELECT sum(grant_amount) FROM Grants AS T1 JOIN Organisations AS T2 ON T1.organisation_id  =  T2.organisation_id JOIN organisation_Types AS T3 ON T2.organisation_type  =  T3.organisation_type WHERE T3.organisation_type_description  =  'Research'",
+        "Correct": "TRUE",
+        "Error Type": "",
+        "GPT Response": "TRUE",
+        "LLM Explanation": "TRUE.\n\nExplanation:\nThe SQL query correctly answers the natural language query \"What is the total grant amount of the organisations described as research?\". Here is the breakdown of the query:\n\n1. **SELECT SUM(Grants.grant_amount)**: This part of the query calculates the total (sum) of the grant amounts.\n\n2. **FROM Grants**: This specifies that the data is being selected from the `Grants` table.\n\n3. **JOIN Organisations ON Grants.organisation_id = Organisations.organisation_id**: This joins the `Grants` table with the `Organisations` table on the `organisation_id` column, ensuring that we are associating each grant with its corresponding organisation.\n\n4. **JOIN Organisation_Types ON Organisations.organ"
+    },
+    {
+        "\ufeffDataset": "tracking_grants_for_research",
+        "Natural Language Query": "What are the details for the project whose research has been published?",
+        "LLM Query": "SELECT Projects.project_id, Projects.organisation_id, Projects.project_details\nFROM Projects\nINNER JOIN Project_Outcomes ON Projects.project_id = Project_Outcomes.project_id\nWHERE Project_Outcomes.outcome_code IN (SELECT outcome_code FROM Research_Outcomes WHERE outcome_description = 'Published');",
+        "Gold Query": "SELECT T1.project_details FROM Projects AS T1 JOIN Project_outcomes AS T2 ON T1.project_id  =  T2.project_id JOIN Research_outcomes AS T3 ON T2.outcome_code  =  T3.outcome_code WHERE T3.outcome_description LIKE '%Published%'",
+        "Correct": "FALSE",
+        "Error Type": "Should use LIKE instead of =",
+        "GPT Response": "FALSE",
+        "LLM Explanation": "FALSE.\n\nThe SQL query provided is logically correct in terms of structure and joins, but the result being an empty DataFrame suggests that there are no matching records in the database that satisfy the condition `outcome_description = 'Published'`. This could be due to several reasons:\n\n1. **Data Issue**: There might be no entries in the `Research_Outcomes` table with `outcome_description` set to 'Published'.\n2. **Case Sensitivity**: The `outcome_description` might be case-sensitive, and the actual data might have a different case (e.g., 'published' instead of 'Published').\n3. **Data Entry Errors**: There could be a typo or different wording in the `outcome_description` field"
+    },
+    {
+        "\ufeffDataset": "tracking_grants_for_research",
+        "Natural Language Query": "What are the response received dates for the documents described as 'Regular' or granted with more than 100?",
+        "LLM Query": "SELECT Documents.response_received_date\nFROM Documents\nJOIN Document_Types ON Documents.document_type_code = Document_Types.document_type_code\nJOIN Grants ON Documents.grant_id = Grants.grant_id\nWHERE Document_Types.document_description = 'Regular' OR Grants.grant_amount > 100;",
+        "Gold Query": "SELECT T1.response_received_date FROM Documents AS T1 JOIN Document_Types AS T2 ON T1.document_type_code  =  T2.document_type_code JOIN Grants AS T3 ON T1.grant_id  =  T3.grant_id WHERE T2.document_description  =  'Regular' OR T3.grant_amount  >  100",
+        "Correct": "TRUE",
+        "Error Type": "",
+        "GPT Response": "TRUE",
+        "LLM Explanation": "TRUE.\n\nExplanation:\nThe SQL query correctly answers the natural language query. Let's break down the natural language query and the SQL query to verify this:\n\nNatural Language Query:\n- We need the response received dates for documents that are either described as 'Regular' or are associated with grants of more than 100.\n\nSQL Query:\n```sql\nSELECT Documents.response_received_date\nFROM Documents\nJOIN Document_Types ON Documents.document_type_code = Document_Types.document_type_code\nJOIN Grants ON Documents.grant_id = Grants.grant_id\nWHERE Document_Types.document_description = 'Regular' OR Grants.grant_amount > 100;\n```\n\nExplanation:\n1. The `SELECT` clause correctly specifies that we want the `response_received_date` from the `"
+    },
+    {
+        "\ufeffDataset": "concert_singer",
+        "Natural Language Query": "What is the maximum capacity and the average of all stadiums ?",
+        "LLM Query": "SELECT MAX(Capacity), AVG(Capacity) FROM stadium;",
+        "Gold Query": "select max(capacity), average from stadium",
+        "Correct": "FALSE",
+        "Error Type": "Uses wrong column name",
+        "GPT Response": "TRUE",
+        "LLM Explanation": "TRUE.\n\nExplanation:\nThe natural language query asks for the maximum capacity and the average capacity of all stadiums. The SQL query provided is:\n\n```sql\nSELECT MAX(Capacity), AVG(Capacity) FROM stadium;\n```\n\nThis query correctly selects the maximum value of the `Capacity` column and the average value of the `Capacity` column from the `stadium` table. The result provided:\n\n```\nMAX(Capacity)  AVG(Capacity)\n         52500   10621.666667\n```\n\nshows the maximum capacity as 52500 and the average capacity as 10621.666667, which correctly answers the natural language query."
+    },
+    {
+        "\ufeffDataset": "bike_1",
+        "Natural Language Query": "What is the id of the trip that has the shortest duration?",
+        "LLM Query": "SELECT MIN(duration) AS shortest_duration FROM trip;",
+        "Gold Query": "SELECT id FROM trip ORDER BY duration LIMIT 1",
+        "Correct": "FALSE",
+        "Error Type": "Returns duration, not ID",
+        "GPT Response": "FALSE",
+        "LLM Explanation": "FALSE.\n\nExplanation:\nThe SQL query provided, `SELECT MIN(duration) AS shortest_duration FROM trip;`, correctly identifies the shortest duration of any trip in the `trip` table. However, it does not return the `id` of the trip with the shortest duration, which is what the natural language query is asking for.\n\nTo correctly answer the natural language query, the SQL query should return the `id` of the trip with the shortest duration. Here is the correct SQL query:\n\n```sql\nSELECT id \nFROM trip \nWHERE duration = (SELECT MIN(duration) FROM trip);\n```\n\nThis query finds the `id` of the trip(s) that have the shortest duration by first determining the minimum duration and then selecting the `id` of"
+    },
+    {
+        "\ufeffDataset": "bike_1",
+        "Natural Language Query": "What are the id and name of the stations that have ever had more than 12 bikes available?",
+        "LLM Query": "SELECT station.id, station.name \nFROM station \nJOIN status \nON station.id = status.station_id \nWHERE status.bikes_available > 12 \nGROUP BY station.id, station.name;",
+        "Gold Query": "SELECT DISTINCT T1.id ,  T1.name FROM station AS T1 JOIN status AS T2 ON T1.id  =  T2.station_id WHERE T2.bikes_available  >  12",
+        "Correct": "TRUE",
+        "Error Type": "",
+        "GPT Response": "TRUE",
+        "LLM Explanation": "TRUE.\n\nExplanation:\nThe SQL query correctly answers the natural language query. The query is designed to retrieve the `id` and `name` of stations that have ever had more than 12 bikes available. Here's a breakdown of why the query is correct:\n\n1. **JOIN Operation**: The query joins the `station` table with the `status` table on the `station.id` and `status.station_id` columns. This is necessary to link each station with its corresponding status records.\n\n2. **WHERE Clause**: The condition `status.bikes_available > 12` filters the records to include only those instances where the number of bikes available at a station was greater than 12.\n\n3. **GROUP BY Clause**: The `"
+    },
+    {
+        "\ufeffDataset": "student_transcripts_tracking",
+        "Natural Language Query": "In which semesters there is some bachelor program with exactly one student enrolled? List the semester names.",
+        "LLM Query": "WITH bachelor_enrolment AS (\u00a0\u00a0 SELECT se.student_id, se.semester_id\u00a0\u00a0 FROM student_enrolment se\u00a0\u00a0 JOIN degree_programs dp ON se.degree_program_id = dp.degree_program_id\u00a0\u00a0 WHERE dp.degree_summary_name = 'Bachelor'\u00a0\u00a0 GROUP BY se.student_id, se.semester_id\u00a0\u00a0 HAVING COUNT(*) = 1 ) SELECT s.first_name, s.last_name FROM students s JOIN bachelor_enrolment be ON s.student_id = be.student_id",
+        "Gold Query": "WITH bachelor_programs AS ( SELECT dp.degree_program_id FROM degree_programs dp WHERE dp.degree_summary_name LIKE '%bachelor%' ), enrolment_counts AS ( SELECT se.semester_id, se.degree_program_id, COUNT(*) AS student_count FROM student_enrolment se WHERE se.degree_program_id IN (SELECT degree_program_id FROM bachelor_programs) GROUP BY se.semester_id, se.degree_program_id ), single_enrolment_semesters AS ( SELECT ec.semester_id FROM enrolment_counts ec WHERE ec.student_count = 1 ) SELECT s.semester_name FROM semesters s WHERE s.semester_id IN (SELECT semester_id FROM single_enrolment_semesters);\"",
+        "Correct": "FALSE",
+        "Error Type": "Lists students not semester names",
+        "GPT Response": "FALSE",
+        "LLM Explanation": "FALSE.\n\nThe SQL query provided does not correctly answer the natural language query. The natural language query asks for the names of semesters where there is exactly one student enrolled in a bachelor program. However, the SQL query provided attempts to list the first and last names of students who are enrolled in a bachelor program, which is not what was requested.\n\nHere is a correct SQL query that answers the natural language query:\n\n```sql\nWITH bachelor_enrolment AS (\n  SELECT se.semester_id\n  FROM student_enrolment se\n  JOIN degree_programs dp ON se.degree_program_id = dp.degree_program_id\n  WHERE dp.degree_summary_name = 'Bachelor'\n  GROUP BY se.semester_id\n  HAVING COUNT(se.student_id) ="
+    },
+    {
+        "\ufeffDataset": "student_transcripts_tracking",
+        "Natural Language Query": "Find the kind of program which most number of students are enrolled in?",
+        "LLM Query": "SELECT degree_summary_name\nFROM Degree_Programs\nWHERE degree_program_id IN (\n    SELECT degree_program_id\n    FROM Student_Enrolment\n    GROUP BY degree_program_id\n    ORDER BY COUNT(student_id) DESC\n    LIMIT 1\n)",
+        "Gold Query": "SELECT T1.degree_summary_name FROM Degree_Programs AS T1 JOIN Student_Enrolment AS T2 ON T1.degree_program_id  =  T2.degree_program_id GROUP BY T1.degree_summary_name ORDER BY count(*) DESC LIMIT 1",
+        "Correct": "TRUE",
+        "Error Type": "",
+        "GPT Response": "TRUE",
+        "LLM Explanation": "TRUE.\n\nExplanation:\nThe SQL query correctly answers the natural language query \"Find the kind of program which most number of students are enrolled in.\" Here's a breakdown of how it works:\n\n1. **Subquery**:\n   ```sql\n   SELECT degree_program_id\n   FROM Student_Enrolment\n   GROUP BY degree_program_id\n   ORDER BY COUNT(student_id) DESC\n   LIMIT 1\n   ```\n   - This subquery groups the `Student_Enrolment` table by `degree_program_id`.\n   - It then orders the groups by the count of `student_id` in descending order.\n   - The `LIMIT 1` clause ensures that only the `degree_program_id` with the highest count of enrolled students is"
+    },
+    {
+        "\ufeffDataset": "farm",
+        "Natural Language Query": "Which statuses correspond to both cities that have a population over 1500 and cities that have a population lower than 500?",
+        "LLM Query": "SELECT Status FROM city WHERE Population > 1500 OR Population < 500;",
+        "Gold Query": "SELECT Status FROM city WHERE Population  >  1500 INTERSECT SELECT Status FROM city WHERE Population  <  500",
+        "Correct": "FALSE",
+        "Error Type": "Uses OR instead of INTERSECT",
+        "GPT Response": "FALSE",
+        "LLM Explanation": "**FALSE**\n\nThe SQL query provided does not correctly answer the natural language query. The natural language query asks for statuses that correspond to cities that have both a population over 1500 and a population lower than 500. This implies that we need to find statuses that are present in both groups of cities.\n\nThe SQL query provided:\n```sql\nSELECT Status FROM city WHERE Population > 1500 OR Population < 500;\n```\nThis query retrieves the statuses of cities that have a population either greater than 1500 or less than 500, but it does not ensure that the statuses are present in both groups.\n\nTo correctly answer the natural language query, we need to find the intersection of statuses from both groups. Here is the correct SQL query"
+    },
+    {
+        "\ufeffDataset": "bike_1",
+        "Natural Language Query": "What are the names and ids of all stations that have more than 14 bikes available on average or had bikes installed in December?",
+        "LLM Query": "SELECT station.id, station.name\nFROM station\nJOIN status ON station.id = status.station_id\nWHERE status.bikes_available > 14\nOR strftime('%m', station.installation_date) = '12'",
+        "Gold Query": "SELECT T1.name ,  T1.id FROM station AS T1 JOIN status AS T2 ON T1.id  =  T2.station_id GROUP BY T2.station_id HAVING avg(T2.bikes_available)  >  14 UNION SELECT name ,  id FROM station WHERE installation_date LIKE \\\"12/%\\\"\"",
+        "Correct": "FALSE",
+        "Error Type": "Returns duplicates (does not select distinct items)",
+        "GPT Response": "FALSE",
+        "LLM Explanation": "FALSE.\n\nExplanation:\nThe SQL query provided does not correctly answer the natural language query for the following reasons:\n\n1. **Average Calculation**: The natural language query asks for stations that have more than 14 bikes available on average. The SQL query checks if `status.bikes_available > 14` for any single record, not the average across all records for a station. To correctly calculate the average, you would need to use an aggregate function like `AVG()` and group by the station.\n\n2. **Duplicate Results**: The SQL query joins the `station` and `status` tables and does not use a `GROUP BY` clause, which results in multiple rows for the same station if there are multiple status records. This is why you"
+    },
+    {
+        "\ufeffDataset": "bike_1",
+        "Natural Language Query": "What are the names of all stations that have more than 10 bikes available and are not located in San Jose?",
+        "LLM Query": "SELECT name \nFROM station \nJOIN status ON station.id = status.station_id \nWHERE bikes_available > 10 AND city != 'San Jose'",
+        "Gold Query": "SELECT T1.name FROM station AS T1 JOIN status AS T2 ON T1.id  =  T2.station_id GROUP BY T2.station_id HAVING avg(bikes_available)  >  10 EXCEPT SELECT name FROM station WHERE city  =  \"San Jose\"",
+        "Correct": "FALSE",
+        "Error Type": "Returns duplicates (does not select distinct items)",
+        "GPT Response": "FALSE",
+        "LLM Explanation": "FALSE\n\nExplanation:\nThe SQL query provided does not correctly answer the natural language query. The issue lies in the fact that the query does not account for the possibility of multiple status records for the same station. This results in duplicate station names being returned if a station has multiple status records that meet the criteria.\n\nTo correctly answer the natural language query, the SQL query should ensure that each station name is returned only once, even if there are multiple status records that meet the criteria. This can be achieved by using the `DISTINCT` keyword to eliminate duplicate station names.\n\nHere is the corrected SQL query:\n\n```sql\nSELECT DISTINCT name \nFROM station \nJOIN status ON station.id = status.station_id \nWHERE bikes_available > 10 AND city != '"
+    },
+    {
+        "\ufeffDataset": "bike_1",
+        "Natural Language Query": "Give me the zip code where the average mean humidity is below 70 and at least 100 trips took place.",
+        "LLM Query": "SELECT zip_code\nFROM weather\nWHERE mean_humidity < 70\nGROUP BY zip_code\nHAVING COUNT(*) >= 100;",
+        "Gold Query": "SELECT zip_code FROM weather GROUP BY zip_code HAVING avg(mean_humidity)  <  70 INTERSECT SELECT zip_code FROM trip GROUP BY zip_code HAVING count(*)  >=  100",
+        "Correct": "FALSE",
+        "Error Type": "Logic error (only looks at weather, not trips)",
+        "GPT Response": "FALSE",
+        "LLM Explanation": "**FALSE**\n\n### Explanation:\n\nThe provided SQL query does not correctly answer the natural language query. The natural language query asks for the zip codes where the average mean humidity is below 70 and at least 100 trips took place. However, the SQL query only checks for zip codes where the mean humidity is below 70 and groups them by zip code, then filters those groups to have at least 100 records in the `weather` table. This does not consider the number of trips.\n\nTo correctly answer the natural language query, the SQL query needs to join the `weather` table with the `trip` table and ensure that the average mean humidity is below 70 and that there are at least 100 trips in the corresponding zip code. Here"
+    },
+    {
+        "\ufeffDataset": "tracking_grants_for_research",
+        "Natural Language Query": "What are the result description of the project whose detail is 'sint'?",
+        "LLM Query": "SELECT outcome_description \nFROM Research_Outcomes \nWHERE outcome_code IN (\n    SELECT outcome_code \n    FROM Project_Outcomes \n    WHERE project_id IN (\n        SELECT project_id \n        FROM Projects \n        WHERE project_details = 'sint'\n    )\n);",
+        "Gold Query": "SELECT T1.outcome_description FROM Research_outcomes AS T1 JOIN Project_outcomes AS T2 ON T1.outcome_code  =  T2.outcome_code JOIN Projects AS T3 ON T2.project_id  =  T3.project_id WHERE T3.project_details  =  'sint'",
+        "Correct": "TRUE",
+        "Error Type": "",
+        "GPT Response": "TRUE",
+        "LLM Explanation": "TRUE.\n\nExplanation:\nThe natural language query asks for the \"result description of the project whose detail is 'sint'.\" The SQL query correctly translates this request by following these steps:\n\n1. **Identify the project with the detail 'sint':**\n   ```sql\n   SELECT project_id \n   FROM Projects \n   WHERE project_details = 'sint'\n   ```\n   This subquery finds the `project_id` of the project whose details match 'sint'.\n\n2. **Find the outcome codes associated with the identified project:**\n   ```sql\n   SELECT outcome_code \n   FROM Project_Outcomes \n   WHERE project_id IN (\n       SELECT project_id \n       FROM Projects \n       WHERE project_details = 'sint'\n   )"
+    },
+    {
+        "\ufeffDataset": "student_transcripts_tracking",
+        "Natural Language Query": "Whose permanent address is different from his or her current address? List his or her first name.",
+        "LLM Query": "SELECT first_name \nFROM Students \nWHERE permanent_address_id <> current_address_id;",
+        "Gold Query": "SELECT first_name FROM Students WHERE current_address_id != permanent_address_id",
+        "Correct": "TRUE",
+        "Error Type": "",
+        "GPT Response": "TRUE",
+        "LLM Explanation": "TRUE.\n\nExplanation:\nThe natural language query asks for the first names of students whose permanent address is different from their current address. The SQL query provided:\n\n```sql\nSELECT first_name \nFROM Students \nWHERE permanent_address_id <> current_address_id;\n```\n\ncorrectly retrieves the `first_name` of students from the `Students` table where the `permanent_address_id` is not equal to the `current_address_id`. This logic directly matches the requirement of the natural language query. The output provided also shows a list of first names, which aligns with the expected result. Therefore, the SQL response correctly answers the natural language query."
+    },
+    {
+        "\ufeffDataset": "bike_1",
+        "Natural Language Query": "What is the total and maximum duration for all trips with the bike id 636?",
+        "LLM Query": "SELECT SUM(duration) AS total_duration, MAX(duration) AS max_duration\nFROM trip\nWHERE bike_id = 636;",
+        "Gold Query": "SELECT sum(duration) , \u00a0max(duration) FROM trip WHERE bike_id \u00a0= \u00a0636",
+        "Correct": "TRUE",
+        "Error Type": "",
+        "GPT Response": "TRUE",
+        "LLM Explanation": "TRUE.\n\nExplanation:\nThe SQL query correctly answers the natural language query. The natural language query asks for the total and maximum duration for all trips with the bike id 636. The SQL query:\n\n```sql\nSELECT SUM(duration) AS total_duration, MAX(duration) AS max_duration\nFROM trip\nWHERE bike_id = 636;\n```\n\naccurately calculates the total duration (`SUM(duration)`) and the maximum duration (`MAX(duration)`) for trips where the `bike_id` is 636. The result provided (`total_duration = 21897` and `max_duration = 1299`) aligns with the expected output for the given natural language query."
+    },
+    {
+        "\ufeffDataset": "product_catalog",
+        "Natural Language Query": "Find the level name of the catalog with the lowest price (in USD).",
+        "LLM Query": "SELECT cs.catalog_level_name\nFROM Catalog_Structure cs\nJOIN Catalog_Contents cc ON cs.catalog_level_number = cc.catalog_level_number\nWHERE cc.price_in_dollars = (SELECT MIN(price_in_dollars) FROM Catalog_Contents)",
+        "Gold Query": "SELECT t2.catalog_level_name FROM catalog_contents AS t1 JOIN catalog_structure AS t2 ON t1.catalog_level_number  =  t2.catalog_level_number ORDER BY t1.price_in_dollars LIMIT 1",
+        "Correct": "TRUE",
+        "Error Type": "",
+        "GPT Response": "TRUE",
+        "LLM Explanation": "TRUE.\n\nExplanation:\nThe SQL query correctly answers the natural language query. Here's a breakdown of the query:\n\n1. **Subquery**: \n   ```sql\n   (SELECT MIN(price_in_dollars) FROM Catalog_Contents)\n   ```\n   This subquery finds the minimum price in dollars from the `Catalog_Contents` table.\n\n2. **Main Query**:\n   ```sql\n   SELECT cs.catalog_level_name\n   FROM Catalog_Structure cs\n   JOIN Catalog_Contents cc ON cs.catalog_level_number = cc.catalog_level_number\n   WHERE cc.price_in_dollars = (SELECT MIN(price_in_dollars) FROM Catalog_Contents)\n   ```\n   - The `JOIN` operation connects the `Catalog_Structure` table with the"
+    },
+    {
+        "\ufeffDataset": "tracking_grants_for_research",
+        "Natural Language Query": "What are the send dates for all documents that have a grant amount of more than 5000 and are involved in research?",
+        "LLM Query": "SELECT Documents.sent_date\nFROM Documents\nJOIN Grants ON Documents.grant_id = Grants.grant_id\nWHERE Grants.grant_amount > 5000;",
+        "Gold Query": "SELECT T1.sent_date FROM documents AS T1 JOIN Grants AS T2 ON T1.grant_id  =  T2.grant_id JOIN Organisations AS T3 ON T2.organisation_id  =  T3.organisation_id JOIN organisation_Types AS T4 ON T3.organisation_type  =  T4.organisation_type WHERE T2.grant_amount  >  5000 AND T4.organisation_type_description  =  'Research'",
+        "Correct": "FALSE",
+        "Error Type": "Doesn't specify that grants are involved in research",
+        "GPT Response": "FALSE",
+        "LLM Explanation": "FALSE.\n\nExplanation:\nThe SQL query provided only checks for documents associated with grants that have an amount greater than 5000. However, the natural language query specifies that the documents should also be \"involved in research.\" The schema provided does not explicitly define what constitutes \"involved in research,\" but it is reasonable to assume that this might involve a relationship with the `Projects` table, which could be linked to research activities.\n\nTo ensure the documents are involved in research, we need to join the `Documents` table with the `Projects` table through the `Grants` table and possibly the `Organisations` table. Here is a revised query that includes this additional check:\n\n```sql\nSELECT Documents.sent_date\nFROM Documents\nJOIN Grants"
+    },
+    {
+        "\ufeffDataset": "bike_1",
+        "Natural Language Query": "What is the mean longitude for all stations that have never had more than 10 bikes available?",
+        "LLM Query": "SELECT AVG(long) \nFROM station \nWHERE id NOT IN (\n    SELECT station_id \n    FROM status \n    WHERE bikes_available > 10\n)",
+        "Gold Query": "SELECT avg(long) FROM station WHERE id NOT IN (SELECT station_id FROM status GROUP BY station_id HAVING max(bikes_available)  >  10)",
+        "Correct": "TRUE",
+        "Error Type": "",
+        "GPT Response": "TRUE",
+        "LLM Explanation": "TRUE.\n\nExplanation:\nThe SQL query correctly answers the natural language query. Let's break it down:\n\n1. **Subquery**:\n   ```sql\n   SELECT station_id \n   FROM status \n   WHERE bikes_available > 10\n   ```\n   This subquery selects all `station_id`s from the `status` table where the number of bikes available is greater than 10. This identifies stations that have had more than 10 bikes available at some point.\n\n2. **Main Query**:\n   ```sql\n   SELECT AVG(long) \n   FROM station \n   WHERE id NOT IN (\n       SELECT station_id \n       FROM status \n       WHERE bikes_available > 10\n   )\n   ```\n   The main query selects the average longitude (`"
+    },
+    {
+        "\ufeffDataset": "student_transcripts_tracking",
+        "Natural Language Query": "Which student has enrolled for the most times in any program? List the id, first name , middle name, last name, the number of enrollments and student id. In case of a tie, return the one with the smallest first name lexicographically",
+        "LLM Query": "SELECT\u00a0\u00a0\u00a0\u00a0\u00a0 s.student_id,\u00a0\u00a0\u00a0\u00a0\u00a0 s.first_name,\u00a0\u00a0\u00a0\u00a0\u00a0 s.middle_name,\u00a0\u00a0\u00a0\u00a0\u00a0 s.last_name,\u00a0\u00a0\u00a0\u00a0\u00a0 COUNT(se.student_enrolment_id) as enrolment_count FROM\u00a0\u00a0\u00a0\u00a0\u00a0 students s JOIN\u00a0\u00a0\u00a0\u00a0\u00a0 student_enrolment se ON s.student_id = se.student_id GROUP BY\u00a0\u00a0\u00a0\u00a0\u00a0 s.student_id,\u00a0\u00a0\u00a0\u00a0\u00a0 s.first_name,\u00a0\u00a0\u00a0\u00a0\u00a0 s.middle_name,\u00a0\u00a0\u00a0\u00a0\u00a0 s.last_name",
+        "Gold Query": "select t1.student_id,\u00a0 t1.first_name,\u00a0 t1.middle_name,\u00a0 t1.last_name,\u00a0 count(*) from students as t1 join student_enrolment as t2 on t1.student_id\u00a0 =\u00a0 t2.student_id group by t1.student_id, t1.first_name,\u00a0 t1.middle_name,\u00a0 t1.last_name order by count(*) desc, t1.first_name asc limit 1",
+        "Correct": "FALSE",
+        "Error Type": "Returns a list of students, none of whom is correct",
+        "GPT Response": "FALSE",
+        "LLM Explanation": "FALSE.\n\nThe SQL query provided does not correctly answer the natural language query for several reasons:\n\n1. **Syntax Error**: The error message indicates a syntax error near \"SELECT\". This is likely due to the presence of non-standard whitespace characters (e.g., non-breaking spaces) in the query. These should be replaced with standard spaces.\n\n2. **Missing ORDER BY Clause**: The query does not include an `ORDER BY` clause to handle the tie-breaking condition specified in the natural language query. The query should order the results by `enrolment_count` in descending order and then by `first_name` in ascending order to ensure that in case of a tie, the student with the smallest first name lexicographically is returned.\n\n3"
+    },
+    {
+        "\ufeffDataset": "student_transcripts_tracking",
+        "Natural Language Query": "List the first name and last name of students who enrolled in exactly one Bachelor degree programs in the same semester",
+        "LLM Query": "WITH bachelor_enrolment AS (\u00a0\u00a0 SELECT se.student_id, se.semester_id\u00a0\u00a0 FROM student_enrolment se\u00a0\u00a0 JOIN degree_programs dp ON se.degree_program_id = dp.degree_program_id\u00a0\u00a0 WHERE dp.degree_summary_name = 'Bachelor'\u00a0\u00a0 GROUP BY se.student_id, se.semester_id\u00a0\u00a0 HAVING COUNT(*) = 1 ) SELECT s.first_name, s.last_name FROM students s JOIN bachelor_enrolment be ON s.student_id = be.student_id",
+        "Gold Query": "WITH student_semester_degrees AS ( SELECT se.student_id, se.semester_id, COUNT(DISTINCT se.degree_program_id) AS degree_count FROM student_enrolment se JOIN degree_programs dp ON se.degree_program_id = dp.degree_program_id WHERE dp.degree_summary_name LIKE '%Bachelor%' GROUP BY se.student_id, se.semester_id ) SELECT DISTINCT s.first_name, s.last_name FROM students s JOIN student_semester_degrees ssd ON s.student_id = ssd.student_id WHERE ssd.degree_count = 1;",
+        "Correct": "FALSE",
+        "Error Type": "Returns duplicates (does not select distinct items)",
+        "GPT Response": "FALSE",
+        "LLM Explanation": "FALSE.\n\nExplanation:\nThe SQL query provided does not correctly answer the natural language query for several reasons:\n\n1. **Syntax Error**: The error message indicates a syntax error near \"\u00a0\u00a0\". This suggests there might be an issue with the formatting or hidden characters in the query. However, assuming the syntax is corrected, there are still logical issues.\n\n2. **Logical Error in Counting Enrollments**:\n   - The query is intended to find students who enrolled in exactly one Bachelor degree program in the same semester. However, the `HAVING COUNT(*) = 1` clause in the `bachelor_enrolment` CTE only ensures that there is exactly one enrollment per student per semester, not that the student has only one enrollment in"
+    },
+    {
+        "\ufeffDataset": "product_catalog",
+        "Natural Language Query": "What is the product with the highest height? Give me the catalog entry name.",
+        "LLM Query": "SELECT catalog_entry_name \nFROM Catalog_Contents \nORDER BY height DESC \nLIMIT 1;",
+        "Gold Query": "SELECT catalog_entry_name FROM catalog_contents ORDER BY height DESC LIMIT 1",
+        "Correct": "TRUE",
+        "Error Type": "",
+        "GPT Response": "FALSE",
+        "LLM Explanation": "FALSE.\n\nExplanation:\nThe SQL query provided does not correctly answer the natural language query. The natural language query asks for the product with the highest height, but the SQL query does not properly handle the height column as it is stored as a VARCHAR(20). Sorting a VARCHAR column will not correctly sort numerical values, especially if they have different lengths (e.g., \"100\" will come before \"20\" in a lexicographical sort).\n\nTo correctly answer the query, the height should be cast to a numerical type before sorting. Here is the corrected SQL query:\n\n```sql\nSELECT catalog_entry_name \nFROM Catalog_Contents \nORDER BY CAST(height AS DECIMAL(10, 2)) DESC \nLIMIT 1;\n```\n\nThis ensures that"
+    },
+    {
+        "\ufeffDataset": "bike_1",
+        "Natural Language Query": "What are the names and ids of stations that had more than 14 bikes available on average or were installed in December?",
+        "LLM Query": "SELECT station.name, station.id\nFROM station\nLEFT JOIN status ON station.id = status.station_id\nWHERE (SELECT AVG(status.bikes_available) FROM status WHERE status.station_id = station.id) > 14\nOR strftime('%m', station.installation_date) = '12'",
+        "Gold Query": "SELECT T1.name ,  T1.id FROM station AS T1 JOIN status AS T2 ON T1.id  =  T2.station_id GROUP BY T2.station_id HAVING avg(T2.bikes_available)  >  14 UNION SELECT name ,  id FROM station WHERE installation_date LIKE \"12/%\"",
+        "Correct": "FALSE",
+        "Error Type": "Returns duplicates (does not select distinct items)",
+        "GPT Response": "FALSE",
+        "LLM Explanation": "FALSE.\n\nExplanation:\nThe SQL query provided does not correctly answer the natural language query due to the following reasons:\n\n1. **Duplicate Rows**: The result set contains multiple rows for the same station, indicating that the `LEFT JOIN` with the `status` table is causing multiple entries for each station. This is because the `status` table can have multiple entries for each station, one for each time the status was recorded.\n\n2. **Incorrect Aggregation**: The subquery `(SELECT AVG(status.bikes_available) FROM status WHERE status.station_id = station.id)` correctly calculates the average number of bikes available for each station, but it is not properly integrated with the main query to avoid duplicates.\n\n3. **Date Format Handling**: The"
+    },
+    {
+        "\ufeffDataset": "pets_1",
+        "Natural Language Query": "What is the first name of every student who has a dog but does not have a cat?",
+        "LLM Query": "SELECT T1.fname ,  T1.age FROM student AS T1 JOIN has_pet AS T2 ON T1.stuid  =  T2.stuid JOIN pets AS T3 ON T3.petid  =  T2.petid WHERE T3.pettype  =  'dog' AND T1.stuid NOT IN (SELECT T1.stuid FROM student AS T1 JOIN has_pet AS T2 ON T1.stuid  =  T2.stuid JOIN pets AS T3 ON T3.petid  =  T2.petid WHERE T3.pettype  =  'cat')",
+        "Gold Query": "SELECT Fname\nFROM Student\nWHERE StuID IN (\n    SELECT StuID\n    FROM Has_Pet\n    JOIN Pets ON Has_Pet.PetID = Pets.PetID\n    WHERE PetType = 'dog'\n) AND StuID NOT IN (\n    SELECT StuID\n    FROM Has_Pet\n    JOIN Pets ON Has_Pet.PetID = Pets.PetID\n    WHERE PetType = 'cat'\n);",
+        "Correct": "FALSE",
+        "Error Type": "Returns duplicates (does not select distinct items)",
+        "GPT Response": "FALSE",
+        "LLM Explanation": "FALSE.\n\nExplanation:\nThe SQL query provided does not correctly answer the natural language query. The natural language query asks for the first name of every student who has a dog but does not have a cat. However, the SQL query returns both the first name and age of the students, which is not what was requested.\n\nAdditionally, the SQL query may produce duplicate rows for students who have multiple dogs, as it does not use a `DISTINCT` clause to eliminate duplicates. This is evident from the result showing \"Tracy 19\" twice.\n\nHere is a corrected version of the SQL query that addresses these issues:\n\n```sql\nSELECT DISTINCT T1.fname\nFROM student AS T1\nJOIN has_pet AS T2 ON T1.stuid"
+    },
+    {
+        "\ufeffDataset": "student_transcripts_tracking",
+        "Natural Language Query": "What is the date and id of the transcript with the least number of results?",
+        "LLM Query": "SELECT transcript_id, transcript_date\nFROM Transcripts\nWHERE transcript_id = (\n  SELECT transcript_id\n  FROM Transcript_Contents\n  GROUP BY transcript_id\n  ORDER BY COUNT(*) ASC\n  LIMIT 1\n)",
+        "Gold Query": "SELECT T2.transcript_date ,  T1.transcript_id FROM Transcript_Contents AS T1 JOIN Transcripts AS T2 ON T1.transcript_id  =  T2.transcript_id GROUP BY T1.transcript_id ORDER BY count(*) ASC LIMIT 1",
+        "Correct": "TRUE",
+        "Error Type": "",
+        "GPT Response": "TRUE",
+        "LLM Explanation": "TRUE.\n\nExplanation:\nThe SQL query correctly answers the natural language query \"What is the date and id of the transcript with the least number of results?\". Here's a breakdown of how it works:\n\n1. **Subquery**:\n   ```sql\n   SELECT transcript_id\n   FROM Transcript_Contents\n   GROUP BY transcript_id\n   ORDER BY COUNT(*) ASC\n   LIMIT 1\n   ```\n   - This subquery groups the `Transcript_Contents` by `transcript_id`.\n   - It orders the groups by the count of entries in ascending order (i.e., the transcript with the least number of results will be first).\n   - The `LIMIT 1` ensures that only the `transcript_id` with the least number of"
+    },
+    {
+        "\ufeffDataset": "pets_1",
+        "Natural Language Query": "Find the first name and age of students who have a dog but do not have a cat as a pet.",
+        "LLM Query": "WITH dog_owners AS (   SELECT s.StuID, s.FName, s.age   FROM student s   JOIN has_pet hp ON s.StuID = hp.StuID   JOIN pets p ON hp.PetID = p.PetID   WHERE p.PetType = 'dog' ), cat_owners AS (   SELECT s.StuID   FROM student s   JOIN has_pet hp ON s.StuID = hp.StuID   JOIN pets p ON hp.PetID = p.PetID   WHERE p.PetType = 'cat' ) SELECT do.FName, do.age FROM dog_owners do LEFT JOIN cat_owners co ON do.StuID = co.StuID WHERE co.StuID IS NULL",
+        "Gold Query": "select distinct t1.Fname ,  t1.age from student as t1 join has_pet as t2 on t1.stuID  =  t2.stuID join pets as t3 on t3.PetID  =  t2.PetID where t3.PetType  =  'dog' and t1.StuID not in (select t1.StuID from student as t1 join has_pet as t2 on t1.StuID  =  t2.StuID join pets as t3 on t3.PetID  =  t2.PetID where t3.PetType  =  'cat')",
+        "Correct": "FALSE",
+        "Error Type": "Returns duplicates (does not select distinct items)",
+        "GPT Response": "TRUE",
+        "LLM Explanation": "TRUE.\n\nExplanation:\nThe SQL query correctly answers the natural language query. Here's a breakdown of how it works:\n\n1. **dog_owners CTE**: This common table expression (CTE) selects students who have a dog. It joins the `student`, `has_pet`, and `pets` tables and filters for `PetType = 'dog'`. The result includes the `StuID`, `FName`, and `age` of these students.\n\n2. **cat_owners CTE**: This CTE selects students who have a cat. It joins the same tables and filters for `PetType = 'cat'`. The result includes only the `StuID` of these students.\n\n3. **Main Query**: The"
+    },
+    {
+        "\ufeffDataset": "student_transcripts_tracking",
+        "Natural Language Query": "Who is enrolled in a Bachelor degree program? List the first name, middle name, last name",
+        "LLM Query": "SELECT s.first_name, s.middle_name, s.last_name FROM students s JOIN student_enrolment se ON s.student_id = se.student_id JOIN degree_programs dp ON se.degree_program_id = dp.degree_program_id WHERE dp.degree_summary_name = 'Bachelor'",
+        "Gold Query": "SELECT DISTINCT t1.first_name ,\u00a0 t1.middle_name ,\u00a0 t1.last_name FROM students AS t1 JOIN student_enrolment as t2 ON t1.student_id\u00a0 =\u00a0 t2.student_id JOIN degree_programs AS t3 ON t2.degree_program_id\u00a0 =\u00a0 t3.degree_program_id WHERE t3.degree_summary_name\u00a0 =\u00a0 'Bachelor'",
+        "Correct": "FALSE",
+        "Error Type": "Returns duplicates (does not select distinct items)",
+        "GPT Response": "FALSE",
+        "LLM Explanation": "**FALSE**\n\n**Explanation:**\n\nThe SQL query provided does not correctly answer the natural language query because it does not filter out duplicate entries. The query joins the `students`, `student_enrolment`, and `degree_programs` tables correctly and filters for students enrolled in a degree program with the name 'Bachelor'. However, it does not ensure that each student is listed only once in the result set.\n\nTo correct this, you should use the `DISTINCT` keyword to ensure that each student appears only once in the result set. Here is the corrected SQL query:\n\n```sql\nSELECT DISTINCT s.first_name, s.middle_name, s.last_name\nFROM students s\nJOIN student_enrolment se ON s.student_id = se.student_id"
+    },
+    {
+        "\ufeffDataset": "student_transcripts_tracking",
+        "Natural Language Query": "How is the math course described?",
+        "LLM Query": "SELECT course_description \nFROM Courses \nWHERE course_name = 'math';",
+        "Gold Query": "SELECT course_description FROM Courses WHERE course_name  =  'math'",
+        "Correct": "TRUE",
+        "Error Type": "",
+        "GPT Response": "TRUE",
+        "LLM Explanation": "TRUE.\n\nExplanation:\nThe natural language query \"How is the math course described?\" is asking for the description of the course named \"math\". The SQL query provided is:\n\n```sql\nSELECT course_description \nFROM Courses \nWHERE course_name = 'math';\n```\n\nThis query selects the `course_description` from the `Courses` table where the `course_name` is 'math'. This correctly retrieves the description of the course named 'math', which directly answers the natural language query. The first 500 characters of the SQL query result showing `course_description` and some text (e.g., \"q.\") indicates that the query is functioning as intended and returning the course description."
+    },
+    {
+        "\ufeffDataset": "pets_1",
+        "Natural Language Query": "What is the first name and gender of the all the students who have more than one pet?",
+        "LLM Query": "SELECT Fname, Sex \nFROM Student \nWHERE StuID IN (\n    SELECT StuID \n    FROM Has_Pet \n    GROUP BY StuID \n    HAVING COUNT(PetID) > 1\n)",
+        "Gold Query": "SELECT T1.fname ,  T1.sex FROM student AS T1 JOIN has_pet AS T2 ON T1.stuid  =  T2.stuid GROUP BY T1.stuid HAVING count(*)  >  1",
+        "Correct": "TRUE",
+        "Error Type": "",
+        "GPT Response": "TRUE",
+        "LLM Explanation": "TRUE.\n\nExplanation:\nThe SQL query correctly answers the natural language query. Let's break it down:\n\n1. **Subquery**:\n   ```sql\n   SELECT StuID \n   FROM Has_Pet \n   GROUP BY StuID \n   HAVING COUNT(PetID) > 1\n   ```\n   This subquery selects the `StuID` of students who have more than one pet. It groups the records in the `Has_Pet` table by `StuID` and uses the `HAVING` clause to filter groups where the count of `PetID` is greater than one.\n\n2. **Main Query**:\n   ```sql\n   SELECT Fname, Sex \n   FROM Student \n   WHERE StuID IN ("
+    },
+    {
+        "\ufeffDataset": "tracking_grants_for_research",
+        "Natural Language Query": "What are the task details, task ids, and project ids for the projects that are detailed as 'omnis' or have at least 3 outcomes?",
+        "LLM Query": "SELECT Tasks.task_details, Tasks.task_id, Tasks.project_id\nFROM Tasks\nJOIN Projects ON Tasks.project_id = Projects.project_id\nJOIN Project_Outcomes ON Projects.project_id = Project_Outcomes.project_id\nWHERE Projects.project_details = 'omnis'\nOR Projects.project_id IN (\n    SELECT Project_Outcomes.project_id\n    FROM Project_Outcomes\n    GROUP BY Project_Outcomes.project_id\n    HAVING COUNT(Project_Outcomes.outcome_code) >= 3\n)",
+        "Gold Query": "SELECT T1.task_details ,  T1.task_id ,  T2.project_id FROM Tasks AS T1 JOIN Projects AS T2 ON T1.project_id  =  T2.project_id WHERE T2.project_details  =  'omnis' UNION SELECT T1.task_details ,  T1.task_id ,  T2.project_id FROM Tasks AS T1 JOIN Projects AS T2 ON T1.project_id  =  T2.project_id JOIN Project_outcomes AS T3 ON T2.project_id  =  T3.project_id GROUP BY T2.project_id HAVING count(*)  >  2",
+        "Correct": "FALSE",
+        "Error Type": "Returns duplicates (does not select distinct items)",
+        "GPT Response": "FALSE",
+        "LLM Explanation": "**FALSE**\n\n### Explanation:\n\nThe SQL query provided does not correctly answer the natural language query due to the following reasons:\n\n1. **Duplicate Results**: The query joins `Tasks` with `Project_Outcomes`, which can result in multiple rows for the same task if a project has multiple outcomes. This is evident from the repeated `task_id` values in the result set.\n\n2. **Incorrect Filtering Logic**: The query is intended to find tasks for projects that either have the detail 'omnis' or have at least 3 outcomes. However, the current query structure can lead to incorrect results due to the way it joins and filters data.\n\n### Corrected SQL Query:\n\nTo correctly answer the natural language query, we need to ensure that"
+    },
+    {
+        "\ufeffDataset": "concert_singer",
+        "Natural Language Query": "List all singer names in concerts in year 2014.",
+        "LLM Query": "SELECT singer.Name\nFROM singer\nJOIN singer_in_concert ON singer.Singer_ID = singer_in_concert.Singer_ID\nJOIN concert ON singer_in_concert.concert_ID = concert.concert_ID\nWHERE concert.Year = '2014';",
+        "Gold Query": "SELECT T2.name FROM singer_in_concert AS T1 JOIN singer AS T2 ON T1.singer_id  =  T2.singer_id JOIN concert AS T3 ON T1.concert_id  =  T3.concert_id WHERE T3.year  =  2014",
+        "Correct": "TRUE",
+        "Error Type": "",
+        "GPT Response": "TRUE",
+        "LLM Explanation": "TRUE.\n\nExplanation:\nThe SQL query correctly joins the `singer`, `singer_in_concert`, and `concert` tables to retrieve the names of singers who participated in concerts in the year 2014. The `WHERE` clause filters the concerts to only those that occurred in 2014. The `SELECT` statement then retrieves the `Name` column from the `singer` table, which matches the natural language query asking for a list of all singer names in concerts in the year 2014.\n\nThe output provided shows a list of singer names, which aligns with the expected result of the natural language query. Therefore, the SQL response correctly answers the natural language query."
+    },
+    {
+        "\ufeffDataset": "product_catalog",
+        "Natural Language Query": "Find the attribute data type for the attribute named \"Green\".",
+        "LLM Query": "SELECT attribute_data_type \nFROM Attribute_Definitions \nWHERE attribute_name = 'Green';",
+        "Gold Query": "SELECT attribute_data_type FROM Attribute_Definitions WHERE attribute_name  =  \"Green\"",
+        "Correct": "TRUE",
+        "Error Type": "",
+        "GPT Response": "TRUE",
+        "LLM Explanation": "TRUE.\n\nExplanation: The SQL query `SELECT attribute_data_type FROM Attribute_Definitions WHERE attribute_name = 'Green';` correctly retrieves the `attribute_data_type` from the `Attribute_Definitions` table where the `attribute_name` is 'Green'. The result `Bool` indicates that the data type for the attribute named \"Green\" is Boolean. This matches the natural language query's requirement to find the attribute data type for the attribute named \"Green\"."
+    },
+    {
+        "\ufeffDataset": "student_transcripts_tracking",
+        "Natural Language Query": "What is the id of the semester that had both Master and Bachelor students enrolled?",
+        "LLM Query": "SELECT semester_id \nFROM Student_Enrolment \nWHERE degree_program_id IN (\n    SELECT degree_program_id \n    FROM Degree_Programs \n    WHERE degree_summary_name IN ('Master', 'Bachelor')\n) \nGROUP BY semester_id \nHAVING COUNT(DISTINCT degree_program_id) = 2;",
+        "Gold Query": "SELECT DISTINCT T2.semester_id FROM Degree_Programs AS T1 JOIN Student_Enrolment AS T2 ON T1.degree_program_id  =  T2.degree_program_id WHERE degree_summary_name  =  'Master' INTERSECT SELECT DISTINCT T2.semester_id FROM Degree_Programs AS T1 JOIN Student_Enrolment AS T2 ON T1.degree_program_id  =  T2.degree_program_id WHERE degree_summary_name  =  'Bachelor'",
+        "Correct": "FALSE",
+        "Error Type": "Incorrect logic (distinct degree programs can both be Bachelors) leads to wrong result",
+        "GPT Response": "FALSE",
+        "LLM Explanation": "FALSE.\n\nExplanation:\nThe SQL query provided does not correctly answer the natural language query. The natural language query asks for the semester ID where both Master and Bachelor students were enrolled. However, the SQL query only checks if there are both Master and Bachelor degree programs in the `Degree_Programs` table and then checks if these programs are present in the `Student_Enrolment` table for a given semester.\n\nThe issue is that the query does not ensure that there are students enrolled in both Master and Bachelor programs in the same semester. It only checks if the degree programs exist and are associated with the semester, not if students are actually enrolled in those programs during that semester.\n\nTo correctly answer the natural language query, the SQL query should ensure that there"
+    },
+    {
+        "\ufeffDataset": "pets_1",
+        "Natural Language Query": "What is the id and weight of every pet who is older than 1?",
+        "LLM Query": "SELECT PetID, weight \nFROM Pets \nWHERE pet_age > 1;",
+        "Gold Query": "SELECT petid ,  weight FROM pets WHERE pet_age  >  1",
+        "Correct": "TRUE",
+        "Error Type": "",
+        "GPT Response": "TRUE",
+        "LLM Explanation": "TRUE.\n\nExplanation:\nThe natural language query asks for the ID and weight of every pet that is older than 1 year. The SQL query provided is:\n\n```sql\nSELECT PetID, weight \nFROM Pets \nWHERE pet_age > 1;\n```\n\nThis query selects the `PetID` and `weight` columns from the `Pets` table where the `pet_age` is greater than 1. The result set shown:\n\n```\nPetID  weight\n2001    12.0\n2002    13.4\n```\n\nindicates that it correctly lists the `PetID` and `weight` of pets that are older than 1 year. Therefore, the SQL response correctly answers the natural language query."
+    },
+    {
+        "\ufeffDataset": "tracking_grants_for_research",
+        "Natural Language Query": "For grants that have descriptions of Regular and Initial Applications, what are their start dates?",
+        "LLM Query": "SELECT grant_start_date \nFROM Grants \nWHERE grant_id IN (\n    SELECT grant_id \n    FROM Documents \n    WHERE document_type_code IN (\n        SELECT document_type_code \n        FROM Document_Types \n        WHERE document_description IN ('Regular', 'Initial Applications')\n    )\n);",
+        "Gold Query": "SELECT T1.grant_start_date FROM Grants AS T1 JOIN Documents AS T2 ON T1.grant_id  =  T2.grant_id JOIN Document_Types AS T3 ON T2.document_type_code  =  T3.document_type_code WHERE T3.document_description  =  'Regular' INTERSECT SELECT T1.grant_start_date FROM Grants AS T1 JOIN Documents AS T2 ON T1.grant_id  =  T2.grant_id JOIN Document_Types AS T3 ON T2.document_type_code  =  T3.document_type_code WHERE T3.document_description  =  'Initial Application'",
+        "Correct": "FALSE",
+        "Error Type": "Uses IN instead of INTERSECT",
+        "GPT Response": "FALSE",
+        "LLM Explanation": "FALSE.\n\nExplanation:\nThe SQL query provided does not correctly answer the natural language query. The natural language query asks for the start dates of grants that have descriptions of \"Regular\" and \"Initial Applications.\" However, the SQL query is checking for grants that have associated documents with document descriptions of \"Regular\" and \"Initial Applications.\"\n\nThe correct SQL query should directly filter the grants based on their descriptions, not through associated documents. However, since the schema provided does not include a description field in the Grants table, it seems there might be a misunderstanding in the natural language query or the schema provided.\n\nIf we assume the natural language query meant to filter based on document descriptions associated with the grants, the SQL query would be correct. But as it stands, the"
+    },
+    {
+        "\ufeffDataset": "bike_1",
+        "Natural Language Query": "What is the latitude, longitude, and city of the station from which the trip with smallest duration started?",
+        "LLM Query": "SELECT station.lat, station.long, station.city\nFROM station\nJOIN trip ON station.id = trip.start_station_id\nORDER BY trip.duration ASC\nLIMIT 1;",
+        "Gold Query": "SELECT T1.lat ,  T1.long ,  T1.city FROM station AS T1 JOIN trip AS T2 ON T1.id  =  T2.start_station_id ORDER BY T2.duration LIMIT 1",
+        "Correct": "TRUE",
+        "Error Type": "",
+        "GPT Response": "TRUE",
+        "LLM Explanation": "TRUE.\n\nExplanation:\nThe SQL query correctly answers the natural language query. Here's the breakdown:\n\n1. **JOIN Operation**: The query joins the `station` table with the `trip` table on the condition that the `station.id` matches the `trip.start_station_id`. This ensures that we are looking at the stations from which trips started.\n\n2. **ORDER BY Clause**: The query orders the results by `trip.duration` in ascending order. This means the trip with the smallest duration will be the first result.\n\n3. **LIMIT 1**: The query limits the result to only one row, which will be the trip with the smallest duration due to the ordering.\n\n4. **SELECT Clause**: The query selects the `"
+    },
+    {
+        "\ufeffDataset": "bike_1",
+        "Natural Language Query": "Give me ids for all the trip that took place in a zip code area with average mean temperature above 60.",
+        "LLM Query": "SELECT trip.id\nFROM trip\nJOIN weather ON trip.zip_code = weather.zip_code\nGROUP BY trip.id\nHAVING AVG(weather.mean_temperature_f) > 60;",
+        "Gold Query": "SELECT T1.id FROM trip AS T1 JOIN weather AS T2 ON T1.zip_code  =  T2.zip_code GROUP BY T2.zip_code HAVING avg(T2.mean_temperature_f)  >  60",
+        "Correct": "FALSE",
+        "Error Type": "Groups by trip id, not zip code.",
+        "GPT Response": "FALSE",
+        "LLM Explanation": "FALSE.\n\nExplanation:\nThe SQL query provided does not correctly answer the natural language query. The natural language query asks for the IDs of all trips that took place in a zip code area with an average mean temperature above 60. However, the SQL query has several logical issues:\n\n1. **Incorrect Use of `GROUP BY` and `HAVING`**: The `GROUP BY` clause groups the results by `trip.id`, which means each trip is treated as a separate group. The `HAVING` clause then checks if the average mean temperature for each individual trip is above 60, which is not the intended logic. The average mean temperature should be calculated per zip code, not per trip.\n\n2. **Missing Date Correlation**:"
+    },
+    {
+        "\ufeffDataset": "product_catalog",
+        "Natural Language Query": "What are the entry names of catalog with the attribute possessed by most entries.",
+        "LLM Query": "SELECT catalog_entry_name \nFROM Catalog_Contents \nWHERE catalog_entry_id IN (\n    SELECT catalog_entry_id \n    FROM Catalog_Contents_Additional_Attributes \n    GROUP BY attribute_id \n    ORDER BY COUNT(*) DESC \n    LIMIT 1\n)",
+        "Gold Query": "SELECT t1.catalog_entry_name FROM Catalog_Contents AS t1 JOIN Catalog_Contents_Additional_Attributes AS t2 ON t1.catalog_entry_id  =  t2.catalog_entry_id WHERE t2.attribute_value  =  (SELECT attribute_value FROM Catalog_Contents_Additional_Attributes GROUP BY attribute_value ORDER BY count(*) DESC LIMIT 1)",
+        "Correct": "FALSE",
+        "Error Type": "Selects only one name",
+        "GPT Response": "FALSE",
+        "LLM Explanation": "FALSE.\n\nExplanation:\nThe SQL query provided does not correctly answer the natural language query. The natural language query asks for the entry names of the catalog that possess the attribute possessed by the most entries. However, the SQL query provided does the following:\n\n1. It selects `catalog_entry_name` from `Catalog_Contents`.\n2. It filters the entries by checking if their `catalog_entry_id` is in a subquery.\n3. The subquery selects `catalog_entry_id` from `Catalog_Contents_Additional_Attributes`, groups by `attribute_id`, orders by the count of entries in descending order, and limits the result to 1.\n\nThe subquery correctly identifies the `attribute_id` that is possessed by the most entries. However,"
+    },
+    {
+        "\ufeffDataset": "farm",
+        "Natural Language Query": "Give the years and official names of the cities of each competition.",
+        "LLM Query": "SELECT Year, Official_Name \nFROM farm_competition \nJOIN city \nON farm_competition.Host_city_ID = city.City_ID;",
+        "Gold Query": "SELECT T2.Year ,  T1.Official_Name FROM city AS T1 JOIN farm_competition AS T2 ON T1.City_ID  =  T2.Host_city_ID",
+        "Correct": "TRUE",
+        "Error Type": "",
+        "GPT Response": "TRUE",
+        "LLM Explanation": "TRUE.\n\nExplanation:\nThe natural language query asks for the years and official names of the cities of each competition. The SQL query provided:\n\n```sql\nSELECT Year, Official_Name \nFROM farm_competition \nJOIN city \nON farm_competition.Host_city_ID = city.City_ID;\n```\n\ncorrectly joins the `farm_competition` table with the `city` table on the `Host_city_ID` and `City_ID` columns, respectively. This join operation ensures that each competition's year and the corresponding host city's official name are selected. The output provided shows the years and the official names of the cities, which matches the natural language query's requirements. Therefore, the SQL response correctly answers the natural language query."
+    },
+    {
+        "\ufeffDataset": "concert_singer",
+        "Natural Language Query": "What is the total number of singers?",
+        "LLM Query": "SELECT COUNT(*) FROM singer;",
+        "Gold Query": "SELECT count(*) FROM singer",
+        "Correct": "TRUE",
+        "Error Type": "",
+        "GPT Response": "TRUE",
+        "LLM Explanation": "TRUE.\n\nExplanation:\nThe natural language query asks for the total number of singers. The SQL query `SELECT COUNT(*) FROM singer;` correctly counts the total number of rows in the `singer` table, which corresponds to the total number of singers. The result of 6 indicates that there are 6 singers in the database, which correctly answers the natural language query."
+    },
+    {
+        "\ufeffDataset": "tracking_grants_for_research",
+        "Natural Language Query": "What are the ids and details for all organizations that have grants of more than 6000 dollars?",
+        "LLM Query": "SELECT Organisations.organisation_id, Organisations.organisation_details\nFROM Organisations\nINNER JOIN Grants ON Organisations.organisation_id = Grants.organisation_id\nWHERE Grants.grant_amount > 6000;",
+        "Gold Query": "SELECT T2.organisation_id ,  T2.organisation_details FROM Grants AS T1 JOIN Organisations AS T2 ON T1.organisation_id  =  T2.organisation_id GROUP BY T2.organisation_id HAVING sum(T1.grant_amount)  >  6000",
+        "Correct": "TRUE",
+        "Error Type": "",
+        "GPT Response": "TRUE",
+        "LLM Explanation": "TRUE.\n\nExplanation:\nThe SQL query correctly answers the natural language query. The natural language query asks for the IDs and details of all organizations that have grants of more than 6000 dollars. The SQL query performs the following steps:\n\n1. **FROM Organisations**: Selects the `Organisations` table.\n2. **INNER JOIN Grants ON Organisations.organisation_id = Grants.organisation_id**: Joins the `Organisations` table with the `Grants` table on the `organisation_id` column, ensuring that only organizations with corresponding grants are considered.\n3. **WHERE Grants.grant_amount > 6000**: Filters the results to include only those grants where the `grant_amount` is greater than 6000 dollars.\n4"
+    },
+    {
+        "\ufeffDataset": "tracking_grants_for_research",
+        "Natural Language Query": "From what date and to what date do the staff work on a project that has the most staff and has staff in a leader role?",
+        "LLM Query": "SELECT the_project.project_id, MIN(date_from) AS start_date, MAX(date_to) AS end_date\nFROM (\n  SELECT project_id, COUNT(DISTINCT staff_id) AS staff_count\n  FROM Project_Staff\n  GROUP BY project_id\n  ORDER BY staff_count DESC\n  LIMIT 1\n) AS the_project\nJOIN Project_Staff ON the_project.project_id = Project_Staff.project_id\nWHERE role_code IN (\n  SELECT role_code\n  FROM Staff_Roles\n  WHERE role_description LIKE '%leader%'\n)\nGROUP BY the_project.project_id;",
+        "Gold Query": "WITH Options AS (SELECT project_id FROM Project_Staff WHERE role_code  =  'leader'), MaxStaffTeam AS ( SELECT project_id FROM Project_Staff GROUP BY project_id ORDER BY count(*) DESC LIMIT 1 ) SELECT date_from, date_to FROM Project_Staff WHERE project_id IN (SELECT project_id FROM Options INTERSECT SELECT project_id FROM MaxStaffTeam)",
+        "Correct": "FALSE",
+        "Error Type": "Join eliminates all staff on the project that are not the lead",
+        "GPT Response": "FALSE",
+        "LLM Explanation": "FALSE.\n\nExplanation:\nThe SQL query provided does not correctly answer the natural language query for several reasons:\n\n1. **Role Filtering**: The query is supposed to find projects with staff in a leader role. However, the filtering for the leader role is done after selecting the project with the most staff. This means the project with the most staff is selected first, regardless of whether it has staff in a leader role or not.\n\n2. **Project Selection**: The subquery `the_project` selects the project with the highest staff count without considering the role. This could result in selecting a project that does not have any staff in a leader role.\n\n3. **Role Description Matching**: The `role_description LIKE '%leader%'` condition is used"
+    },
+    {
+        "\ufeffDataset": "bike_1",
+        "Natural Language Query": "For each zip code, return how many times max wind speed reached 25?",
+        "LLM Query": "SELECT zip_code, COUNT(*) \nFROM weather \nWHERE max_wind_Speed_mph = 25 \nGROUP BY zip_code;",
+        "Gold Query": "SELECT zip_code , count(*) FROM weather WHERE max_wind_Speed_mph  >=  25 GROUP BY zip_code",
+        "Correct": "FALSE",
+        "Error Type": "Incorrect logic (should also return values that exceed 25)",
+        "GPT Response": "TRUE",
+        "LLM Explanation": "TRUE.\n\nExplanation:\nThe SQL query correctly answers the natural language query. The natural language query asks for the count of times the maximum wind speed reached 25 mph for each zip code. The SQL query does the following:\n\n1. `SELECT zip_code, COUNT(*)`: Selects the zip code and the count of records.\n2. `FROM weather`: From the weather table.\n3. `WHERE max_wind_Speed_mph = 25`: Filters the records where the maximum wind speed is exactly 25 mph.\n4. `GROUP BY zip_code`: Groups the results by zip code to get the count for each zip code.\n\nThe output shows the zip codes and the corresponding counts, which matches the requirement of the natural language query. Therefore"
+    },
+    {
+        "\ufeffDataset": "product_catalog",
+        "Natural Language Query": "Find all the catalog publishers whose name contains \"Murray\"",
+        "LLM Query": "SELECT catalog_publisher \nFROM Catalogs \nWHERE catalog_publisher LIKE '%Murray%'",
+        "Gold Query": "SELECT distinct(catalog_publisher) FROM catalogs WHERE catalog_publisher LIKE \"%Murray%\"",
+        "Correct": "FALSE",
+        "Error Type": "Returns duplicates (does not select distinct items)",
+        "GPT Response": "TRUE",
+        "LLM Explanation": "TRUE.\n\nExplanation:\nThe SQL query provided is:\n```sql\nSELECT catalog_publisher \nFROM Catalogs \nWHERE catalog_publisher LIKE '%Murray%';\n```\n\nThis query selects the `catalog_publisher` from the `Catalogs` table where the `catalog_publisher` name contains the substring \"Murray\". The `LIKE '%Murray%'` condition ensures that any publisher name containing \"Murray\" anywhere in the string will be matched.\n\nThe result shown:\n```\ncatalog_publisher\nMurray Coffee shop\nMurray Coffee shop\n```\nindicates that the query correctly identified publishers whose names contain \"Murray\". The repetition of \"Murray Coffee shop\" might suggest there are multiple entries with the same name, but"
+    },
+    {
+        "\ufeffDataset": "student_transcripts_tracking",
+        "Natural Language Query": "Who are enrolled in 2 degree programs in one semester? List the first name, middle name and last name and the id.",
+        "LLM Query": "SELECT T1.first_name ,  T1.middle_name ,  T1.last_name ,  T1.student_id FROM Students AS T1 JOIN Student_Enrolment AS T2 ON T1.student_id  =  T2.student_id GROUP BY T1.student_id HAVING count(*)  =  2",
+        "Gold Query": "SELECT first_name, middle_name, last_name, student_id\nFROM Students\nWHERE student_id IN (\n  SELECT student_id\n  FROM Student_Enrolment\n  GROUP BY student_id, semester_id\n  HAVING COUNT(degree_program_id) = 2\n)",
+        "Correct": "FALSE",
+        "Error Type": "Selects students enrolled in two semesters but doesn't check that they're the same",
+        "GPT Response": "FALSE",
+        "LLM Explanation": "FALSE.\n\nExplanation:\nThe provided SQL query does not correctly answer the natural language query. The natural language query asks for students who are enrolled in 2 degree programs in one semester. However, the SQL query only checks if a student has two enrollments in total, without considering whether these enrollments are within the same semester.\n\nTo correctly answer the natural language query, the SQL query should ensure that the student is enrolled in two different degree programs within the same semester. Here is a corrected version of the SQL query:\n\n```sql\nSELECT \n    T1.first_name, \n    T1.middle_name, \n    T1.last_name, \n    T1.student_id \nFROM \n    Students AS T1 \nJOIN \n    Student_Enrol"
+    },
+    {
+        "\ufeffDataset": "student_transcripts_tracking",
+        "Natural Language Query": "What is the maximum number of times that a course shows up in different transcripts and what is that course's enrollment id?",
+        "LLM Query": "SELECT course_id, student_enrolment_id, COUNT(*) AS times_in_transcripts\nFROM Student_Enrolment_Courses \nJOIN Transcript_Contents ON Student_Enrolment_Courses.student_course_id = Transcript_Contents.student_course_id\nGROUP BY course_id, student_enrolment_id\nORDER BY times_in_transcripts DESC\nLIMIT 1;",
+        "Gold Query": "SELECT count(*), student_course_id FROM Transcript_Contents GROUP BY student_course_id ORDER BY count(*) DESC LIMIT 1",
+        "Correct": "FALSE",
+        "Error Type": "Groups by course id and student enrolment ID",
+        "GPT Response": "FALSE",
+        "LLM Explanation": "**FALSE**\n\n### Explanation:\n\nThe provided SQL query does not correctly answer the natural language query. The natural language query asks for the maximum number of times a course shows up in different transcripts and the enrollment ID associated with that course. However, the SQL query groups by both `course_id` and `student_enrolment_id`, which means it is counting the occurrences of each unique combination of `course_id` and `student_enrolment_id` in the transcripts, rather than just the occurrences of each course.\n\nTo correctly answer the natural language query, the SQL query should only group by `course_id` and then find the maximum count. Here is the corrected SQL query:\n\n```sql\nSELECT course_id, student_enrolment_id, COUNT"
+    },
+    {
+        "\ufeffDataset": "tracking_grants_for_research",
+        "Natural Language Query": "Which projects have no outcome? List the project details.",
+        "LLM Query": "SELECT Projects.project_id, Projects.project_details\nFROM Projects\nLEFT JOIN Project_Outcomes ON Projects.project_id = Project_Outcomes.project_id\nWHERE Project_Outcomes.project_id IS NULL;",
+        "Gold Query": "SELECT project_details FROM Projects WHERE project_id NOT IN ( SELECT project_id FROM Project_outcomes )",
+        "Correct": "TRUE",
+        "Error Type": "",
+        "GPT Response": "TRUE",
+        "LLM Explanation": "TRUE.\n\nExplanation:\nThe SQL query correctly answers the natural language query \"Which projects have no outcome? List the project details.\" Here's why:\n\n1. **LEFT JOIN**: The query uses a LEFT JOIN between the `Projects` table and the `Project_Outcomes` table. This ensures that all projects are included in the result set, regardless of whether they have a corresponding entry in the `Project_Outcomes` table.\n\n2. **WHERE Project_Outcomes.project_id IS NULL**: This condition filters the results to include only those projects that do not have a corresponding entry in the `Project_Outcomes` table. In other words, it selects projects that have no outcomes.\n\n3. **SELECT Projects.project_id, Projects.project_details**: The"
+    },
+    {
+        "\ufeffDataset": "product_catalog",
+        "Natural Language Query": "Find the names of the products with length smaller than 3 or height greater than 5.",
+        "LLM Query": "SELECT catalog_entry_name FROM catalog_contents WHERE LENGTH  <  3 OR width  >  5",
+        "Gold Query": "SELECT catalog_entry_name \nFROM Catalog_Contents \nWHERE (length < '3' OR height > '5');",
+        "Correct": "FALSE",
+        "Error Type": "Wrong keyword",
+        "GPT Response": "FALSE",
+        "LLM Explanation": "FALSE.\n\nExplanation:\nThe SQL query provided does not correctly answer the natural language query. The natural language query asks for products with a length smaller than 3 or a height greater than 5. However, the SQL query checks for a length smaller than 3 or a width greater than 5, which is not what was requested.\n\nThe correct SQL query should be:\n```sql\nSELECT catalog_entry_name \nFROM catalog_contents \nWHERE CAST(length AS DECIMAL) < 3 OR CAST(height AS DECIMAL) > 5;\n```\n\nThis query ensures that the conditions are applied to the `length` and `height` columns as specified in the natural language query. Note that the `CAST` function is used to convert the `length`"
+    },
+    {
+        "\ufeffDataset": "bike_1",
+        "Natural Language Query": "On which day and in which zip code was the min dew point lower than any day in zip code 94107?",
+        "LLM Query": "SELECT date, zip_code\nFROM weather\nWHERE min_dew_point_f < (SELECT MIN(min_dew_point_f) FROM weather WHERE zip_code = 94107)",
+        "Gold Query": "SELECT date ,  zip_code FROM weather WHERE min_dew_point_f  <  (SELECT min(min_dew_point_f) FROM weather WHERE zip_code  =  94107)",
+        "Correct": "TRUE",
+        "Error Type": "",
+        "GPT Response": "FALSE",
+        "LLM Explanation": "FALSE.\n\nExplanation:\nThe SQL query provided does not correctly answer the natural language query. The natural language query asks for the day and zip code where the minimum dew point was lower than any day in zip code 94107. The SQL query provided:\n\n```sql\nSELECT date, zip_code\nFROM weather\nWHERE min_dew_point_f < (SELECT MIN(min_dew_point_f) FROM weather WHERE zip_code = 94107)\n```\n\nThis query checks for dates and zip codes where the minimum dew point is lower than the absolute minimum dew point recorded in zip code 94107. However, the natural language query asks for days where the minimum dew point is lower than any day in zip code 94107, which implies a comparison against"
+    }
+]

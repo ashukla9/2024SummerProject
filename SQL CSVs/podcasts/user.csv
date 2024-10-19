@@ -1,0 +1,21 @@
+user_id,full_name,is_creator,is_influencer,country_name,associated_hashtags,interests,birth_year,birth_month,birth_day
+"user0","Charlotte Johnson",True,True,"UK","fashion","travel,cooking,chess",1998,11,18
+"user1","Amelia Wilson",True,True,"France","technical","chess,AI",2004,10,5
+"user2","Amelia Anderson",False,True,"USA","leisure","cooking",2003,9,30
+"user3","James Brown",True,False,"Singapore","leisure","travel",2005,5,16
+"user4","Joseph Miller",False,True,"France","technical","travel,AI,chess",2000,10,18
+"user5","Harper Lopez",False,False,"UK","technical,fashion","AI,chess,travel",2001,12,19
+"user6","Daniel Moore",False,False,"China","fashion","AI,cooking,travel",2004,10,25
+"user7","John Wilson",False,True,"Singapore","leisure","AI,travel,cooking",2004,3,26
+"user8","Charlotte Thompson",True,False,"China","fashion","chess,travel,AI",2006,3,26
+"user9","Thomas Smith",False,False,"China","leisure","travel,chess,cooking",2007,6,2
+"user10","Robert Thompson",False,False,"France","fashion,leisure","chess,cooking,travel",2003,9,25
+"user11","Charlotte Smith",True,True,"France","technical","travel,chess",1998,9,27
+"user12","Joseph Moore",True,False,"China","leisure","cooking,chess",1999,1,22
+"user13","Emily Williams",False,True,"USA","fashion","travel,cooking",2007,3,1
+"user14","Mia Garcia",True,False,"France","technical","AI,travel,cooking",2004,8,14
+"user15","Charlotte Wilson",False,True,"UK","technical","travel,AI,chess",2008,11,19
+"user16","Isabella Brown",False,False,"Singapore","technical","cooking,AI",1996,6,10
+"user17","Mia Anderson",True,False,"China","leisure,fashion","chess,cooking",1999,6,17
+"user18","David Smith",False,True,"France","fashion,leisure","cooking",2000,12,12
+"user19","Olivia Thomas",False,False,"France","leisure","AI",1999,12,21

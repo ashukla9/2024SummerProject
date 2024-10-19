@@ -1,0 +1,3160 @@
+,Natural Language Query,Generated SQL Query,Result
+0,Give me the dates when the max temperature was higher than 85.,"SELECT date 
+FROM weather 
+WHERE max_temperature_f > 85;","      date
+  9/7/2013
+ 8/30/2013
+  9/6/2013
+  9/7/2013
+  9/9/2013
+ 9/19/2013
+  9/6/2013
+  9/7/2013
+ 8/30/2013
+  9/6/2013
+  9/7/2013
+ 9/19/2013
+ 8/30/2013
+  9/6/2013
+  9/7/2013
+  9/8/2013
+  9/9/2013
+ 9/19/2013
+ 4/30/2014
+ 5/13/2014
+ 5/14/2014
+  6/8/2014
+ 7/25/2014
+ 4/29/2014
+ 4/30/2014
+  5/1/2014
+ 5/12/2014
+ 5/13/2014
+ 5/14/2014
+ 5/15/2014
+  6/8/2014
+  6/9/2014
+ 6/18/2014
+ 6/29/2014
+ 6/30/2014
+ 7/24/2014
+ 7/25/2014
+ 4/29/2014
+ 4/30/2014
+  5/1/2014
+ 5/12/2014
+ 5/13/2014
+ 5/14/2014
+ 5/15/2014
+  6/8/2014
+ 6/12/2014
+ 6/18/2014
+ 6/30/2014
+ 7/24/2014
+ 7/25/2014
+ 4/29/2014
+ 4/30/2014
+  5/1/2014
+ 5/12/2014
+ 5/13/2014
+ 5/14/2014
+ 5/15/2014
+  6/8/2014
+ 6/14/2014
+ 6/18/2014
+ 6/30/2014
+ 7/25/2014
+  4/8/2014
+ 4/29/2014
+ 4/30/2014
+  5/1/2014
+ 5/12/2014
+ 5/13/2014
+ 5/14/2014
+ 5/15/2014
+  6/8/2014
+  6/9/2014
+ 6/14/2014
+ 6/18/2014
+ 6/29/2014
+ 6/30/2014
+ 7/14/2014
+ 7/25/2014
+ 7/26/2014
+ 7/27/2014
+ 8/30/2014
+ 10/2/2014
+ 10/3/2014
+ 10/4/2014
+ 10/5/2014
+10/12/2014
+  6/8/2015
+ 7/19/2015
+ 7/28/2015
+ 8/15/2015
+ 8/16/2015
+ 8/28/2015
+  9/1/2014
+ 10/2/2014
+ 10/3/2014
+ 10/4/2014
+ 10/5/2014
+10/12/2014
+ 4/30/2015
+  6/8/2015
+ 6/30/2015
+ 7/19/2015
+ 7/20/2015
+ 7/27/2015
+ 7/28/2015
+ 8/15/2015
+ 8/16/2015
+ 8/17/2015
+ 8/27/2015
+ 8/28/2015
+  9/1/2014
+ 10/1/2014
+ 10/2/2014
+ 10/3/2014
+ 10/4/2014
+ 10/5/2014
+10/12/2014
+10/18/2014
+ 1/27/2015
+ 2/27/2015
+ 4/27/2015
+ 4/30/2015
+  6/8/2015
+ 6/30/2015
+ 7/27/2015
+ 7/28/2015
+  8/8/2015
+ 8/13/2015
+ 8/15/2015
+ 8/27/2015
+ 9/10/2014
+ 10/1/2014
+ 10/2/2014
+ 10/3/2014
+ 10/4/2014
+ 10/5/2014
+10/12/2014
+ 4/30/2015
+  5/1/2015
+  5/2/2015
+  5/3/2015
+  6/8/2015
+ 6/25/2015
+ 6/30/2015
+ 7/19/2015
+ 7/20/2015
+ 7/28/2015
+ 8/15/2015
+ 8/16/2015
+ 8/27/2015
+ 8/28/2015
+  9/1/2014
+ 9/10/2014
+ 9/11/2014
+ 10/2/2014
+ 10/3/2014
+ 10/4/2014
+ 10/5/2014
+ 10/6/2014
+10/12/2014
+10/13/2014
+ 3/14/2015
+ 4/30/2015
+  6/8/2015
+ 6/12/2015
+ 6/25/2015
+ 6/30/2015
+  7/1/2015
+ 7/19/2015
+ 7/20/2015
+ 7/27/2015
+ 7/28/2015
+ 7/29/2015
+ 8/15/2015
+ 8/16/2015
+ 8/17/2015
+ 8/26/2015
+ 8/27/2015
+ 8/28/2015"
+1,What are the dates with a maximum temperature higher than 85?,"SELECT date 
+FROM weather 
+WHERE max_temperature_f > 85;","      date
+  9/7/2013
+ 8/30/2013
+  9/6/2013
+  9/7/2013
+  9/9/2013
+ 9/19/2013
+  9/6/2013
+  9/7/2013
+ 8/30/2013
+  9/6/2013
+  9/7/2013
+ 9/19/2013
+ 8/30/2013
+  9/6/2013
+  9/7/2013
+  9/8/2013
+  9/9/2013
+ 9/19/2013
+ 4/30/2014
+ 5/13/2014
+ 5/14/2014
+  6/8/2014
+ 7/25/2014
+ 4/29/2014
+ 4/30/2014
+  5/1/2014
+ 5/12/2014
+ 5/13/2014
+ 5/14/2014
+ 5/15/2014
+  6/8/2014
+  6/9/2014
+ 6/18/2014
+ 6/29/2014
+ 6/30/2014
+ 7/24/2014
+ 7/25/2014
+ 4/29/2014
+ 4/30/2014
+  5/1/2014
+ 5/12/2014
+ 5/13/2014
+ 5/14/2014
+ 5/15/2014
+  6/8/2014
+ 6/12/2014
+ 6/18/2014
+ 6/30/2014
+ 7/24/2014
+ 7/25/2014
+ 4/29/2014
+ 4/30/2014
+  5/1/2014
+ 5/12/2014
+ 5/13/2014
+ 5/14/2014
+ 5/15/2014
+  6/8/2014
+ 6/14/2014
+ 6/18/2014
+ 6/30/2014
+ 7/25/2014
+  4/8/2014
+ 4/29/2014
+ 4/30/2014
+  5/1/2014
+ 5/12/2014
+ 5/13/2014
+ 5/14/2014
+ 5/15/2014
+  6/8/2014
+  6/9/2014
+ 6/14/2014
+ 6/18/2014
+ 6/29/2014
+ 6/30/2014
+ 7/14/2014
+ 7/25/2014
+ 7/26/2014
+ 7/27/2014
+ 8/30/2014
+ 10/2/2014
+ 10/3/2014
+ 10/4/2014
+ 10/5/2014
+10/12/2014
+  6/8/2015
+ 7/19/2015
+ 7/28/2015
+ 8/15/2015
+ 8/16/2015
+ 8/28/2015
+  9/1/2014
+ 10/2/2014
+ 10/3/2014
+ 10/4/2014
+ 10/5/2014
+10/12/2014
+ 4/30/2015
+  6/8/2015
+ 6/30/2015
+ 7/19/2015
+ 7/20/2015
+ 7/27/2015
+ 7/28/2015
+ 8/15/2015
+ 8/16/2015
+ 8/17/2015
+ 8/27/2015
+ 8/28/2015
+  9/1/2014
+ 10/1/2014
+ 10/2/2014
+ 10/3/2014
+ 10/4/2014
+ 10/5/2014
+10/12/2014
+10/18/2014
+ 1/27/2015
+ 2/27/2015
+ 4/27/2015
+ 4/30/2015
+  6/8/2015
+ 6/30/2015
+ 7/27/2015
+ 7/28/2015
+  8/8/2015
+ 8/13/2015
+ 8/15/2015
+ 8/27/2015
+ 9/10/2014
+ 10/1/2014
+ 10/2/2014
+ 10/3/2014
+ 10/4/2014
+ 10/5/2014
+10/12/2014
+ 4/30/2015
+  5/1/2015
+  5/2/2015
+  5/3/2015
+  6/8/2015
+ 6/25/2015
+ 6/30/2015
+ 7/19/2015
+ 7/20/2015
+ 7/28/2015
+ 8/15/2015
+ 8/16/2015
+ 8/27/2015
+ 8/28/2015
+  9/1/2014
+ 9/10/2014
+ 9/11/2014
+ 10/2/2014
+ 10/3/2014
+ 10/4/2014
+ 10/5/2014
+ 10/6/2014
+10/12/2014
+10/13/2014
+ 3/14/2015
+ 4/30/2015
+  6/8/2015
+ 6/12/2015
+ 6/25/2015
+ 6/30/2015
+  7/1/2015
+ 7/19/2015
+ 7/20/2015
+ 7/27/2015
+ 7/28/2015
+ 7/29/2015
+ 8/15/2015
+ 8/16/2015
+ 8/17/2015
+ 8/26/2015
+ 8/27/2015
+ 8/28/2015"
+2,What are the names of stations that have latitude lower than 37.5?,SELECT name FROM station WHERE lat < 37.5;,"                                 name
+    San Jose Diridon Caltrain Station
+                San Jose Civic Center
+               Santa Clara at Almaden
+                     Adobe on Almaden
+                     San Pedro Square
+                 Paseo de San Antonio
+                  San Salvador at 1st
+                            Japantown
+                   San Jose City Hall
+                          MLK Library
+               SJSU 4th at San Carlos
+                        St James Park
+             Arena Green / SAP Center
+           SJSU - San Salvador at 9th
+                    Franklin at Maple
+        Redwood City Caltrain Station
+              San Mateo County Center
+          Redwood City Public Library
+             Stanford in Redwood City
+          Redwood City Medical Center
+              Mountain View City Hall
+       Mountain View Caltrain Station
+         San Antonio Caltrain Station
+                 Evelyn Park and Ride
+          San Antonio Shopping Center
+     Castro Street and El Camino Real
+Rengstorff Avenue / California Street
+           Palo Alto Caltrain Station
+               University and Emerson
+      California Ave Caltrain Station
+                 Cowper at University
+                        Park at Olive
+      Santa Clara County Civic Center
+                           Mezes Park
+                          Ryland Park"
+3,What are the names of all stations with a latitude smaller than 37.5?,SELECT name FROM station WHERE lat < 37.5;,"                                 name
+    San Jose Diridon Caltrain Station
+                San Jose Civic Center
+               Santa Clara at Almaden
+                     Adobe on Almaden
+                     San Pedro Square
+                 Paseo de San Antonio
+                  San Salvador at 1st
+                            Japantown
+                   San Jose City Hall
+                          MLK Library
+               SJSU 4th at San Carlos
+                        St James Park
+             Arena Green / SAP Center
+           SJSU - San Salvador at 9th
+                    Franklin at Maple
+        Redwood City Caltrain Station
+              San Mateo County Center
+          Redwood City Public Library
+             Stanford in Redwood City
+          Redwood City Medical Center
+              Mountain View City Hall
+       Mountain View Caltrain Station
+         San Antonio Caltrain Station
+                 Evelyn Park and Ride
+          San Antonio Shopping Center
+     Castro Street and El Camino Real
+Rengstorff Avenue / California Street
+           Palo Alto Caltrain Station
+               University and Emerson
+      California Ave Caltrain Station
+                 Cowper at University
+                        Park at Olive
+      Santa Clara County Civic Center
+                           Mezes Park
+                          Ryland Park"
+4,"For each city, return the highest latitude among its stations.","SELECT city, MAX(lat) as highest_latitude
+FROM station
+GROUP BY city;","         city  highest_latitude
+Mountain View         37.406940
+    Palo Alto         37.448598
+ Redwood City         37.491269
+San Francisco         37.804770
+     San Jose         37.352601"
+5,"For each city, what is the highest latitude for its stations?","SELECT city, MAX(lat) as highest_latitude
+FROM station
+GROUP BY city;","         city  highest_latitude
+Mountain View         37.406940
+    Palo Alto         37.448598
+ Redwood City         37.491269
+San Francisco         37.804770
+     San Jose         37.352601"
+6,Give me the start station and end station for the trips with the three oldest id.,"SELECT start_station_id, end_station_id 
+FROM trip 
+ORDER BY id ASC 
+LIMIT 3;"," start_station_id  end_station_id
+               63              69
+               66              69
+               77              50"
+7,What is the station station and end station for the trips with the three smallest ids?,"SELECT start_station_name, end_station_name 
+FROM trip 
+WHERE id IN (SELECT id FROM trip ORDER BY id ASC LIMIT 3)","      start_station_name                        end_station_name
+           Howard at 2nd San Francisco Caltrain 2 (330 Townsend)
+South Van Ness at Market San Francisco Caltrain 2 (330 Townsend)
+       Market at Sansome    Harry Bridges Plaza (Ferry Building)"
+8,What is the average latitude and longitude of stations located in San Jose city?,"SELECT AVG(lat) AS average_latitude, AVG(long) AS average_longitude
+FROM station
+WHERE city = 'San Jose';"," average_latitude  average_longitude
+        37.336414        -121.891606"
+9,What is the average latitude and longitude in San Jose?,"SELECT AVG(lat) AS average_latitude, AVG(long) AS average_longitude
+FROM station
+WHERE city = 'San Jose';"," average_latitude  average_longitude
+        37.336414        -121.891606"
+10,What is the id of the trip that has the shortest duration?,SELECT MIN(duration) AS shortest_duration FROM trip;," shortest_duration
+                61"
+11,What is the id of the shortest trip?,"SELECT MIN(duration), id
+FROM trip
+GROUP BY id
+ORDER BY duration ASC
+LIMIT 1;"," MIN(duration)     id
+            61 906210"
+12,What is the total and maximum duration of trips with bike id 636?,"SELECT SUM(duration) AS total_duration, MAX(duration) AS max_duration
+FROM trip
+WHERE bike_id = 636;"," total_duration  max_duration
+          21897          1299"
+13,What is the total and maximum duration for all trips with the bike id 636?,"SELECT SUM(duration) AS total_duration, MAX(duration) AS max_duration
+FROM trip
+WHERE bike_id = 636;"," total_duration  max_duration
+          21897          1299"
+14,"For each zip code, return the average mean temperature of August there.","SELECT zip_code, AVG(mean_temperature_f) 
+FROM weather 
+WHERE date LIKE '____-08-__' 
+GROUP BY zip_code;","Empty DataFrame
+Columns: [zip_code, AVG(mean_temperature_f)]
+Index: []"
+15,"For each zip code, what is the average mean temperature for all dates that start with '8'?","SELECT zip_code, AVG(mean_temperature_f) 
+FROM weather 
+WHERE date LIKE '8%' 
+GROUP BY zip_code;"," zip_code  AVG(mean_temperature_f)
+    94041                69.923077
+    94063                69.153846
+    94107                67.892308
+    94301                69.030769
+    95113                70.738462"
+16,"From the trip record, find the number of unique bikes.",SELECT DISTINCT bike_id FROM trip;," bike_id
+     454
+     574
+     636
+     187
+     363
+      16
+      67
+     427
+     603
+     503
+     351
+     507
+     415
+      29
+     110
+     343
+     374
+     520
+     531
+     521
+     512
+     275
+     137
+     451
+     259
+     537
+     563
+     425
+     266
+     538
+     285
+     434
+     360
+     528
+     193
+     535
+     593
+     448
+     416
+     687
+     552
+     449
+      90
+     522
+     370
+      94
+     386
+     260
+     418
+     359
+     405
+     598
+     327
+     233
+      57
+     672
+     441
+     408
+     111
+     625
+     628
+     392
+     361
+     473
+     279
+     282
+     575
+     590
+     278
+     422
+      20
+     546
+     315
+     470
+     289
+     659
+     292
+     602
+     581
+     573
+     437
+     417
+     578
+     105
+     299
+     309
+     494
+     388
+     572
+     555
+     191
+     231
+     384
+     312
+     268
+     492
+      64
+     212
+     623
+     600
+      33
+      56
+     436
+      65
+     455
+     478
+     562
+     362
+     617
+     143
+     372
+     651
+     696
+     400
+     514
+     355
+     331
+     426
+     243
+     375
+     373
+     504
+     509
+     109
+     479
+     429
+     541
+     300
+     586
+     395
+     569
+     423
+     450
+     420
+     500
+     463
+     443
+     274
+     502
+     301
+     505
+     547
+     431
+     532
+     214
+     293
+     329
+      86
+     589
+     353
+     585
+     136
+     366
+     335
+     401
+     379
+     336
+     468
+     131
+     410
+     592
+     403
+      55
+     635
+      69
+     557
+     518
+      28
+     117
+     428
+      32
+     620
+     576
+     878
+      96
+     591
+     419
+     203
+     621
+     488
+     654
+     364
+     677
+     340
+     511
+     206
+     597
+     526
+     560
+     606
+     643
+     629
+     630
+     270
+     354
+     407
+     314
+     579
+     391
+     517
+      48
+     498
+     287
+     583
+     290
+     584
+     624
+     652
+     619
+     134
+     356
+     501
+     469
+     462
+     194
+     613
+     158
+     238
+     248
+     358
+     348
+     508
+     267
+     325
+     383
+     608
+     317
+     540
+     338
+     286
+     554
+     382
+     491
+      66
+     245
+     371
+     404
+     252
+     385
+      88
+     475
+     587
+     568
+     692
+     190
+     648
+     631
+     253
+     638
+     525
+     544
+     389
+     632
+     510
+     519
+     611
+      77
+     489
+     322
+     497
+     530
+     283
+      75
+     347
+     306
+     582
+     483
+     376
+     219
+     205
+     485
+     311
+     567
+     445
+     308
+     533
+     123
+     676
+     118
+     683
+     326
+     459
+     570
+     716
+     558
+      12
+      27
+     342
+     250
+      82
+     622
+     284
+     461
+     197
+     288
+     604
+     516
+     482
+      46
+     296
+     548
+     607
+      98
+     409
+     394
+     350
+     402
+     412
+     380
+     534
+     712
+     542
+     495
+     453
+     334
+     496
+      14
+      78
+      38
+     649
+     147
+     141
+     139
+     432
+     609
+     255
+     387
+     421
+      41
+     707
+     235
+     218
+     332
+      71
+     618
+     167
+      84
+     328
+     221
+     684
+     230
+      37
+      80
+     465
+     472
+     189
+      30
+     688
+     693
+     487
+     706
+     179
+      31
+     689
+     186
+     658
+     614
+     318
+     549
+     127
+     269
+     634
+      35
+     122
+     484
+     291
+     471
+     493
+     877
+     647
+     378
+     650
+     277
+     444
+     456
+     320
+     442
+     313
+     377
+     310
+     393
+     390
+      95
+     663
+     209
+     271
+     163
+     251
+     556
+     705
+     599
+     715
+     120
+     673
+     239
+     182
+     411
+     566
+     527
+      61
+     397
+     661
+     129
+     506
+     686
+     681
+     399
+     477
+     357
+     709
+     458
+      40
+     140
+     160
+     413
+      51
+     240
+     513
+     690
+     553
+      92
+     257
+     457
+     144
+     128
+     675
+     646
+      13
+     216
+     188
+     126
+      50
+     524
+     447
+     263
+      72
+     656
+     104
+     142
+      22
+     561
+     529
+     655
+     691
+     679
+     694
+     702
+     406
+     440
+     700
+     446
+     304
+     352
+      10
+     258
+     262
+     699
+     208
+      63
+     213
+     264
+     159
+      18
+     669
+     671
+     594
+     439
+     228
+     175
+     200
+     192
+     321
+     577
+     155
+      21
+     639
+     148
+     601
+     704
+     295
+      93
+     678
+     708
+     157
+     701
+     294
+     102
+     232
+     249
+     714
+     150
+     107
+     641
+     152
+     236
+     164
+     368
+     680
+     685
+     480
+     168
+     344
+     162
+     698
+     559
+     165
+     149
+     261
+     564
+     119
+     103
+     181
+     176
+     668
+     211
+     138
+      43
+      83
+     145
+      68
+      25
+      74
+     196
+     215
+     666
+     713
+     670
+     178
+     156
+     660"
+17,How many different bike ids are there?,SELECT COUNT(DISTINCT bike_id) FROM trip;," COUNT(DISTINCT bike_id)
+                     530"
+18,What is the number of distinct cities the stations are located at?,SELECT COUNT(DISTINCT city) FROM station;," COUNT(DISTINCT city)
+                    5"
+19,How many different cities have these stations?,SELECT DISTINCT city FROM station;,"         city
+     San Jose
+ Redwood City
+Mountain View
+    Palo Alto
+San Francisco"
+20,How many stations does Mountain View city has?,SELECT COUNT(id) FROM station WHERE city = 'Mountain View';," COUNT(id)
+         7"
+21,How many stations are in Mountain View?,SELECT COUNT(id) FROM station WHERE city = 'Mountain View';," COUNT(id)
+         7"
+22,Return the unique name for stations that have ever had 7 bikes available.,"SELECT DISTINCT station.name 
+FROM station 
+JOIN status 
+ON station.id = status.station_id 
+WHERE status.bikes_available = 7;","                                         name
+                       Santa Clara at Almaden
+                          San Salvador at 1st
+                                St James Park
+                     Arena Green / SAP Center
+              California Ave Caltrain Station
+                           Powell Street BART
+                              Clay at Battery
+                             Davis at Jackson
+                        Washington at Kearney
+                              Post at Kearney
+         Harry Bridges Plaza (Ferry Building)
+                        Embarcadero at Bryant
+Temporary Transbay Terminal (Howard at Beale)
+                      San Francisco City Hall
+                       Embarcadero at Sansome
+                              2nd at Townsend
+                            2nd at South Park
+                            Steuart at Market"
+23,What are the different names for each station that has ever had 7 bikes available?,"SELECT DISTINCT station.name 
+FROM station 
+JOIN status 
+ON station.id = status.station_id 
+WHERE status.bikes_available = 7;","                                         name
+                       Santa Clara at Almaden
+                          San Salvador at 1st
+                                St James Park
+                     Arena Green / SAP Center
+              California Ave Caltrain Station
+                           Powell Street BART
+                              Clay at Battery
+                             Davis at Jackson
+                        Washington at Kearney
+                              Post at Kearney
+         Harry Bridges Plaza (Ferry Building)
+                        Embarcadero at Bryant
+Temporary Transbay Terminal (Howard at Beale)
+                      San Francisco City Hall
+                       Embarcadero at Sansome
+                              2nd at Townsend
+                            2nd at South Park
+                            Steuart at Market"
+24,Which start station had the most trips starting from August? Give me the name and id of the station.,"SELECT start_station_id, start_station_name
+FROM trip
+WHERE start_date >= '2021-08-01'
+GROUP BY start_station_id, start_station_name
+ORDER BY COUNT(*) DESC
+LIMIT 1;"," start_station_id                      start_station_name
+               69 San Francisco Caltrain 2 (330 Townsend)"
+25,What are the start station's name and id for the one that had the most start trips in August?,"SELECT start_station_name, start_station_id
+FROM trip
+WHERE start_date BETWEEN '2022-08-01' AND '2022-08-31'
+GROUP BY start_station_name, start_station_id
+ORDER BY COUNT(*) DESC
+LIMIT 1;","Empty DataFrame
+Columns: [start_station_name, start_station_id]
+Index: []"
+26,Which bike traveled the most often in zip code 94002?,"SELECT bike_id
+FROM trip
+WHERE zip_code = 94002
+GROUP BY bike_id
+ORDER BY COUNT(*) DESC
+LIMIT 1;"," bike_id
+     679"
+27,What is the id of the bike that traveled the most in 94002?,"SELECT bike_id
+FROM trip
+WHERE start_station_id IN (SELECT id FROM station WHERE city = '94002')
+GROUP BY bike_id
+ORDER BY SUM(duration) DESC
+LIMIT 1;","Empty DataFrame
+Columns: [bike_id]
+Index: []"
+28,How many days had both mean humidity above 50 and mean visibility above 8?,"SELECT COUNT(date) 
+FROM weather 
+WHERE mean_humidity > 50 AND mean_visibility_miles > 8;"," COUNT(date)
+        3013"
+29,What is the number of days that had an average humity above 50 and an average visibility above 8?,"SELECT COUNT(date) 
+FROM weather 
+WHERE mean_humidity > 50 AND mean_visibility_miles > 8;"," COUNT(date)
+        3013"
+30,"What is the latitude, longitude, city of the station from which the shortest trip started?","SELECT station.lat, station.long, station.city
+FROM station
+JOIN trip ON station.id = trip.start_station_id
+ORDER BY trip.duration ASC
+LIMIT 1;","      lat       long          city
+37.776617 -122.39526 San Francisco"
+31,"What is the latitude, longitude, and city of the station from which the trip with smallest duration started?","SELECT station.lat, station.long, station.city
+FROM station
+JOIN trip ON station.id = trip.start_station_id
+ORDER BY trip.duration ASC
+LIMIT 1;","      lat       long          city
+37.776617 -122.39526 San Francisco"
+32,What are the ids of stations that are located in San Francisco and have average bike availability above 10.,"SELECT station.id
+FROM station
+JOIN status ON station.id = status.station_id
+WHERE station.city = 'San Francisco'
+GROUP BY station.id
+HAVING AVG(status.bikes_available) > 10;"," id
+ 45
+ 48
+ 51
+ 56
+ 57
+ 62
+ 64
+ 65
+ 68
+ 71
+ 72
+ 73
+ 75
+ 77"
+33,What are the ids of the stations in San Francisco that normally have more than 10 bikes available?,"SELECT station_id 
+FROM status 
+WHERE station_id IN (SELECT id FROM station WHERE city = 'San Francisco') 
+GROUP BY station_id 
+HAVING AVG(bikes_available) > 10;"," station_id
+         45
+         48
+         51
+         56
+         57
+         62
+         64
+         65
+         68
+         71
+         72
+         73
+         75
+         77"
+34,What are the names and ids of stations that had more than 14 bikes available on average or were installed in December?,"SELECT station.name, station.id
+FROM station
+LEFT JOIN status ON station.id = status.station_id
+WHERE (SELECT AVG(status.bikes_available) FROM status WHERE status.station_id = station.id) > 14
+OR strftime('%m', station.installation_date) = '12'","                             name  id
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+Civic Center BART (7th at Market)  72
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77
+                Market at Sansome  77"
+35,What are the names and ids of all stations that have more than 14 bikes available on average or had bikes installed in December?,"SELECT station.id, station.name
+FROM station
+JOIN status ON station.id = status.station_id
+WHERE status.bikes_available > 14
+OR strftime('%m', station.installation_date) = '12'"," id                              name
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 65                   Townsend at 7th
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 72 Civic Center BART (7th at Market)
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome
+ 77                 Market at Sansome"
+36,What is the 3 most common cloud cover rates in the region of zip code 94107?,"SELECT cloud_cover, COUNT(*) as frequency
+FROM weather
+WHERE zip_code = 94107
+GROUP BY cloud_cover
+ORDER BY frequency DESC
+LIMIT 3;"," cloud_cover  frequency
+           5        116
+           4        103
+           6        101"
+37,What are the 3 most common cloud covers in the zip code of 94107?,"SELECT cloud_cover, COUNT(*) as frequency
+FROM weather
+WHERE zip_code = 94107
+GROUP BY cloud_cover
+ORDER BY frequency DESC
+LIMIT 3;"," cloud_cover  frequency
+           5        116
+           4        103
+           6        101"
+38,What is the zip code in which the average mean sea level pressure is the lowest?,"SELECT zip_code, AVG(mean_sea_level_pressure_inches) as avg_pressure
+FROM weather
+GROUP BY zip_code
+ORDER BY avg_pressure ASC
+LIMIT 1;"," zip_code  avg_pressure
+    94301     29.978472"
+39,What is the zip code that has the lowest average mean sea level pressure?,"SELECT zip_code, AVG(mean_sea_level_pressure_inches) as avg_pressure
+FROM weather
+GROUP BY zip_code
+ORDER BY avg_pressure ASC
+LIMIT 1;"," zip_code  avg_pressure
+    94301     29.978472"
+40,What is the average bike availability in stations that are not located in Palo Alto?,"SELECT AVG(bikes_available) 
+FROM status 
+WHERE station_id NOT IN (
+    SELECT id 
+    FROM station 
+    WHERE city != 'Palo Alto'
+)"," AVG(bikes_available)
+             8.222764"
+41,What is the average bike availablility for stations not in Palo Alto?,"SELECT AVG(bikes_available) 
+FROM status 
+WHERE station_id NOT IN (SELECT id FROM station WHERE city = 'Palo Alto');"," AVG(bikes_available)
+             7.657901"
+42,What is the average longitude of stations that never had bike availability more than 10?,"SELECT AVG(long) 
+FROM station 
+WHERE id NOT IN (
+    SELECT station_id 
+    FROM status 
+    WHERE bikes_available > 10
+)","  AVG(long)
+-122.167486"
+43,What is the mean longitude for all stations that have never had more than 10 bikes available?,"SELECT AVG(long) 
+FROM station 
+WHERE id NOT IN (
+    SELECT station_id 
+    FROM status 
+    WHERE bikes_available > 10
+)","  AVG(long)
+-122.167486"
+44,When and in what zip code did max temperature reach 80?,"SELECT date, zip_code 
+FROM weather 
+WHERE max_temperature_f = 80;","      date  zip_code
+ 9/19/2013     94107
+ 10/5/2013     94107
+ 10/7/2013     94107
+10/15/2013     94107
+10/16/2013     94107
+ 8/29/2013     94063
+  9/1/2013     94063
+ 9/23/2013     94063
+ 9/28/2013     94063
+10/16/2013     94063
+  9/1/2013     94301
+  9/5/2013     94301
+ 9/16/2013     94301
+ 8/29/2013     94041
+  9/2/2013     94041
+ 9/27/2013     94041
+10/15/2013     94041
+ 8/31/2013     95113
+  9/3/2013     95113
+ 9/23/2013     95113
+10/17/2013     95113
+ 6/14/2014     94107
+ 6/29/2014     94107
+  4/7/2014     94063
+ 4/20/2014     94063
+ 5/16/2014     94063
+ 5/25/2014     94063
+ 5/26/2014     94063
+ 5/29/2014     94063
+ 6/14/2014     94063
+  7/7/2014     94063
+ 7/14/2014     94063
+ 7/15/2014     94063
+ 7/27/2014     94063
+ 8/14/2014     94063
+ 8/17/2014     94063
+ 3/15/2014     94301
+ 5/25/2014     94301
+  6/9/2014     94301
+ 6/17/2014     94301
+ 7/14/2014     94301
+ 7/16/2014     94301
+ 7/29/2014     94301
+ 8/22/2014     94301
+ 8/30/2014     94301
+ 4/20/2014     94041
+  7/7/2014     94041
+ 7/15/2014     94041
+ 7/16/2014     94041
+ 7/29/2014     94041
+ 7/30/2014     94041
+ 8/22/2014     94041
+ 8/27/2014     94041
+ 8/29/2014     94041
+ 3/16/2014     95113
+ 4/10/2014     95113
+ 4/20/2014     95113
+  6/1/2014     95113
+  6/4/2014     95113
+  7/8/2014     95113
+  7/9/2014     95113
+ 7/10/2014     95113
+ 7/31/2014     95113
+  8/5/2014     95113
+  8/8/2014     95113
+ 8/10/2014     95113
+ 8/16/2014     95113
+ 8/21/2014     95113
+ 3/14/2015     94107
+ 3/26/2015     94107
+ 8/17/2015     94107
+ 9/16/2014     94063
+ 3/26/2015     94063
+ 4/16/2015     94063
+  7/3/2015     94063
+  7/4/2015     94063
+ 7/30/2015     94063
+ 8/31/2015     94063
+ 9/12/2014     94301
+ 9/18/2014     94301
+ 9/24/2014     94301
+ 10/8/2014     94301
+ 3/26/2015     94301
+ 5/30/2015     94301
+ 6/12/2015     94301
+ 7/13/2015     94301
+ 8/14/2015     94301
+ 8/16/2015     94301
+ 9/24/2014     94041
+10/29/2014     94041
+ 4/16/2015     94041
+ 6/13/2015     94041
+  9/4/2014     95113
+ 9/18/2014     95113
+ 9/24/2014     95113
+ 3/15/2015     95113
+ 3/19/2015     95113
+ 4/16/2015     95113
+ 6/19/2015     95113
+ 6/20/2015     95113
+ 8/10/2015     95113
+ 8/13/2015     95113
+ 8/25/2015     95113
+ 8/29/2015     95113"
+45,What zip codes have a station with a max temperature greater than or equal to 80 and when did it reach that temperature?,"SELECT weather.zip_code, weather.date
+FROM weather
+JOIN station ON weather.zip_code = station.zip_code
+WHERE weather.max_temperature_f >= 80;","An error occurred: Execution failed on sql 'SELECT weather.zip_code, weather.date
+FROM weather
+JOIN station ON weather.zip_code = station.zip_code
+WHERE weather.max_temperature_f >= 80;': no such column: station.zip_code"
+46,Give me ids for all the trip that took place in a zip code area with average mean temperature above 60.,"SELECT trip.id
+FROM trip
+JOIN weather ON trip.zip_code = weather.zip_code
+GROUP BY trip.id
+HAVING AVG(weather.mean_temperature_f) > 60;","    id
+900504
+900508
+900509
+900515
+900520
+900530
+900531
+900557
+900572
+900573
+900578
+900591
+900639
+900648
+900672
+900685
+900712
+900715
+900719
+900741
+900755
+900756
+900761
+900762
+900768
+900772
+900774
+900776
+900782
+900785
+900787
+900789
+900795
+900796
+900800
+900805
+900806
+900807
+900816
+900821
+900826
+900833
+900844
+900858
+900871
+900875
+900876
+900892
+900893
+900897
+900899
+900900
+900901
+900910
+900917
+900920
+900926
+900927
+900929
+900956
+900961
+900968
+900970
+900973
+900988
+901004
+901009
+901010
+901016
+901017
+901020
+901023
+901028
+901029
+901036
+901037
+901051
+901052
+901062
+901075
+901109
+901119
+901120
+901123
+901149
+901159
+901181
+901189
+901190
+901198
+901202
+901204
+901214
+901218
+901240
+901241
+901244
+901267
+901268
+901272
+901308
+901309
+901322
+901330
+901340
+901342
+901347
+901348
+901352
+901357
+901358
+901379
+901380
+901384
+901398
+901403
+901411
+901419
+901420
+901429
+901431
+901434
+901441
+901444
+901448
+901456
+901457
+901468
+901489
+901494
+901496
+901497
+901511
+901526
+901527
+901535
+901545
+901547
+901551
+901569
+901598
+901613
+901624
+901627
+901633
+901645
+901646
+901647
+901657
+901658
+901659
+901660
+901661
+901667
+901676
+901678
+901681
+901686
+901687
+901688
+901700
+901706
+901707
+901710
+901711
+901725
+901727
+901728
+901740
+901741
+901743
+901772
+901773
+901774
+901778
+901779
+901788
+901795
+901798
+901803
+901806
+901808
+901809
+901810
+901824
+901826
+901831
+901835
+901838
+901841
+901843
+901858
+901868
+901869
+901875
+901881
+901890
+901901
+901902
+901904
+901908
+901909
+901917
+901925
+901939
+901940
+901945
+901952
+901965
+901998
+902007
+902018
+902052
+902083
+902086
+902100
+902106
+902108
+902160
+902164
+902169
+902178
+902184
+902188
+902201
+902210
+902228
+902241
+902249
+902251
+902252
+902262
+902265
+902292
+902299
+902301
+902308
+902312
+902318
+902321
+902323
+902333
+902350
+902361
+902368
+902377
+902379
+902382
+902394
+902404
+902422
+902441
+902442
+902448
+902449
+902453
+902476
+902478
+902486
+902490
+902511
+902528
+902535
+902540
+902544
+902545
+902552
+902557
+902565
+902598
+902601
+902602
+902607
+902622
+902625
+902636
+902664
+902670
+902675
+902693
+902694
+902695
+902700
+902709
+902720
+902748
+902760
+902814
+902823
+902842
+902856
+902871
+902879
+902895
+902900
+902908
+902943
+902946
+902955
+902959
+902971
+903016
+903018
+903023
+903028
+903047
+903071
+903082
+903097
+903112
+903118
+903136
+903147
+903162
+903163
+903170
+903187
+903190
+903221
+903228
+903239
+903250
+903272
+903278
+903289
+903297
+903307
+903339
+903342
+903343
+903345
+903348
+903354
+903359
+903369
+903376
+903377
+903388
+903391
+903392
+903398
+903402
+903405
+903416
+903420
+903426
+903442
+903458
+903461
+903482
+903488
+903495
+903498
+903502
+903506
+903516
+903519
+903520
+903523
+903527
+903530
+903535
+903536
+903537
+903538
+903540
+903554
+903564
+903572
+903608
+903626
+903631
+903643
+903645
+903650
+903652
+903657
+903658
+903660
+903661
+903666
+903667
+903740
+903746
+903751
+903764
+903769
+903802
+903803
+903810
+903816
+903824
+903835
+903837
+903858
+903863
+903867
+903894
+903898
+903907
+903910
+903921
+903923
+903924
+903927
+903930
+903933
+903935
+903938
+903939
+903941
+903945
+903949
+903955
+903956
+903976
+903986
+903991
+903994
+904003
+904014
+904041
+904055
+904058
+904066
+904080
+904098
+904099
+904109
+904124
+904133
+904136
+904141
+904150
+904151
+904158
+904160
+904174
+904202
+904208
+904209
+904228
+904237
+904254
+904255
+904286
+904291
+904296
+904309
+904324
+904339
+904342
+904357
+904367
+904370
+904374
+904387
+904407
+904414
+904420
+904424
+904434
+904465
+904477
+904490
+904500
+904502
+904516
+904522
+904532
+904559
+904578
+904616
+904624
+904635
+904672
+904698
+904744
+904813
+904834
+904836
+904858
+904861
+904862
+904872
+904881
+904887
+904902
+904945
+904955
+904964
+904966
+904976
+904980
+904994
+905000
+905016
+905044
+905045
+905051
+905054
+905063
+905074
+905090
+905099
+905112
+905116
+905121
+905124
+905125
+905128
+905129
+905132
+905138
+905165
+905168
+905174
+905188
+905191
+905192
+905205
+905229
+905232
+905255
+905262
+905273
+905274
+905280
+905282
+905289
+905291
+905292
+905293
+905294
+905311
+905312
+905334
+905348
+905349
+905360
+905366
+905369
+905374
+905375
+905378
+905380
+905381
+905386
+905388
+905393
+905401
+905409
+905435
+905456
+905463
+905481
+905484
+905490
+905492
+905503
+905507
+905510
+905518
+905535
+905539
+905558
+905568
+905585
+905590
+905643
+905646
+905656
+905670
+905698
+905707
+905716
+905745
+905763
+905764
+905770
+905771
+905775
+905778
+905780
+905784
+905788
+905810
+905822
+905823
+905824
+905829
+905832
+905834
+905835
+905837
+905848
+905850
+905871
+905888
+905891
+905893
+905898
+905900
+905905
+905913
+905922
+905931
+905958
+905966
+905968
+905980
+905986
+905987
+905988
+905990
+905993
+905999
+906006
+906008
+906027
+906030
+906045
+906046
+906074
+906086
+906099
+906100
+906118
+906146
+906149
+906159
+906161
+906162
+906177
+906214
+906224
+906225
+906231
+906247
+906248
+906271
+906302
+906314
+906316
+906325
+906357
+906361
+906379
+906381
+906383
+906396
+906398
+906409
+906412
+906422
+906443
+906461
+906467
+906470
+906474
+906542
+906563
+906570
+906573
+906591
+906592
+906601
+906689
+906725
+906739
+906744
+906758
+906759
+906775
+906781
+906786
+906792
+906798
+906810
+906828
+906836
+906841
+906843
+906848
+906849
+906850
+906854
+906880
+906932
+906940
+906945
+906949
+906977
+906986
+906990
+906996
+907009
+907010
+907016
+907033
+907051
+907085
+907086
+907095
+907102
+907106
+907113
+907120
+907131
+907134
+907144
+907148
+907156
+907157
+907170
+907178
+907187
+907188
+907190
+907191
+907194
+907215
+907224
+907226
+907242
+907262
+907275
+907287
+907294
+907297
+907298
+907301
+907302
+907306
+907309
+907388
+907391
+907394
+907396
+907423
+907424
+907432
+907438
+907500
+907511
+907537
+907552
+907557
+907568
+907576
+907580
+907584
+907613
+907617
+907640
+907642
+907647
+907667
+907676
+907683
+907689
+907690
+907693
+907697
+907700
+907704
+907713
+907715
+907753
+907771
+907774
+907797
+907804
+907812
+907817
+907823
+907827
+907839
+907844
+907854
+907858
+907861
+907875
+907880
+907884
+907890
+907895
+907901
+907908
+907911
+907915
+907924
+907929
+907989
+907990
+907997
+908012
+908025
+908027
+908028
+908036
+908041
+908043
+908075
+908084
+908092
+908094
+908096
+908098
+908121
+908145
+908152
+908154
+908160
+908167
+908171
+908180
+908187
+908216
+908217
+908235
+908236
+908248
+908276
+908277
+908286
+908332
+908352
+908355
+908408
+908418
+908447
+908456
+908463
+908473
+908479
+908494
+908580
+908626
+908634
+908662
+908675
+908689
+908707
+908721
+908724
+908737
+908742
+908746
+908754
+908811
+908838
+908874
+908875
+908889
+908901
+908903
+908906
+908912
+908913
+908924
+908928
+908930
+908936
+908941
+908942
+908950
+908962
+908966
+908970
+908971
+908973
+908989
+908999
+909003
+909013
+909036
+909042
+909055
+909065
+909074
+909082
+909094
+909095
+909098
+909099
+909100
+909102
+909108
+909110
+909124
+909131
+909132
+909137
+909143
+909181
+909198
+909210
+909223
+909228
+909243
+909245
+909261
+909262
+909269
+909292
+909298
+909309
+909313
+909326
+909333
+909335
+909393
+909427
+909450
+909453
+909457
+909460
+909465
+909498
+909506
+909517
+909525
+909547
+909551
+909556
+909561
+909563
+909572
+909583
+909588
+909600
+909606
+909607
+909618
+909638
+909643
+909644
+909648
+909653
+909668
+909683
+909693
+909697
+909699
+909712
+909713
+909717
+909719
+909721
+909724
+909753
+909795
+909801
+909834
+909845
+909864
+909867
+909882
+909886
+909887
+909890
+909892
+909896
+909898
+909906
+909925
+909926
+909929
+909935
+909937
+909951
+909965
+909988
+909993
+910004
+910017
+910044
+910065
+910068
+910072
+910078
+910122
+910126
+910158
+910175
+910188
+910199
+910202
+910204
+910221
+910225
+910263
+910271
+910278
+910300
+910317
+910339
+910341
+910366
+910369
+910375
+910379
+910382
+910385
+910388
+910416
+910420
+910422
+910442
+910515
+910534
+910545
+910546
+910560
+910563
+910564
+910574
+910581
+910600
+910606
+910609
+910615
+910619
+910631
+910632
+910645
+910646
+910652
+910657
+910665
+910670
+910672
+910673
+910675
+910678
+910685
+910693
+910695
+910699
+910701
+910712
+910744
+910753
+910754
+910762
+910777
+910782
+910783
+910804
+910809
+910818
+910829
+910834
+910837
+910838
+910844
+910848
+910850
+910854
+910857
+910888
+910892
+910899
+910904
+910905
+910906
+910908
+910914
+910915
+910923
+910924
+910925
+910926
+910955
+910956
+910957
+910962
+910971
+910972
+910973
+910987
+911002
+911014
+911021
+911058
+911075
+911114
+911117
+911120
+911123
+911129
+911154
+911170
+911171
+911176
+911177
+911178
+911211
+911215
+911216
+911217
+911218
+911221
+911223
+911225
+911230
+911235
+911243
+911244
+911247
+911253
+911254
+911289
+911296
+911299
+911309
+911310
+911311
+911318
+911329
+911333
+911335
+911336
+911339
+911359
+911360
+911425
+911426
+911447
+911449
+911464
+911474
+911481
+911494
+911498
+911499
+911507
+911523
+911542
+911552
+911556
+911561
+911562
+911569
+911579
+911580
+911608
+911618
+911621
+911628
+911638
+911639
+911646
+911687
+911706
+911711
+911715
+911732
+911738
+911743
+911764
+911769
+911771
+911777
+911787
+911788
+911833
+911861
+911862
+911863
+911871
+911900
+911901
+911906
+911935
+911938
+911967
+911975
+911981
+911989
+912013
+912027
+912031
+912052
+912053
+912054
+912057
+912060
+912071
+912076
+912077
+912078
+912088
+912094
+912124
+912125
+912126
+912128
+912130
+912134
+912149
+912151
+912155
+912159
+912169
+912180
+912195
+912200
+912201
+912205
+912206
+912225
+912247
+912262
+912263
+912266
+912279
+912281
+912283
+912295
+912315
+912321
+912322
+912350
+912368
+912371
+912387
+912391
+912400
+912425
+912469
+912471
+912483
+912484
+912485
+912517
+912536
+912537
+912539
+912550
+912560
+912565
+912571
+912619
+912646
+912691
+912709
+912736
+912762
+912763
+912796
+912817
+912856
+912876
+912904
+912933
+912946
+912953
+912979
+912994
+913005
+913019
+913062
+913065
+913072
+913082
+913083
+913096
+913100
+913103
+913104
+913114
+913122
+913153
+913155
+913156
+913164
+913202
+913212
+913213
+913228
+913232
+913241
+913244
+913246
+913248
+913263
+913266
+913273
+913274
+913280
+913287
+913288
+913289
+913294
+913297
+913307
+913315
+913316
+913320
+913321
+913335
+913337
+913341
+913343
+913345
+913346
+913349
+913351
+913356
+913361
+913372
+913379
+913385
+913393
+913404
+913409
+913434
+913440
+913442
+913454
+913455"
+47,"For each zip code, find the ids of all trips that have a higher average mean temperature above 60?","SELECT trip.id, weather.zip_code
+FROM trip
+JOIN weather ON trip.start_date = weather.date
+GROUP BY weather.zip_code
+HAVING AVG(weather.mean_temperature_f) > 60;","Empty DataFrame
+Columns: [id, zip_code]
+Index: []"
+48,"For each zip code, return how many times max wind speed reached 25?","SELECT zip_code, COUNT(*) 
+FROM weather 
+WHERE max_wind_Speed_mph = 25 
+GROUP BY zip_code;"," zip_code  COUNT(*)
+    94041         7
+    94063         4
+    94107        18
+    94301         2
+    95113         8"
+49,"For each zip code, how many times has the maximum wind speed reached 25 mph?","SELECT zip_code, COUNT(*) 
+FROM weather 
+WHERE max_wind_Speed_mph = 25 
+GROUP BY zip_code;"," zip_code  COUNT(*)
+    94041         7
+    94063         4
+    94107        18
+    94301         2
+    95113         8"

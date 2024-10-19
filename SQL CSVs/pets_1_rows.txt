@@ -1,0 +1,20 @@
+Here is the first row of all tables in the database:
+
+Table: Student
+
+First row: (1001, 'Smith', 'Linda', 18, 'F', 600, 1121, 'BAL')
+
+----------------------------------------
+
+Table: Has_Pet
+
+First row: (1001, 2001)
+
+----------------------------------------
+
+Table: Pets
+
+First row: (2001, 'cat', 3, 12.0)
+
+----------------------------------------
+

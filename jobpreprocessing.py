@@ -9,25 +9,47 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 #%%
-df = pd.read_csv(r"C:\Users\anyas\Desktop\Summer Project\Correlation CSVs\job_descriptions.csv")
-#%%
-import re
-def extract_salary_range(salary_range):
-    match = re.findall(r'\d+', salary_range.replace(',', ''))
-    if match:
-        return int(match[0]), int(match[1])
-    return None, None
+df = pd.read_csv(r"C:\Users\anyas\Desktop\Summer Project\Correlation CSVs\USvideos.csv")
+import json
 
-df[['lowest_salary', 'highest_salary']] = df['Salary Range'].apply(lambda x: pd.Series(extract_salary_range(x)))
-
-print(df)
-## go through and get the highest and lowest salary
-## then take the average of thsoe two and call that the actual salary
-## then take the first 2000 rows only
+# Step 1: Load the JSON file
+with open(r"C:\Users\anyas\Downloads\US_category_id.json", 'r') as f:
+    categories_data = json.load(f)
 #%%
-new_df = df.head(3000)
-
-new_df['Salary'] = (new_df['lowest_salary'] + new_df['highest_salary']) / 2
-new_df.drop(columns={'lowest_salary', 'highest_salary', 'Salary Range'}, inplace=True)
+categories = [{'category_id': item['id'], 'title': item['snippet']['title']} for item in categories_data['items']]
+# Step 2: Convert JSON data to DataFrame (if applicable)
+# For demonstration, let's assume categories_data is a list of dictionaries
+categories_df = pd.DataFrame(categories)
 #%%
-new_df.to_csv(r"C:\Users\anyas\Desktop\Summer Project\Correlation CSVs\job_descriptions.csv")
+df['category_id'] = df['category_id'].astype(str)
+#%%
+print(categories_df['title'].unique)
+#%%
+merged_df = pd.merge(df, categories_df, on='category_id')
+print(merged_df)
+#%%
+merged_df.to_csv(r"C:\Users\anyas\Desktop\Summer Project\Correlation CSVs\video_titles.csv")
+#%%
+title_desc = pd.read_csv(r"C:\Users\anyas\Downloads\Categorized_Video_Data.csv")
+lda = pd.read_csv(r"C:\Users\anyas\Downloads\LDA_Categorized_Video_Data.csv")
+#%%
+title_selected = title_desc[['video_id', 'category']]
+title_selected.rename(columns={'category': 'title_desc category'}, inplace=True)
+print(title_selected)
+# #%%
+# lda_selected = lda[['video_id', 'category']]
+# lda_selected.rename(columns={'category': 'lda_category'}, inplace=True)
+# print(lda_selected)
+#%%
+merged_df_unique = merged_df.drop_duplicates(subset='video_id')
+title_unique = title_selected.drop_duplicates(subset='video_id')
+new_merged_df = pd.merge(merged_df_unique, title_unique, on='video_id')
+print(new_merged_df)
+#%%
+print(new_merged_df.columns)
+new_merged_df['Pred Correct'] = new_merged_df['title_desc category'] == new_merged_df['title_y']
+print((new_merged_df['Pred Correct'] == True).sum() / len(new_merged_df['Pred Correct']))
+# #%%
+# new_merged_df = pd.merge(new_merged_df, lda_selected, on='video_id')
+#%%
+print(new_merged_df)

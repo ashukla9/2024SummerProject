@@ -1,0 +1,113 @@
+,Natural Language Query,Generated SQL Query,Result
+0,What are the first names of the people in alphabetical order?,"SELECT first_name 
+FROM People 
+ORDER BY first_name ASC;","first_name
+   Dariana
+      Hoyt
+    Lizeth
+     Mayra
+      Nova
+   Shannon
+     Verna
+  Virginie"
+1,What are the id of students who registered courses or attended courses?,"SELECT student_id 
+FROM Student_Course_Registrations
+UNION
+SELECT student_id 
+FROM Student_Course_Attendance;"," student_id
+        111
+        121
+        131
+        141
+        151
+        161
+        171"
+2,What are the ids of the students who either registered or attended a course?,"SELECT DISTINCT student_id 
+FROM Student_Course_Registrations 
+UNION 
+SELECT DISTINCT student_id 
+FROM Student_Course_Attendance;"," student_id
+        111
+        121
+        131
+        141
+        151
+        161
+        171"
+3,Find the id of courses which are registered or attended by student whose id is 121?,"SELECT course_id 
+FROM Student_Course_Registrations 
+WHERE student_id = 121
+UNION
+SELECT course_id 
+FROM Student_Course_Attendance 
+WHERE student_id = 121;"," course_id
+       301
+       303"
+4,What are the ids of the courses that are registered or attended by the student whose id is 121?,"SELECT course_id 
+FROM Student_Course_Registrations 
+WHERE student_id = 121
+UNION
+SELECT course_id 
+FROM Student_Course_Attendance 
+WHERE student_id = 121;"," course_id
+       301
+       303"
+5,What are all info of students who registered courses but not attended courses?,"SELECT Students.student_id, Students.student_details, People.first_name, People.middle_name, People.last_name, People.cell_mobile_number, People.email_address, People.login_name, People.password, Student_Course_Registrations.course_id, Student_Course_Registrations.registration_date
+FROM Students
+JOIN People ON Students.student_id = People.person_id
+JOIN Student_Course_Registrations ON Students.student_id = Student_Course_Registrations.student_id
+WHERE Student_Course_Registrations.student_id NOT IN (SELECT student_id FROM Student_Course_Attendance)"," student_id student_details first_name middle_name last_name cell_mobile_number       email_address login_name                                 password  course_id   registration_date
+        131           Barry    Dariana      Hayley    Bednar  (262)347-9364x516 leila14@example.net       zops b20b6a9f24aadeda70d54e410c3219f61fb063fb        303 2008-11-05 10:35:13"
+6,What are all details of the students who registered but did not attend any course?,"SELECT Students.student_id, Students.student_details, People.first_name, People.middle_name, People.last_name, People.cell_mobile_number, People.email_address, People.login_name, People.password
+FROM Students
+JOIN People ON Students.student_id = People.person_id
+LEFT JOIN Student_Course_Registrations ON Students.student_id = Student_Course_Registrations.student_id
+LEFT JOIN Student_Course_Attendance ON Student_Course_Registrations.student_id = Student_Course_Attendance.student_id AND Student_Course_Registrations.course_id = Student_Course_Attendance.course_id
+WHERE Student_Course_Registrations.student_id IS NOT NULL AND Student_Course_Attendance.student_id IS NULL;"," student_id student_details first_name middle_name last_name cell_mobile_number       email_address login_name                                 password
+        131           Barry    Dariana      Hayley    Bednar  (262)347-9364x516 leila14@example.net       zops b20b6a9f24aadeda70d54e410c3219f61fb063fb"
+7,List the id of students who registered course statistics in the order of registration date.,"SELECT student_id 
+FROM Student_Course_Registrations 
+WHERE course_id IN (SELECT course_id FROM Courses WHERE course_name = 'statistics') 
+ORDER BY registration_date;"," student_id
+        121
+        111
+        171
+        141"
+8,What are the ids of the students who registered course statistics by order of registration date?,"SELECT student_id 
+FROM Student_Course_Registrations 
+WHERE course_id IN (SELECT course_id FROM Courses WHERE course_name = 'statistics') 
+ORDER BY registration_date;"," student_id
+        121
+        111
+        171
+        141"
+9,List the id of students who attended  statistics courses in the order of attendance date.,"SELECT student_id, date_of_attendance
+FROM Student_Course_Attendance
+WHERE course_id IN (
+    SELECT course_id
+    FROM Courses
+    WHERE course_name LIKE '%statistics%'
+)
+ORDER BY date_of_attendance;"," student_id  date_of_attendance
+        111 2008-11-04 10:35:13
+        121 2012-04-09 11:44:34
+        141 2012-09-09 11:44:34
+        171 2015-04-09 11:44:34"
+10,What are the ids of the students who attended courses in the statistics department in order of attendance date.,"SELECT student_id, date_of_attendance
+FROM Student_Course_Attendance
+WHERE course_id IN (
+    SELECT course_id
+    FROM Courses
+    WHERE course_description LIKE '%statistics%'
+)
+ORDER BY date_of_attendance;"," student_id  date_of_attendance
+        111 2008-11-04 10:35:13
+        121 2012-04-09 11:44:34
+        141 2012-09-09 11:44:34
+        171 2015-04-09 11:44:34"
+11,Give me the dates when the max temperature was higher than 85.,"SELECT Your request seems to be related to a weather database, but the provided schema does not contain any tables or columns related to weather or temperature data. Could you please provide the correct database schema or modify your request?","An error occurred: Execution failed on sql 'SELECT Your request seems to be related to a weather database, but the provided schema does not contain any tables or columns related to weather or temperature data. Could you please provide the correct database schema or modify your request?': near ""seems"": syntax error"
+12,What are the dates with a maximum temperature higher than 85?,SELECT Your provided schema does not contain any information related to temperature or dates with temperature. Please provide the correct schema to generate the SQL query.,"An error occurred: Execution failed on sql 'SELECT Your provided schema does not contain any information related to temperature or dates with temperature. Please provide the correct schema to generate the SQL query.': near ""schema"": syntax error"
+13,What are the names of stations that have latitude lower than 37.5?,SELECT The provided schema does not contain any table or column related to stations or latitude. Please provide the correct schema.,"An error occurred: Execution failed on sql 'SELECT The provided schema does not contain any table or column related to stations or latitude. Please provide the correct schema.': near ""schema"": syntax error"
+14,What are the names of all stations with a latitude smaller than 37.5?,SELECT The provided schema does not contain any table or column related to stations or latitude. Please provide the correct schema.,"An error occurred: Execution failed on sql 'SELECT The provided schema does not contain any table or column related to stations or latitude. Please provide the correct schema.': near ""schema"": syntax error"
+15,"For each city, return the highest latitude among its stations.","SELECT It seems like there is a misunderstanding. The provided schema does not contain any tables or columns related to ""stations"" or ""latitude"". Could you please provide the correct schema or adjust the query?","An error occurred: Execution failed on sql 'SELECT It seems like there is a misunderstanding. The provided schema does not contain any tables or columns related to ""stations"" or ""latitude"". Could you please provide the correct schema or adjust the query?': near ""like"": syntax error"
+16,"For each city, what is the highest latitude for its stations?","SELECT Your provided schema does not include any tables or columns related to ""stations"" or ""latitude"". Please provide the correct database schema to generate the SQL query.","An error occurred: Execution failed on sql 'SELECT Your provided schema does not include any tables or columns related to ""stations"" or ""latitude"". Please provide the correct database schema to generate the SQL query.': near ""schema"": syntax error"

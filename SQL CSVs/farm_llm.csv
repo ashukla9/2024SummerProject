@@ -1,0 +1,242 @@
+,Natural Language Query,Generated SQL Query,Result
+0,Count the number of farms.,SELECT COUNT(*) FROM farm;," COUNT(*)
+        8"
+1,List the total number of horses on farms in ascending order.,SELECT Total_Horses FROM farm ORDER BY Total_Horses ASC;," Total_Horses
+       2546.9
+       2604.8
+       3658.9
+       4781.3
+       5056.5
+       5308.2
+       5486.9
+       5607.5"
+2,"What is the total horses record for each farm, sorted ascending?","SELECT Farm_ID, SUM(Total_Horses) AS Total_Horses
+FROM farm
+GROUP BY Farm_ID
+ORDER BY Total_Horses ASC;"," Farm_ID  Total_Horses
+       8        2546.9
+       7        2604.8
+       6        3658.9
+       5        4781.3
+       1        5056.5
+       4        5308.2
+       2        5486.9
+       3        5607.5"
+3,"What are the hosts of competitions whose theme is not ""Aliens""?","SELECT Hosts 
+FROM farm_competition 
+WHERE Theme != 'Aliens';","                               Hosts
+Miley Cyrus Jared Leto and Karen Mok
+       Leehom Wang and Kelly Rowland
+                         Alicia Keys
+      Vanness Wu and Michelle Branch
+                 Shaggy and Coco Lee"
+4,Return the hosts of competitions for which the theme is not Aliens?,"SELECT Hosts 
+FROM farm_competition 
+WHERE Theme != 'Aliens';","                               Hosts
+Miley Cyrus Jared Leto and Karen Mok
+       Leehom Wang and Kelly Rowland
+                         Alicia Keys
+      Vanness Wu and Michelle Branch
+                 Shaggy and Coco Lee"
+5,What are the themes of farm competitions sorted by year in ascending order?,"SELECT Theme, Year
+FROM farm_competition
+ORDER BY Year ASC;","              Theme  Year
+             Aliens  2002
+           MTV Cube  2003
+    Valentine's Day  2004
+       MTV Asia Aid  2005
+        Codehunters  2006
+Carnival M is back!  2013"
+6,"Return the themes of farm competitions, sorted by year ascending.","SELECT Theme, Year 
+FROM farm_competition 
+ORDER BY Year ASC;","              Theme  Year
+             Aliens  2002
+           MTV Cube  2003
+    Valentine's Day  2004
+       MTV Asia Aid  2005
+        Codehunters  2006
+Carnival M is back!  2013"
+7,What is the average number of working horses of farms with more than 5000 total number of horses?,"SELECT AVG(Working_Horses) 
+FROM farm 
+WHERE Total_Horses > 5000;"," AVG(Working_Horses)
+             3977.75"
+8,Give the average number of working horses on farms with more than 5000 total horses.,"SELECT AVG(Working_Horses) 
+FROM farm 
+WHERE Total_Horses > 5000;"," AVG(Working_Horses)
+             3977.75"
+9,What are the maximum and minimum number of cows across all farms.,"SELECT MAX(Cows) AS Maximum_Cows, MIN(Cows) AS Minimum_Cows FROM farm;"," Maximum_Cows  Minimum_Cows
+       3987.0        2407.2"
+10,Return the maximum and minimum number of cows across all farms.,"SELECT MAX(Cows), MIN(Cows) FROM farm;"," MAX(Cows)  MIN(Cows)
+    3987.0     2407.2"
+11,How many different statuses do cities have?,SELECT COUNT(DISTINCT Status) FROM city;," COUNT(DISTINCT Status)
+                      2"
+12,Count the number of different statuses.,SELECT COUNT(DISTINCT Status) FROM city;," COUNT(DISTINCT Status)
+                      2"
+13,List official names of cities in descending order of population.,"SELECT Official_Name, Population 
+FROM city 
+ORDER BY Population DESC;","          Official_Name  Population
+Grand Falls/Grand-Sault      5706.0
+          Perth-Andover      1778.0
+           Plaster Rock      1135.0
+               Drummond       775.0
+              Aroostook       351.0"
+14,"What are the official names of cities, ordered descending by population?","SELECT Official_Name, Population 
+FROM city 
+ORDER BY Population DESC;","          Official_Name  Population
+Grand Falls/Grand-Sault      5706.0
+          Perth-Andover      1778.0
+           Plaster Rock      1135.0
+               Drummond       775.0
+              Aroostook       351.0"
+15,List the official name and status of the city with the largest population.,"SELECT Official_Name, Status 
+FROM city 
+ORDER BY Population DESC 
+LIMIT 1;","          Official_Name Status
+Grand Falls/Grand-Sault   Town"
+16,What is the official name and status of the city with the most residents?,"SELECT Official_Name, Status
+FROM city
+ORDER BY Population DESC
+LIMIT 1;","          Official_Name Status
+Grand Falls/Grand-Sault   Town"
+17,Show the years and the official names of the host cities of competitions.,"SELECT Year, Official_Name 
+FROM farm_competition 
+JOIN city 
+ON farm_competition.Host_city_ID = city.City_ID;"," Year           Official_Name
+ 2013 Grand Falls/Grand-Sault
+ 2006           Perth-Andover
+ 2005            Plaster Rock
+ 2004                Drummond
+ 2003               Aroostook
+ 2002               Aroostook"
+18,Give the years and official names of the cities of each competition.,"SELECT Year, Official_Name 
+FROM farm_competition 
+JOIN city 
+ON farm_competition.Host_city_ID = city.City_ID;"," Year           Official_Name
+ 2013 Grand Falls/Grand-Sault
+ 2006           Perth-Andover
+ 2005            Plaster Rock
+ 2004                Drummond
+ 2003               Aroostook
+ 2002               Aroostook"
+19,Show the official names of the cities that have hosted more than one competition.,"SELECT Official_Name
+FROM city
+WHERE City_ID IN (
+  SELECT Host_city_ID
+  FROM farm_competition
+  GROUP BY Host_city_ID
+  HAVING COUNT(Competition_ID) > 1
+)","Official_Name
+    Aroostook"
+20,What are the official names of cities that have hosted more than one competition?,"SELECT Official_Name
+FROM city
+WHERE City_ID IN (
+  SELECT Host_city_ID
+  FROM farm_competition
+  GROUP BY Host_city_ID
+  HAVING COUNT(Competition_ID) > 1
+)","Official_Name
+    Aroostook"
+21,Show the status of the city that has hosted the greatest number of competitions.,"SELECT Status FROM city
+WHERE City_ID = (
+  SELECT Host_city_ID FROM farm_competition
+  GROUP BY Host_city_ID
+  ORDER BY COUNT(*) DESC
+  LIMIT 1
+)"," Status
+Village"
+22,What is the status of the city that has hosted the most competitions?,"SELECT Official_Name, Status
+FROM city
+WHERE City_ID = (
+  SELECT Host_city_ID
+  FROM farm_competition
+  GROUP BY Host_city_ID
+  ORDER BY COUNT(*) DESC
+  LIMIT 1
+)","Official_Name  Status
+    Aroostook Village"
+23,Please show the themes of competitions with host cities having populations larger than 1000.,"SELECT theme
+FROM farm_competition
+JOIN city ON farm_competition.Host_city_ID = city.City_ID
+WHERE city.Population > 1000;","              Theme
+Carnival M is back!
+        Codehunters
+       MTV Asia Aid"
+24,What are the themes of competitions that have corresponding host cities with more than 1000 residents?,"SELECT the Theme from farm_competition
+WHERE Host_city_ID IN (
+  SELECT City_ID from city
+  WHERE Population > 1000
+)","An error occurred: Execution failed on sql 'SELECT the Theme from farm_competition
+WHERE Host_city_ID IN (
+  SELECT City_ID from city
+  WHERE Population > 1000
+)': no such column: the"
+25,Please show the different statuses of cities and the average population of cities with each status.,"SELECT Status, AVG(Population) 
+FROM city 
+GROUP BY Status;"," Status  AVG(Population)
+   Town          5706.00
+Village          1009.75"
+26,What are the statuses and average populations of each city?,"SELECT Status, AVG(Population) 
+FROM city 
+GROUP BY Status;"," Status  AVG(Population)
+   Town          5706.00
+Village          1009.75"
+27,"Please show the different statuses, ordered by the number of cities that have each.","SELECT Status, COUNT(City_ID) AS Number_of_Cities
+FROM city
+GROUP BY Status
+ORDER BY Number_of_Cities DESC;"," Status  Number_of_Cities
+Village                 4
+   Town                 1"
+28,"Return the different statuses of cities, ascending by frequency.","SELECT Status, COUNT(*) AS Frequency
+FROM city
+GROUP BY Status
+ORDER BY Frequency ASC;"," Status  Frequency
+   Town          1
+Village          4"
+29,List the most common type of Status across cities.,"SELECT Status
+FROM city
+GROUP BY Status
+ORDER BY COUNT(*) DESC
+LIMIT 1;"," Status
+Village"
+30,What is the most common status across all cities?,"SELECT Status
+FROM city
+GROUP BY Status
+ORDER BY COUNT(*) DESC
+LIMIT 1;"," Status
+Village"
+31,List the official names of cities that have not held any competition.,"SELECT Official_Name
+FROM city
+WHERE City_ID NOT IN (SELECT Host_city_ID FROM farm_competition)","Empty DataFrame
+Columns: [Official_Name]
+Index: []"
+32,What are the official names of cities that have not hosted a farm competition?,"SELECT Official_Name
+FROM city
+WHERE City_ID NOT IN (SELECT Host_city_ID FROM farm_competition);","Empty DataFrame
+Columns: [Official_Name]
+Index: []"
+33,Show the status shared by cities with population bigger than 1500 and smaller than 500.,SELECT Your query seems to have a contradiction as a population cannot be both bigger than 1500 and smaller than 500 at the same time. Please revise your query.,"An error occurred: Execution failed on sql 'SELECT Your query seems to have a contradiction as a population cannot be both bigger than 1500 and smaller than 500 at the same time. Please revise your query.': near ""seems"": syntax error"
+34,Which statuses correspond to both cities that have a population over 1500 and cities that have a population lower than 500?,SELECT Status FROM city WHERE Population > 1500 OR Population < 500;," Status
+   Town
+Village
+Village"
+35,Find the official names of cities with population bigger than 1500 or smaller than 500.,"SELECT Official_Name 
+FROM city 
+WHERE Population > 1500 OR Population < 500;","          Official_Name
+Grand Falls/Grand-Sault
+          Perth-Andover
+              Aroostook"
+36,What are the official names of cities that have population over 1500 or less than 500?,"SELECT Official_Name 
+FROM city 
+WHERE Population > 1500 OR Population < 500;","          Official_Name
+Grand Falls/Grand-Sault
+          Perth-Andover
+              Aroostook"
+37,"Show the census ranking of cities whose status are not ""Village"".","SELECT Official_Name, Census_Ranking
+FROM city
+WHERE Status != 'Village';","          Official_Name Census_Ranking
+Grand Falls/Grand-Sault    636 of 5008"
+38,"What are the census rankings of cities that do not have the status ""Village""?","SELECT Official_Name, Census_Ranking
+FROM city
+WHERE Status != 'Village';","          Official_Name Census_Ranking
+Grand Falls/Grand-Sault    636 of 5008"
+39,which course has most number of registered students?,SELECT Your provided schema does not contain any information related to courses or students. Please provide the correct schema to generate the SQL query.,"An error occurred: Execution failed on sql 'SELECT Your provided schema does not contain any information related to courses or students. Please provide the correct schema to generate the SQL query.': near ""schema"": syntax error"

@@ -1,0 +1,83 @@
+,Natural Language Query,Generated SQL Query,Result
+0,Give me the average and minimum price (in Euro) of the products.,"SELECT AVG(price_in_euros) AS average_price, MIN(price_in_euros) AS minimum_price
+FROM Catalog_Contents;"," average_price  minimum_price
+    492.863333         159.84"
+1,What is the product with the highest height? Give me the catalog entry name.,"SELECT catalog_entry_name 
+FROM Catalog_Contents 
+ORDER BY height DESC 
+LIMIT 1;","catalog_entry_name
+              Cola"
+2,Which catalog content has the highest height? Give me the catalog entry name.,"SELECT MAX(height), catalog_entry_name 
+FROM Catalog_Contents 
+ORDER BY height DESC 
+LIMIT 1;","MAX(height) catalog_entry_name
+          9               Cola"
+3,Find the name of the product that has the smallest capacity.,"SELECT catalog_entry_name 
+FROM Catalog_Contents 
+WHERE capacity = (SELECT MIN(capacity) FROM Catalog_Contents);","catalog_entry_name
+              Cola
+         Dr Pepper"
+4,Which catalog content has the smallest capacity? Return the catalog entry name.,"SELECT catalog_entry_name 
+FROM Catalog_Contents 
+ORDER BY capacity 
+LIMIT 1;","catalog_entry_name
+              Cola"
+5,"Find the names of all the products whose stock number starts with ""2"".","SELECT catalog_entry_name 
+FROM Catalog_Contents 
+WHERE product_stock_number LIKE '2%';","catalog_entry_name
+       Sprite Lemo
+         Dr Pepper"
+6,"Which catalog contents have a product stock number that starts from ""2""? Show the catalog entry names.","SELECT catalog_entry_name 
+FROM Catalog_Contents 
+WHERE product_stock_number LIKE '2%';","catalog_entry_name
+       Sprite Lemo
+         Dr Pepper"
+7,Find the names of catalog entries with level number 8.,"SELECT catalog_entry_name 
+FROM Catalog_Contents 
+WHERE catalog_level_number = 8;","catalog_entry_name
+         Root beer
+        Cream Soda
+            Ramune
+         Dr Pepper
+ Diet Mountain Dew"
+8,What are the names of catalog entries with level number 8?,"SELECT catalog_entry_name 
+FROM Catalog_Contents 
+WHERE catalog_level_number = 8;","catalog_entry_name
+         Root beer
+        Cream Soda
+            Ramune
+         Dr Pepper
+ Diet Mountain Dew"
+9,Find the names of the products with length smaller than 3 or height greater than 5.,"SELECT catalog_entry_name 
+FROM Catalog_Contents 
+WHERE (length < '3' OR height > '5');","catalog_entry_name
+              Cola
+        Cream Soda
+       Ginger Beer
+             Tizer
+             Vimto
+            Ramune
+         Wanglaoji"
+10,Which catalog contents have length below 3 or above 5? Find the catalog entry names.,"SELECT catalog_entry_name 
+FROM Catalog_Contents 
+WHERE length < '3' OR length > '5';","catalog_entry_name
+         Root beer
+        Cream Soda
+  Carbonated Water
+             Tizer
+             Vimto
+       Sprite Lemo
+         Dr Pepper
+        Diet Pepsi
+ Diet Mountain Dew
+      Mountain Dew"
+11,Find the name and attribute ID of the attribute definitions with attribute value 0.,"SELECT attribute_name, attribute_id 
+FROM Attribute_Definitions 
+WHERE attribute_id IN (
+  SELECT attribute_id 
+  FROM Catalog_Contents_Additional_Attributes 
+  WHERE attribute_value = '0'
+)","attribute_name  attribute_id
+         Black             2
+        Yellow             3
+         Sweet             4"

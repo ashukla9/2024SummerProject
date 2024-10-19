@@ -1,0 +1,32 @@
+Here is the first row of all tables in the database:
+
+Table: Attribute_Definitions
+
+First row: (1, 'Green', 'Bool')
+
+----------------------------------------
+
+Table: Catalogs
+
+First row: (1, 'Chocolate', 'Koepp-Rutherford handmade chocolate store', '2013-03-15 05:09:17', '2017-09-26 12:10:36')
+
+----------------------------------------
+
+Table: Catalog_Structure
+
+First row: (1, 1, 'Category')
+
+----------------------------------------
+
+Table: Catalog_Contents
+
+First row: (1, 1, 5, 9, 7, 'Cola', '89 cp', 200.78, 159.84, 172.17, '1', '3', '9', '5')
+
+----------------------------------------
+
+Table: Catalog_Contents_Additional_Attributes
+
+First row: (5, 8, 4, '1')
+
+----------------------------------------
+

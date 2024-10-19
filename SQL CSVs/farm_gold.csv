@@ -1,0 +1,41 @@
+,Gold Queries
+0,SELECT count(*) FROM farm
+1,SELECT Total_Horses FROM farm ORDER BY Total_Horses ASC
+2,SELECT Total_Horses FROM farm ORDER BY Total_Horses ASC
+3,SELECT Hosts FROM farm_competition WHERE Theme !=  'Aliens'
+4,SELECT Hosts FROM farm_competition WHERE Theme !=  'Aliens'
+5,SELECT Theme FROM farm_competition ORDER BY YEAR ASC
+6,SELECT Theme FROM farm_competition ORDER BY YEAR ASC
+7,SELECT avg(Working_Horses) FROM farm WHERE Total_Horses  >  5000
+8,SELECT avg(Working_Horses) FROM farm WHERE Total_Horses  >  5000
+9,"SELECT max(Cows) ,  min(Cows) FROM farm"
+10,"SELECT max(Cows) ,  min(Cows) FROM farm"
+11,SELECT count(DISTINCT Status) FROM city
+12,SELECT count(DISTINCT Status) FROM city
+13,SELECT Official_Name FROM city ORDER BY Population DESC
+14,SELECT Official_Name FROM city ORDER BY Population DESC
+15,"SELECT Official_Name ,  Status FROM city ORDER BY Population DESC LIMIT 1"
+16,"SELECT Official_Name ,  Status FROM city ORDER BY Population DESC LIMIT 1"
+17,"SELECT T2.Year ,  T1.Official_Name FROM city AS T1 JOIN farm_competition AS T2 ON T1.City_ID  =  T2.Host_city_ID"
+18,"SELECT T2.Year ,  T1.Official_Name FROM city AS T1 JOIN farm_competition AS T2 ON T1.City_ID  =  T2.Host_city_ID"
+19,SELECT T1.Official_Name FROM city AS T1 JOIN farm_competition AS T2 ON T1.City_ID  =  T2.Host_city_ID GROUP BY T2.Host_city_ID HAVING COUNT(*)  >  1
+20,SELECT T1.Official_Name FROM city AS T1 JOIN farm_competition AS T2 ON T1.City_ID  =  T2.Host_city_ID GROUP BY T2.Host_city_ID HAVING COUNT(*)  >  1
+21,SELECT T1.Status FROM city AS T1 JOIN farm_competition AS T2 ON T1.City_ID  =  T2.Host_city_ID GROUP BY T2.Host_city_ID ORDER BY COUNT(*) DESC LIMIT 1
+22,SELECT T1.Status FROM city AS T1 JOIN farm_competition AS T2 ON T1.City_ID  =  T2.Host_city_ID GROUP BY T2.Host_city_ID ORDER BY COUNT(*) DESC LIMIT 1
+23,SELECT T2.Theme FROM city AS T1 JOIN farm_competition AS T2 ON T1.City_ID  =  T2.Host_city_ID WHERE T1.Population  >  1000
+24,SELECT T2.Theme FROM city AS T1 JOIN farm_competition AS T2 ON T1.City_ID  =  T2.Host_city_ID WHERE T1.Population  >  1000
+25,"SELECT Status ,  avg(Population) FROM city GROUP BY Status"
+26,"SELECT Status ,  avg(Population) FROM city GROUP BY Status"
+27,SELECT Status FROM city GROUP BY Status ORDER BY COUNT(*) ASC
+28,SELECT Status FROM city GROUP BY Status ORDER BY COUNT(*) ASC
+29,SELECT Status FROM city GROUP BY Status ORDER BY COUNT(*) DESC LIMIT 1
+30,SELECT Status FROM city GROUP BY Status ORDER BY COUNT(*) DESC LIMIT 1
+31,SELECT Official_Name FROM city WHERE City_ID NOT IN (SELECT Host_city_ID FROM farm_competition)
+32,SELECT Official_Name FROM city WHERE City_ID NOT IN (SELECT Host_city_ID FROM farm_competition)
+33,SELECT Status FROM city WHERE Population  >  1500 INTERSECT SELECT Status FROM city WHERE Population  <  500
+34,SELECT Status FROM city WHERE Population  >  1500 INTERSECT SELECT Status FROM city WHERE Population  <  500
+35,SELECT Official_Name FROM city WHERE Population  >  1500 OR Population  <  500
+36,SELECT Official_Name FROM city WHERE Population  >  1500 OR Population  <  500
+37,"SELECT Census_Ranking FROM city WHERE Status !=  ""Village"""
+38,"SELECT Census_Ranking FROM city WHERE Status !=  ""Village"""
+39,SELECT T1.course_name FROM courses AS T1 JOIN student_course_registrations AS T2 ON T1.course_id = T2.course_Id GROUP BY T1.course_id ORDER BY count(*) DESC LIMIT 1

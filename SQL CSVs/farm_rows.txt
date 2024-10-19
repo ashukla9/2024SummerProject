@@ -1,0 +1,26 @@
+Here is the first row of all tables in the database:
+
+Table: city
+
+First row: (1, 'Grand Falls/Grand-Sault', 'Town', 18.06, 5706.0, '636 of 5008')
+
+----------------------------------------
+
+Table: farm
+
+First row: (1, 1927, 5056.5, 3900.1, 8374.5, 805.5, 31.6, 3852.1, 4412.4, 7956.3)
+
+----------------------------------------
+
+Table: farm_competition
+
+First row: (1, 2013, 'Carnival M is back!', 1, 'Miley Cyrus Jared Leto and Karen Mok')
+
+----------------------------------------
+
+Table: competition_record
+
+First row: (1, 8, 1)
+
+----------------------------------------
+

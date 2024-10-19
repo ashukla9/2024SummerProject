@@ -1,0 +1,208 @@
+﻿Dataset,Natural Language Query,LLM Query,Gold Query,Correct,Error Type,Error Description
+episodes,Find the title for episodes whose video contains some pet. ,"WITH pet_videos AS ( SELECT 
+        video_name 
+    FROM 
+        episodevideos_objects 
+    WHERE 
+        category =  'pet'
+) 
+SELECT 
+    e.episode_title 
+FROM 
+    episode e 
+JOIN 
+    pet_videos pv ON e.video_name = pv.video_name; ","WITH pet_videos AS ( 
+    SELECT 
+       DISTINCT video_name 
+    FROM 
+        episodevideos_objects 
+    WHERE 
+        category =  'pet'
+) 
+SELECT 
+    e.episode_title 
+FROM 
+    episode e 
+JOIN 
+    pet_videos pv ON e.video_name = pv.video_name; 
+ ",FALSE,Missing DISTINCT,
+episodes,Find the number of episodes that contain a pet from the top 10 episodes ordered by engagement level. Engagement level is defined as the sum of impressions and shares for all engagements for that episode.,"WITH episode_engagement AS ( 
+    SELECT 
+        ee.episode_id, 
+        SUM(ee.impressions + ee.shares) AS engagement_level 
+    FROM episodeengagement ee 
+    GROUP BY ee.episode_id 
+), 
+top_episodes AS ( 
+    SELECT 
+        ee.episode_id, 
+        ee.engagement_level 
+    FROM episode_engagement ee 
+    ORDER BY ee.engagement_level DESC 
+    LIMIT 10 
+), 
+pet_episodes AS ( 
+    SELECT 
+        te.episode_id 
+    FROM top_episodes te 
+    JOIN episode e ON te.episode_id = e.episode_id 
+    JOIN episodevideos_objects eo ON e.video_name = eo.video_name 
+    WHERE category =  'pet'
+) 
+SELECT COUNT(*) AS num_pet_episodes FROM pet_episodes; ","WITH episode_engagement AS ( 
+    SELECT 
+        ee.episode_id, 
+        SUM(ee.impressions + ee.shares) AS engagement_level 
+    FROM episodeengagement ee 
+    GROUP BY ee.episode_id 
+), 
+top_episodes AS ( 
+    SELECT 
+        ee.episode_id, 
+        ee.engagement_level 
+    FROM episode_engagement ee 
+    ORDER BY ee.engagement_level DESC 
+    LIMIT 10 
+), 
+pet_episodes AS ( 
+    SELECT DISTINCT
+        te.episode_id 
+    FROM top_episodes te 
+    JOIN episode e ON te.episode_id = e.episode_id 
+    JOIN episodevideos_objects eo ON e.video_name = eo.video_name 
+    WHERE category =  'pet'
+) 
+SELECT COUNT(*) AS num_pet_episodes FROM pet_episodes; ",FALSE,Missing DISTINCT,
+episodes,"For each episode video, count the number of frames containing exactly one person, and the number of frames containing more than 1 person. ","WITH frame_counts AS ( 
+    SELECT 
+        f.video_name, 
+        COUNT(DISTINCT CASE WHEN o.type = 'person' THEN f.timestamp END) AS person_frames 
+    FROM episodevideos_frames f 
+    JOIN episodevideos_objects o ON f.timestamp = o.timestamp 
+    GROUP BY f.video_name
+), 
+single_person_frames AS ( 
+    SELECT 
+        video_name, 
+        COUNT(*) AS single_person_count 
+    FROM frame_counts 
+    WHERE person_frames = 1 
+    GROUP BY video_name 
+), 
+multiple_person_frames AS ( 
+    SELECT 
+        video_name, 
+        COUNT(*) AS multiple_person_count 
+    FROM frame_counts 
+    WHERE person_frames > 1 
+    GROUP BY video_name 
+) 
+SELECT 
+    spf.video_name, 
+    spf.single_person_count, 
+    mpf.multiple_person_count 
+FROM single_person_frames spf 
+JOIN multiple_person_frames mpf ON spf.video_name = mpf.video_name 
+","WITH frames_with_person AS ( SELECT video_name, timestamp, COUNT(*) as person_count FROM episodevideos.objects WHERE type = 'person' GROUP BY video_name, timestamp ), frames_count AS ( SELECT video_name, COUNT(CASE WHEN person_count = 1 THEN 1 END) as one_person_count, COUNT(CASE WHEN person_count > 1 THEN 1 END) as more_than_one_person_count FROM frames_with_person GROUP BY video_name ) SELECT c.episode_title, fc.one_person_count, fc.more_than_one_person_count FROM frames_count fc JOIN episode c ON fc.video_name = c.video_name
+ ",FALSE,Incorrect use of keyword,Wrong use of GROUP BY
+episodes,"Find the top 10 video frames ordered by engagement (total impressions) happening at the timestamp of the frame. Include video names, episode title, timestamp and total impression in the result.","WITH engagement_frames AS ( 
+    SELECT  
+        ef.video_name,  
+        e.episode_title,  
+        ef.timestamp,  
+        SUM(ee.impressions) AS total_impressions 
+    FROM episodeengagement ee 
+    JOIN episodevideos_frames ef ON ee.engagement_timestamp = ef.timestamp 
+    JOIN episode e ON ee.video_name = e.video_name 
+    GROUP BY ef.video_name, e.episode_title, ef.timestamp 
+) 
+ 
+SELECT  
+    video_name,  
+    episode_title,  
+    timestamp,  
+    total_impressions 
+FROM engagement_frames 
+ORDER BY total_impressions DESC 
+LIMIT 10; ","WITH engagement_frames AS (SELECT  e.episode_title,  e.video_name, SUM(ee.impressions) AS total_impressions FROM episodeengagement ee JOIN episode e ON ee.video_name = e.video_name GROUP BY ee.video_name, e.episode_title ) SELECT video_name, episode_title, total_impressions FROM engagement_frames ORDER BY total_impressions DESC LIMIT 10;",FALSE,Incorrect use of keyword,Incorrect use of JOIN
+episodes,"Rank all the podcasts by their engagement i.e. total of impressions, shares and aggregate count of comments. List the id and name of the podcasts. ","WITH engagement_data AS ( 
+    SELECT 
+        e.podcast_id, 
+        p.podcast_name, 
+        e.shares, 
+        e.impressions, 
+        COUNT(e.comment) AS comment_count 
+    FROM episodeengagement e 
+    JOIN podcast p ON e.podcast_id = p.podcast_id 
+    GROUP BY e.podcast_id, p.podcast_name, e.shares, e.impressions 
+) 
+SELECT 
+    ed.podcast_id, 
+    ed.podcast_name, 
+    SUM(ed.shares + ed.impressions + ed.comment_count) AS total_engagement 
+FROM engagement_data ed 
+GROUP BY ed.podcast_id, ed.podcast_name 
+ORDER BY total_engagement DESC; ","WITH engagement_data AS ( SELECT e.podcast_id, p.podcast_name, e.shares, e.impressions, COUNT(e.comment) AS comment_count FROM episodeengagement e JOIN podcast p ON e.podcast_id = p.podcast_id GROUP BY e.podcast_id, p.podcast_name) SELECT ed.podcast_id, ed.podcast_name, SUM(ed.shares + ed.impressions + ed.comment_count) AS total_engagement FROM engagement_data ed GROUP BY ed.podcast_id, ed.podcast_name ORDER BY total_engagement DESC;",FALSE,Incorrect use of keyword,Semantic error with GROUP BY
+episodes,"Return the number of reactions per 10 sec interval for the video with the most reactions. For each interval, show the start time in seconds. ","WITH video_reactions AS ( 
+    SELECT  
+        video_name,  
+        COUNT(reaction) AS reaction_count 
+    FROM  
+        episodeengagement 
+    GROUP BY  
+        video_name 
+    LIMIT 1 
+),  
+reactions_per_interval AS ( 
+    SELECT  
+        video_name,  
+        (engagement_timestamp / 10000) * 10 AS start_time,  
+        COUNT(reaction) AS reaction_count 
+    FROM  
+        episodeengagement 
+    WHERE  
+        video_name = (SELECT video_name FROM video_reactions) 
+    GROUP BY  
+        video_name,  
+        start_time 
+) 
+SELECT * FROM reactions_per_interval ","WITH video_reactions AS ( 
+    SELECT  
+        video_name,  
+        COUNT(reaction) AS reaction_count 
+    FROM  
+        episodeengagement 
+    GROUP BY  
+        video_name 
+    ORDER BY  
+        reaction_count DESC 
+    LIMIT 1 
+),  
+reactions_per_interval AS ( 
+    SELECT  
+        video_name,  
+        (engagement_timestamp / 10000) * 10 AS start_time,  
+        COUNT(reaction) AS reaction_count 
+    FROM  
+        episodeengagement 
+    WHERE  
+        video_name = (SELECT video_name FROM video_reactions) 
+    GROUP BY  
+        video_name,  
+        start_time 
+) 
+SELECT * FROM reactions_per_interval ",FALSE,Missing ORDER BY,
+episodes,"Rank all episodes by the engagement level, which is defined as the sum of impressions and shares. Additionally, provide the combined occurrence count for each object found across the top 2 episodes and the rest of the episodes. Each row should contain 2 columns, the count from the top 2 episodes and count from the rest. ","WITH RankedEpisodes AS (SELECT episode_id, SUM(impressions + shares) AS engagement_level FROM episodeengagement GROUP BY episode_id ORDER BY engagement_level DESC), Top2Episodes AS (SELECT episode_id FROM RankedEpisodes LIMIT 2), EpisodeToVideo AS (SELECT episode.episode_id, episodevideos.video_id FROM episode JOIN episodevideos ON episode.video_name = episodevideos.video_name), ObjectCounts AS (SELECT CASE WHEN ev.video_id IN (SELECT video_id FROM EpisodeToVideo WHERE episode_id IN (SELECT episode_id FROM Top2Episodes)) THEN 'top2' ELSE 'rest' END AS category, COUNT(*) AS object_count FROM episodevideos_objects ev GROUP BY category) SELECT COALESCE((SELECT object_count FROM ObjectCounts WHERE category = 'top2'), 0) AS top2_count, COALESCE((SELECT object_count FROM ObjectCounts WHERE category = 'rest'), 0) AS rest_count;","WITH RankedEpisodes AS (SELECT e.episode_id, e.video_name, SUM(ee.impressions + ee.shares) AS engagement_level FROM episode e JOIN episodeengagement ee ON e.episode_id = ee.episode_id GROUP BY e.episode_id, e.video_name ORDER BY engagement_level DESC), Top2Episodes AS (SELECT episode_id, video_name FROM RankedEpisodes LIMIT 2), ObjectCounts AS (SELECT CASE WHEN evo.video_name IN (SELECT video_name FROM Top2Episodes) THEN 'top_2' ELSE 'rest' END AS episode_group, COUNT(*) AS object_count FROM episodevideos_objects evo GROUP BY CASE WHEN evo.video_name IN (SELECT video_name FROM Top2Episodes) THEN 'top_2' ELSE 'rest' END) SELECT (SELECT object_count FROM ObjectCounts WHERE episode_group = 'top_2') AS top_2_count, (SELECT object_count FROM ObjectCounts WHERE episode_group = 'rest') AS rest_count;",FALSE,Incorrect keyword,Episode_id and video_id are not the same across different tables
+episodes,"Rank all episodes by the engagement level, which is defined as the sum of impressions and shares. Additionally, provide the combined occurrence count for each object found across the top 2 episodes and the rest of the episodes. Each row should contain 2 columns, the count from the top 2 episodes and count from the rest. ","WITH RankedEpisodes AS (SELECT episode_id, podcast_id, (impressions + shares) AS engagement_level FROM episodeengagement ORDER BY engagement_level DESC), TopEpisodes AS (SELECT episode_id FROM RankedEpisodes LIMIT 2), EpisodeObjects AS (SELECT eo.object_id, eo.video_id, eo.video_name, e.episode_id FROM episodevideos_objects eo INNER JOIN episode e ON eo.video_name = e.video_name) SELECT SUM(CASE WHEN eo.episode_id IN (SELECT episode_id FROM TopEpisodes) THEN 1 ELSE 0 END) AS top_2_episodes_count, SUM(CASE WHEN eo.episode_id NOT IN (SELECT episode_id FROM TopEpisodes) THEN 1 ELSE 0 END) AS rest_episodes_count FROM EpisodeObjects eo;","WITH RankedEpisodes AS (SELECT e.episode_id, e.video_name, SUM(ee.impressions + ee.shares) AS engagement_level FROM episode e JOIN episodeengagement ee ON e.episode_id = ee.episode_id GROUP BY e.episode_id, e.video_name ORDER BY engagement_level DESC), Top2Episodes AS (SELECT episode_id, video_name FROM RankedEpisodes LIMIT 2), ObjectCounts AS (SELECT CASE WHEN evo.video_name IN (SELECT video_name FROM Top2Episodes) THEN 'top_2' ELSE 'rest' END AS episode_group, COUNT(*) AS object_count FROM episodevideos_objects evo GROUP BY CASE WHEN evo.video_name IN (SELECT video_name FROM Top2Episodes) THEN 'top_2' ELSE 'rest' END) SELECT (SELECT object_count FROM ObjectCounts WHERE episode_group = 'top_2') AS top_2_count, (SELECT object_count FROM ObjectCounts WHERE episode_group = 'rest') AS rest_count;",FALSE,Missing GROUP BY and SUM,
+episodes,"Rank all episodes by the engagement level, which is defined as the sum of impressions and shares. Additionally, provide the combined occurrence count for each object found across the top 2 episodes and the rest of the episodes. Each row should contain 2 columns, the count from the top 2 episodes and count from the rest. ","WITH RankedEpisodes AS (SELECT e.episode_id, e.video_name, SUM(ee.impressions + ee.shares) AS engagement_level FROM episode e JOIN episodeengagement ee ON e.episode_id = ee.episode_id GROUP BY e.episode_id, e.video_name ORDER BY engagement_level DESC), Top2Episodes AS (SELECT episode_id, video_name FROM RankedEpisodes LIMIT 2), ObjectCounts AS (SELECT CASE WHEN evo.video_name IN (SELECT video_name FROM Top2Episodes) THEN 'top_2' ELSE 'rest' END AS episode_group, COUNT(*) AS object_count FROM episodevideos_objects evo GROUP BY CASE WHEN evo.video_name IN (SELECT video_name FROM Top2Episodes) THEN 'top_2' ELSE 'rest' END) SELECT (SELECT object_count FROM ObjectCounts WHERE episode_group = 'top_2') AS top_2_count, (SELECT object_count FROM ObjectCounts WHERE episode_group = 'rest') AS rest_count;","WITH RankedEpisodes AS (SELECT e.episode_id, e.video_name, SUM(ee.impressions + ee.shares) AS engagement_level FROM episode e JOIN episodeengagement ee ON e.episode_id = ee.episode_id GROUP BY e.episode_id, e.video_name ORDER BY engagement_level DESC), Top2Episodes AS (SELECT episode_id, video_name FROM RankedEpisodes LIMIT 2), ObjectCounts AS (SELECT CASE WHEN evo.video_name IN (SELECT video_name FROM Top2Episodes) THEN 'top_2' ELSE 'rest' END AS episode_group, COUNT(*) AS object_count FROM episodevideos_objects evo GROUP BY CASE WHEN evo.video_name IN (SELECT video_name FROM Top2Episodes) THEN 'top_2' ELSE 'rest' END) SELECT (SELECT object_count FROM ObjectCounts WHERE episode_group = 'top_2') AS top_2_count, (SELECT object_count FROM ObjectCounts WHERE episode_group = 'rest') AS rest_count;",TRUE,,
+episodes,"Rank all episodes by the engagement level, which is defined as the sum of impressions and shares. Then provide a list of the first three objects in the top 10 episode videos. ","WITH ranked_episodes AS ( SELECT ee.episode_id, SUM(ee.impressions + ee.shares) AS engagement_level FROM episodeengagement ee GROUP BY ee.episode_id ORDER BY engagement_level DESC LIMIT 10) SELECT evo.video_id, evo.object_id, evo.type, evo.category, evo.tracking_id, evo.timestamp FROM ranked_episodes re JOIN episode ON episode.episode_id = re.episode_id JOIN episodevideos_objects evo ON evo.video_id = episode.video_name ORDER BY re.engagement_level DESC, evo.timestamp ASC LIMIT 30;","WITH ranked_episodes AS (SELECT ee.episode_id, SUM(ee.impressions + ee.shares) AS engagement_level FROM episodeengagement ee GROUP BY ee.episode_id ORDER BY engagement_level DESC LIMIT 10), episode_videos AS (SELECT re.episode_id, evo.video_id, evo.object_id, evo.type, evo.category, evo.tracking_id, evo.timestamp, ROW_NUMBER() OVER (PARTITION BY evo.video_id ORDER BY evo.timestamp) AS obj_rank FROM ranked_episodes re JOIN episode ON re.episode_id = episode.episode_id JOIN episodevideos_objects evo ON episode.video_name = evo.video_name) SELECT video_id, object_id, type, category, tracking_id, timestamp FROM episode_videos WHERE obj_rank <= 3;",FALSE,Incorrect keyword,Episode_id and video_id are not the same across different tables
+episodes,"Rank all episodes by the engagement level, which is defined as the sum of impressions and shares. Then provide a list of the first three objects in the top 10 episode videos. ","WITH ranked_episodes AS (SELECT ee.episode_id, SUM(ee.impressions + ee.shares) AS engagement_level FROM episodeengagement ee GROUP BY ee.episode_id ORDER BY engagement_level DESC LIMIT 10), episode_videos AS (SELECT re.episode_id, evo.video_id, evo.object_id, evo.type, evo.category, evo.tracking_id, evo.timestamp, ROW_NUMBER() OVER (PARTITION BY evo.video_id ORDER BY evo.timestamp) AS obj_rank FROM ranked_episodes re JOIN episode ON re.episode_id = episode.episode_id JOIN episodevideos_objects evo ON episode.video_name = evo.video_name) SELECT video_id, object_id, type, category, tracking_id, timestamp FROM episode_videos WHERE obj_rank <= 3;","WITH ranked_episodes AS (SELECT ee.episode_id, SUM(ee.impressions + ee.shares) AS engagement_level FROM episodeengagement ee GROUP BY ee.episode_id ORDER BY engagement_level DESC LIMIT 10), episode_videos AS (SELECT re.episode_id, evo.video_id, evo.object_id, evo.type, evo.category, evo.tracking_id, evo.timestamp, ROW_NUMBER() OVER (PARTITION BY evo.video_id ORDER BY evo.timestamp) AS obj_rank FROM ranked_episodes re JOIN episode ON re.episode_id = episode.episode_id JOIN episodevideos_objects evo ON episode.video_name = evo.video_name) SELECT video_id, object_id, type, category, tracking_id, timestamp FROM episode_videos WHERE obj_rank <= 3;",TRUE,,
+episodes,"Rank all episodes by the engagement level, which is defined as the sum of impressions and shares. Then provide a list of the first three objects in the top 10 episode videos. ","WITH ranked_episodes AS (SELECT e.episode_id, e.video_name, SUM(ee.impressions + ee.shares) AS engagement_level FROM episode e JOIN episodeengagement ee ON e.episode_id = ee.episode_id GROUP BY e.episode_id, e.video_name ORDER BY engagement_level DESC LIMIT 10) SELECT evo.video_id, evo.video_name, evo.object_id, evo.type, evo.category, evo.tracking_id, evo.timestamp FROM episodevideos_objects evo JOIN ranked_episodes re ON evo.video_name = re.video_name ORDER BY re.engagement_level DESC, evo.video_name, evo.timestamp LIMIT 30;","WITH ranked_episodes AS (SELECT ee.episode_id, SUM(ee.impressions + ee.shares) AS engagement_level FROM episodeengagement ee GROUP BY ee.episode_id ORDER BY engagement_level DESC LIMIT 10), episode_videos AS (SELECT re.episode_id, evo.video_id, evo.object_id, evo.type, evo.category, evo.tracking_id, evo.timestamp, ROW_NUMBER() OVER (PARTITION BY evo.video_id ORDER BY evo.timestamp) AS obj_rank FROM ranked_episodes re JOIN episode ON re.episode_id = episode.episode_id JOIN episodevideos_objects evo ON episode.video_name = evo.video_name) SELECT video_id, object_id, type, category, tracking_id, timestamp FROM episode_videos WHERE obj_rank <= 3;",FALSE,Misunderstands question,"Missing DISTINCT, takes top 30 objects rather than the top 3 from each video"
+episodes,"Rank all episodes by the engagement level, which is defined as the sum of impressions and shares. Then provide a list of the first three objects in the top 10 episode videos. ","WITH ranked_episodes AS (SELECT e.episode_id, e.video_name, SUM(ee.impressions + ee.shares) AS engagement_level, ROW_NUMBER() OVER (ORDER BY SUM(ee.impressions + ee.shares) DESC) AS rank FROM episode e JOIN episodeengagement ee ON e.episode_id = ee.episode_id GROUP BY e.episode_id, e.video_name) SELECT evo.object_id, evo.video_id, evo.video_name, evo.type, evo.category, evo.tracking_id, evo.timestamp FROM ranked_episodes re JOIN episodevideos_objects evo ON re.video_name = evo.video_name WHERE re.rank <= 10 ORDER BY re.rank, evo.timestamp LIMIT 30;","WITH ranked_episodes AS (SELECT ee.episode_id, SUM(ee.impressions + ee.shares) AS engagement_level FROM episodeengagement ee GROUP BY ee.episode_id ORDER BY engagement_level DESC LIMIT 10), episode_videos AS (SELECT re.episode_id, evo.video_id, evo.object_id, evo.type, evo.category, evo.tracking_id, evo.timestamp, ROW_NUMBER() OVER (PARTITION BY evo.video_id ORDER BY evo.timestamp) AS obj_rank FROM ranked_episodes re JOIN episode ON re.episode_id = episode.episode_id JOIN episodevideos_objects evo ON episode.video_name = evo.video_name) SELECT video_id, object_id, type, category, tracking_id, timestamp FROM episode_videos WHERE obj_rank <= 3;",FALSE,Misunderstands question,Takes top 30 objects rather than top 3 from each video
+episodes,Compare the distribution of objects (count of each object) from the videos for top 2 episodes with highest engagement level with other episodes. Engagement level is defined as the sum of shares and impressions. ,"WITH EngagementRank AS (SELECT ep.episode_id, SUM(ee.shares + ee.impressions) AS engagement_level FROM episodeengagement ee JOIN episode ep ON ee.episode_id = ep.episode_id GROUP BY ep.episode_id ORDER BY engagement_level DESC), Top2Episodes AS (SELECT episode_id FROM EngagementRank LIMIT 2) SELECT 'Top 2 Episodes' AS Category, evo.type, COUNT(*) AS object_count FROM episodevideos_objects evo JOIN episode ep ON ep.video_name = evo.video_name JOIN Top2Episodes t2e ON ep.episode_id = t2e.episode_id GROUP BY evo.type UNION ALL SELECT 'Other Episodes' AS Category, evo.type, COUNT(*) AS object_count FROM episodevideos_objects evo JOIN episode ep ON ep.video_name = evo.video_name WHERE ep.episode_id NOT IN (SELECT episode_id FROM Top2Episodes) GROUP BY evo.type;","WITH EngagementRank AS (SELECT ep.episode_id, SUM(ee.shares + ee.impressions) AS engagement_level FROM episodeengagement ee JOIN episode ep ON ee.episode_id = ep.episode_id GROUP BY ep.episode_id ORDER BY engagement_level DESC), Top2Episodes AS (SELECT episode_id FROM EngagementRank LIMIT 2) SELECT 'Top 2 Episodes' AS Category, evo.type, COUNT(*) AS object_count FROM episodevideos_objects evo JOIN episode ep ON ep.video_name = evo.video_name JOIN Top2Episodes t2e ON ep.episode_id = t2e.episode_id GROUP BY evo.type UNION ALL SELECT 'Other Episodes' AS Category, evo.type, COUNT(*) AS object_count FROM episodevideos_objects evo JOIN episode ep ON ep.video_name = evo.video_name WHERE ep.episode_id NOT IN (SELECT episode_id FROM Top2Episodes) GROUP BY evo.type;",TRUE,,
+episodes,Compare the distribution of objects (count of each object) from the videos for top 2 episodes with highest engagement level with other episodes. Engagement level is defined as the sum of shares and impressions. ,"WITH engagement_level AS (SELECT episode_id, SUM(shares + impressions) AS total_engagement FROM episodeengagement GROUP BY episode_id), top_2_episodes AS (SELECT episode_id FROM engagement_level ORDER BY total_engagement DESC LIMIT 2), objects_distribution AS (SELECT e.episode_id, o.type AS object_type, COUNT(*) AS object_count FROM episode e JOIN episodevideos_objects o ON e.video_name = o.video_name GROUP BY e.episode_id, o.type) SELECT CASE WHEN e.episode_id IN (SELECT episode_id FROM top_2_episodes) THEN 'Top 2 Episodes' ELSE 'Other Episodes' END AS episode_group, o.object_type, SUM(o.object_count) AS object_count FROM objects_distribution o JOIN episode e ON o.episode_id = e.episode_id GROUP BY episode_group, o.object_type ORDER BY episode_group, o.object_type;","WITH engagement_level AS (SELECT episode_id, SUM(shares + impressions) AS total_engagement FROM episodeengagement GROUP BY episode_id), top_2_episodes AS (SELECT episode_id FROM engagement_level ORDER BY total_engagement DESC LIMIT 2), objects_distribution AS (SELECT e.episode_id, o.type AS object_type, COUNT(*) AS object_count FROM episode e JOIN episodevideos_objects o ON e.video_name = o.video_name GROUP BY e.episode_id, o.type) SELECT CASE WHEN e.episode_id IN (SELECT episode_id FROM top_2_episodes) THEN 'Top 2 Episodes' ELSE 'Other Episodes' END AS episode_group, o.object_type, SUM(o.object_count) AS object_count FROM objects_distribution o JOIN episode e ON o.episode_id = e.episode_id GROUP BY episode_group, o.object_type ORDER BY episode_group, o.object_type;",TRUE,,
+episodes,Compare the distribution of objects (count of each object) from the videos for top 2 episodes with highest engagement level with other episodes. Engagement level is defined as the sum of shares and impressions. ,"WITH episode_engagement AS (SELECT episode_id, SUM(shares + impressions) AS engagement_level FROM episodeengagement GROUP BY episode_id), top_2_episodes AS (SELECT episode_id FROM episode_engagement ORDER BY engagement_level DESC LIMIT 2), object_count AS (SELECT video_name, type, COUNT(object_id) AS object_count FROM episodevideos_objects GROUP BY video_name, type) SELECT CASE WHEN e.episode_id IN (SELECT episode_id FROM top_2_episodes) THEN 'Top 2 Episodes' ELSE 'Other Episodes' END AS episode_group, o.type, SUM(o.object_count) AS total_object_count FROM episodevideos ev JOIN episode e ON ev.video_name = e.video_name JOIN object_count o ON ev.video_name = o.video_name GROUP BY episode_group, o.type","WITH episode_engagement AS (SELECT episode_id, SUM(shares + impressions) AS engagement_level FROM episodeengagement GROUP BY episode_id), top_2_episodes AS (SELECT episode_id FROM episode_engagement ORDER BY engagement_level DESC LIMIT 2), object_count AS (SELECT video_name, type, COUNT(object_id) AS object_count FROM episodevideos_objects GROUP BY video_name, type) SELECT CASE WHEN e.episode_id IN (SELECT episode_id FROM top_2_episodes) THEN 'Top 2 Episodes' ELSE 'Other Episodes' END AS episode_group, o.type, SUM(o.object_count) AS total_object_count FROM episodevideos ev JOIN episode e ON ev.video_name = e.video_name JOIN object_count o ON ev.video_name = o.video_name GROUP BY episode_group, o.type",TRUE,,
+episodes,Rank all the videos based on the number of distinct objects they contain. Then return the engagement levels of the top 5 videos. Engagement is defined as the sum of shares and impressions.,"WITH ObjectCount AS (SELECT video_name, COUNT(DISTINCT object_id) AS object_count FROM episodevideos_objects GROUP BY video_name), VideoEngagement AS (SELECT video_name, SUM(shares + impressions) AS engagement_level FROM episodeengagement GROUP BY video_name), RankedVideos AS (SELECT oc.video_name, ve.engagement_level, RANK() OVER (ORDER BY oc.object_count DESC) AS rank FROM ObjectCount oc JOIN VideoEngagement ve ON oc.video_name = ve.video_name) SELECT video_name, engagement_level FROM RankedVideos WHERE rank <= 5;","WITH ObjectCount AS (SELECT video_name, COUNT(DISTINCT object_id) AS object_count FROM episodevideos_objects GROUP BY video_name), VideoEngagement AS (SELECT video_name, SUM(shares + impressions) AS engagement_level FROM episodeengagement GROUP BY video_name), RankedVideos AS (SELECT oc.video_name, ve.engagement_level, RANK() OVER (ORDER BY oc.object_count DESC) AS rank FROM ObjectCount oc JOIN VideoEngagement ve ON oc.video_name = ve.video_name) SELECT video_name, engagement_level FROM RankedVideos WHERE rank <= 5;",TRUE,,
+episodes,Rank all the videos based on the number of distinct objects they contain. Then return the engagement levels of the top 5 videos. Engagement is defined as the sum of shares and impressions.,"WITH VideoObjectCount AS (SELECT video_id, COUNT(DISTINCT object_id) AS object_count FROM episodevideos_objects GROUP BY video_id), TopVideos AS (SELECT video_id FROM VideoObjectCount ORDER BY object_count DESC LIMIT 5) SELECT e.video_name, (SUM(e.shares) + SUM(e.impressions)) AS engagement FROM episodeengagement e JOIN episodevideos v ON e.video_name = v.video_name JOIN TopVideos t ON v.video_id = t.video_id GROUP BY e.video_name ORDER BY engagement DESC;","WITH VideoObjectCount AS (SELECT video_id, COUNT(DISTINCT object_id) AS object_count FROM episodevideos_objects GROUP BY video_id), TopVideos AS (SELECT video_id FROM VideoObjectCount ORDER BY object_count DESC LIMIT 5) SELECT e.video_name, (SUM(e.shares) + SUM(e.impressions)) AS engagement FROM episodeengagement e JOIN episodevideos v ON e.video_name = v.video_name JOIN TopVideos t ON v.video_id = t.video_id GROUP BY e.video_name ORDER BY engagement DESC;",TRUE,,
+episodes,Rank all the videos based on their length. Then return the engagement levels of the top 3 videos. Engagement is defined as the sum of shares and impressions.,"SELECT ev.video_name, SUM(ee.shares + ee.impressions) AS engagement FROM episodevideos ev JOIN episodeengagement ee ON ev.video_name = ee.video_name GROUP BY ev.video_name ORDER BY ev.duration DESC LIMIT 3;","SELECT ev.video_name, SUM(ee.shares + ee.impressions) AS engagement FROM episodevideos ev JOIN episodeengagement ee ON ev.video_name = ee.video_name GROUP BY ev.video_name ORDER BY ev.duration DESC LIMIT 3;",TRUE,,
+episodes,Rank all the videos based on their length. Then return the engagement levels of the top 3 videos. Engagement is defined as the sum of shares and impressions.,"WITH RankedVideos AS (SELECT video_name, duration, ROW_NUMBER() OVER (ORDER BY duration DESC) AS rank FROM episodevideos), TopVideos AS (SELECT video_name FROM RankedVideos WHERE rank <= 3) SELECT e.video_name, SUM(e.shares + e.impressions) AS engagement_level FROM episodeengagement e JOIN TopVideos tv ON e.video_name = tv.video_name GROUP BY e.video_name ORDER BY engagement_level DESC;","WITH RankedVideos AS (SELECT video_name, duration, ROW_NUMBER() OVER (ORDER BY duration DESC) AS rank FROM episodevideos), TopVideos AS (SELECT video_name FROM RankedVideos WHERE rank <= 3) SELECT e.video_name, SUM(e.shares + e.impressions) AS engagement_level FROM episodeengagement e JOIN TopVideos tv ON e.video_name = tv.video_name GROUP BY e.video_name ORDER BY engagement_level DESC;",TRUE,,

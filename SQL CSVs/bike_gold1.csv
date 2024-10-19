@@ -1,0 +1,51 @@
+,Gold Queries
+0,SELECT date FROM weather WHERE max_temperature_f  >  85
+1,SELECT date FROM weather WHERE max_temperature_f  >  85
+2,SELECT name FROM station WHERE lat  <  37.5
+3,SELECT name FROM station WHERE lat  <  37.5
+4,"SELECT city ,  max(lat) FROM station GROUP BY city"
+5,"SELECT city ,  max(lat) FROM station GROUP BY city"
+6,"SELECT start_station_name ,  end_station_name FROM trip ORDER BY id LIMIT 3"
+7,"SELECT start_station_name ,  end_station_name FROM trip ORDER BY id LIMIT 3"
+8,"SELECT avg(lat) ,  avg(long) FROM station WHERE city  =  ""San Jose"""
+9,"SELECT avg(lat) ,  avg(long) FROM station WHERE city  =  ""San Jose"""
+10,SELECT id FROM trip ORDER BY duration LIMIT 1
+11,SELECT id FROM trip ORDER BY duration LIMIT 1
+12,"SELECT sum(duration) ,  max(duration) FROM trip WHERE bike_id  =  636"
+13,"SELECT sum(duration) ,  max(duration) FROM trip WHERE bike_id  =  636"
+14,"SELECT zip_code  ,  avg(mean_temperature_f) FROM weather WHERE date LIKE ""8/%"" GROUP BY zip_code"
+15,"SELECT zip_code  ,  avg(mean_temperature_f) FROM weather WHERE date LIKE ""8/%"" GROUP BY zip_code"
+16,SELECT count(DISTINCT bike_id) FROM trip
+17,SELECT count(DISTINCT bike_id) FROM trip
+18,SELECT count(DISTINCT city) FROM station
+19,SELECT count(DISTINCT city) FROM station
+20,"SELECT COUNT(*) FROM station WHERE city  =  ""Mountain View"""
+21,"SELECT COUNT(*) FROM station WHERE city  =  ""Mountain View"""
+22,SELECT DISTINCT T1.name FROM station AS T1 JOIN status AS T2 ON T1.id  =  T2.station_id WHERE T2.bikes_available  =  7
+23,SELECT DISTINCT T1.name FROM station AS T1 JOIN status AS T2 ON T1.id  =  T2.station_id WHERE T2.bikes_available  =  7
+24,"SELECT start_station_name ,  start_station_id FROM trip WHERE start_date LIKE ""8/%"" GROUP BY start_station_name ORDER BY COUNT(*) DESC LIMIT 1"
+25,"SELECT start_station_name ,  start_station_id FROM trip WHERE start_date LIKE ""8/%"" GROUP BY start_station_name ORDER BY COUNT(*) DESC LIMIT 1"
+26,SELECT bike_id FROM trip WHERE zip_code  =  94002 GROUP BY bike_id ORDER BY COUNT(*) DESC LIMIT 1
+27,SELECT bike_id FROM trip WHERE zip_code  =  94002 GROUP BY bike_id ORDER BY COUNT(*) DESC LIMIT 1
+28,SELECT COUNT(*) FROM weather WHERE mean_humidity  >  50 AND mean_visibility_miles  >  8
+29,SELECT COUNT(*) FROM weather WHERE mean_humidity  >  50 AND mean_visibility_miles  >  8
+30,"SELECT T1.lat ,  T1.long ,  T1.city FROM station AS T1 JOIN trip AS T2 ON T1.id  =  T2.start_station_id ORDER BY T2.duration LIMIT 1"
+31,"SELECT T1.lat ,  T1.long ,  T1.city FROM station AS T1 JOIN trip AS T2 ON T1.id  =  T2.start_station_id ORDER BY T2.duration LIMIT 1"
+32,"SELECT id FROM station WHERE city  =  ""San Francisco"" INTERSECT SELECT station_id FROM status GROUP BY station_id HAVING avg(bikes_available)  >  10"
+33,"SELECT id FROM station WHERE city  =  ""San Francisco"" INTERSECT SELECT station_id FROM status GROUP BY station_id HAVING avg(bikes_available)  >  10"
+34,"SELECT T1.name ,  T1.id FROM station AS T1 JOIN status AS T2 ON T1.id  =  T2.station_id GROUP BY T2.station_id HAVING avg(T2.bikes_available)  >  14 UNION SELECT name ,  id FROM station WHERE installation_date LIKE ""12/%"""
+35,"SELECT T1.name ,  T1.id FROM station AS T1 JOIN status AS T2 ON T1.id  =  T2.station_id GROUP BY T2.station_id HAVING avg(T2.bikes_available)  >  14 UNION SELECT name ,  id FROM station WHERE installation_date LIKE ""12/%"""
+36,SELECT cloud_cover FROM weather WHERE zip_code  =  94107 GROUP BY cloud_cover ORDER BY COUNT (*) DESC LIMIT 3
+37,SELECT cloud_cover FROM weather WHERE zip_code  =  94107 GROUP BY cloud_cover ORDER BY COUNT (*) DESC LIMIT 3
+38,SELECT zip_code FROM weather GROUP BY zip_code ORDER BY avg(mean_sea_level_pressure_inches) LIMIT 1
+39,SELECT zip_code FROM weather GROUP BY zip_code ORDER BY avg(mean_sea_level_pressure_inches) LIMIT 1
+40,"SELECT avg(bikes_available) FROM status WHERE station_id NOT IN (SELECT id FROM station WHERE city  =  ""Palo Alto"")"
+41,"SELECT avg(bikes_available) FROM status WHERE station_id NOT IN (SELECT id FROM station WHERE city  =  ""Palo Alto"")"
+42,SELECT avg(long) FROM station WHERE id NOT IN (SELECT station_id FROM status GROUP BY station_id HAVING max(bikes_available)  >  10)
+43,SELECT avg(long) FROM station WHERE id NOT IN (SELECT station_id FROM status GROUP BY station_id HAVING max(bikes_available)  >  10)
+44,"SELECT date ,  zip_code FROM weather WHERE max_temperature_f  >=  80"
+45,"SELECT date ,  zip_code FROM weather WHERE max_temperature_f  >=  80"
+46,SELECT T1.id FROM trip AS T1 JOIN weather AS T2 ON T1.zip_code  =  T2.zip_code GROUP BY T2.zip_code HAVING avg(T2.mean_temperature_f)  >  60
+47,SELECT T1.id FROM trip AS T1 JOIN weather AS T2 ON T1.zip_code  =  T2.zip_code GROUP BY T2.zip_code HAVING avg(T2.mean_temperature_f)  >  60
+48,"SELECT zip_code , count(*) FROM weather WHERE max_wind_Speed_mph  >=  25 GROUP BY zip_code"
+49,"SELECT zip_code , count(*) FROM weather WHERE max_wind_Speed_mph  >=  25 GROUP BY zip_code"

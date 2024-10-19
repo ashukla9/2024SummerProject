@@ -1,0 +1,312 @@
+,Natural Language Query,Generated SQL Query,Result
+0,How many singers do we have?,SELECT COUNT(*) FROM singer;," COUNT(*)
+        6"
+1,What is the total number of singers?,SELECT COUNT(*) FROM singer;," COUNT(*)
+        6"
+2,"Show name, country, age for all singers ordered by age from the oldest to the youngest.","SELECT Name, Country, Age 
+FROM singer 
+ORDER BY Age DESC;","        Name       Country  Age
+   Joe Sharp   Netherlands   52
+John Nizinik        France   43
+  Rose White        France   41
+   Timbaland United States   32
+Justin Brown        France   29
+ Tribal King        France   25"
+3,"What are the names, countries, and ages for every singer in descending order of age?","SELECT Name, Country, Age 
+FROM singer 
+ORDER BY Age DESC;","        Name       Country  Age
+   Joe Sharp   Netherlands   52
+John Nizinik        France   43
+  Rose White        France   41
+   Timbaland United States   32
+Justin Brown        France   29
+ Tribal King        France   25"
+4,"What is the average, minimum, and maximum age of all singers from France?","SELECT AVG(Age) AS Average_Age, MIN(Age) AS Minimum_Age, MAX(Age) AS Maximum_Age
+FROM singer
+WHERE Country = 'France';"," Average_Age  Minimum_Age  Maximum_Age
+        34.5           25           43"
+5,"What is the average, minimum, and maximum age for all French singers?","SELECT AVG(Age) AS Average_Age, MIN(Age) AS Minimum_Age, MAX(Age) AS Maximum_Age
+FROM singer
+WHERE Country = 'French';","Average_Age Minimum_Age Maximum_Age
+       None        None        None"
+6,Show the name and the release year of the song by the youngest singer.,"SELECT s.Name, s.Song_release_year
+FROM singer s
+WHERE s.Age = (SELECT MIN(Age) FROM singer);","       Name Song_release_year
+Tribal King              2016"
+7,What are the names and release years for all the songs of the youngest singer?,"SELECT s.Name, s.Song_release_year
+FROM singer s
+WHERE s.Age = (SELECT MIN(Age) FROM singer);","       Name Song_release_year
+Tribal King              2016"
+8,What are all distinct countries where singers above age 20 are from?,"SELECT DISTINCT Country 
+FROM singer 
+WHERE Age > 20;","      Country
+  Netherlands
+United States
+       France"
+9,What are  the different countries with singers above age 20?,"SELECT DISTINCT Country 
+FROM singer 
+WHERE Age > 20;","      Country
+  Netherlands
+United States
+       France"
+10,Show all countries and the number of singers in each country.,"SELECT Country, COUNT(Singer_ID) 
+FROM singer 
+GROUP BY Country;","      Country  COUNT(Singer_ID)
+       France                 4
+  Netherlands                 1
+United States                 1"
+11,How many singers are from each country?,"SELECT Country, COUNT(*) 
+FROM singer 
+GROUP BY Country;","      Country  COUNT(*)
+       France         4
+  Netherlands         1
+United States         1"
+12,List all song names by singers above the average age.,"SELECT s.Song_Name
+FROM singer s
+WHERE s.Age > (SELECT AVG(Age) FROM singer);","Song_Name
+      You
+      Sun
+Gentleman"
+13,What are all the song names by singers who are older than average?,"SELECT s.Song_Name
+FROM singer s
+WHERE s.Age > (SELECT AVG(Age) FROM singer);","Song_Name
+      You
+      Sun
+Gentleman"
+14,Show location and name for all stadiums with a capacity between 5000 and 10000.,"SELECT Location, Name 
+FROM stadium 
+WHERE Capacity BETWEEN 5000 AND 10000;","Empty DataFrame
+Columns: [Location, Name]
+Index: []"
+15,What are the locations and names of all stations with capacity between 5000 and 10000?,"SELECT Location, Name 
+FROM stadium 
+WHERE Capacity BETWEEN 5000 AND 10000;","Empty DataFrame
+Columns: [Location, Name]
+Index: []"
+16,What is the maximum capacity and the average of all stadiums ?,"SELECT MAX(Capacity), AVG(Capacity) FROM stadium;"," MAX(Capacity)  AVG(Capacity)
+         52500   10621.666667"
+17,What is the average and maximum capacities for all stadiums ?,"SELECT AVG(Capacity) AS Average_Capacity, MAX(Capacity) AS Maximum_Capacity
+FROM stadium;"," Average_Capacity  Maximum_Capacity
+     10621.666667             52500"
+18,What is the name and capacity for the stadium with highest average attendance?,"SELECT Name, Capacity 
+FROM stadium 
+WHERE Average = (SELECT MAX(Average) FROM stadium);","        Name  Capacity
+Stark's Park     10104"
+19,What is the name and capacity for the stadium with the highest average attendance?,"SELECT Name, Capacity 
+FROM stadium 
+WHERE Average = (SELECT MAX(Average) FROM stadium);","        Name  Capacity
+Stark's Park     10104"
+20,How many concerts are there in year 2014 or 2015?,"SELECT COUNT(*) 
+FROM concert 
+WHERE Year IN ('2014', '2015');"," COUNT(*)
+        6"
+21,How many concerts occurred in 2014 or 2015?,"SELECT COUNT(*) 
+FROM concert 
+WHERE Year IN ('2014', '2015');"," COUNT(*)
+        6"
+22,Show the stadium name and the number of concerts in each stadium.,"SELECT stadium.Name, COUNT(concert.concert_ID) AS Number_of_Concerts
+FROM stadium
+LEFT JOIN concert ON stadium.Stadium_ID = concert.Stadium_ID
+GROUP BY stadium.Name;","             Name  Number_of_Concerts
+          Balmoor                   1
+  Bayview Stadium                   0
+Forthbank Stadium                   0
+    Gayfield Park                   0
+       Glebe Park                   1
+     Hampden Park                   0
+  Recreation Park                   1
+    Somerset Park                   2
+     Stark's Park                   1"
+23,"For each stadium, how many concerts play there?","SELECT stadium.Stadium_ID, COUNT(concert.concert_ID) AS Number_of_Concerts
+FROM stadium
+LEFT JOIN concert ON stadium.Stadium_ID = concert.Stadium_ID
+GROUP BY stadium.Stadium_ID;"," Stadium_ID  Number_of_Concerts
+          1                   1
+          2                   2
+          3                   0
+          4                   0
+          5                   0
+          6                   0
+          7                   1
+          9                   1
+         10                   1"
+24,Show the stadium name and capacity with most number of concerts in year 2014 or after.,"SELECT stadium.Name, stadium.Capacity
+FROM stadium
+JOIN concert ON stadium.Stadium_ID = concert.Stadium_ID
+WHERE concert.Year >= '2014'
+GROUP BY stadium.Stadium_ID, stadium.Name, stadium.Capacity
+ORDER BY COUNT(*) DESC
+LIMIT 1;","         Name  Capacity
+Somerset Park     11998"
+25,What is the name and capacity of the stadium with the most concerts after 2013 ?,"SELECT stadium.Name, stadium.Capacity
+FROM stadium
+JOIN concert ON stadium.Stadium_ID = concert.Stadium_ID
+WHERE concert.Year > '2013'
+GROUP BY stadium.Stadium_ID, stadium.Name, stadium.Capacity
+ORDER BY COUNT(*) DESC
+LIMIT 1;","         Name  Capacity
+Somerset Park     11998"
+26,Which year has most number of concerts?,"SELECT Year, COUNT(*) AS NumberOfConcerts
+FROM concert
+GROUP BY Year
+ORDER BY NumberOfConcerts DESC
+LIMIT 1;","Year  NumberOfConcerts
+2015                 3"
+27,What is the year that had the most concerts?,"SELECT Year, COUNT(*) AS Concert_Count
+FROM concert
+GROUP BY Year
+ORDER BY Concert_Count DESC
+LIMIT 1;","Year  Concert_Count
+2015              3"
+28,Show the stadium names without any concert.,"SELECT stadium.Name
+FROM stadium
+LEFT JOIN concert ON stadium.Stadium_ID = concert.Stadium_ID
+WHERE concert.Stadium_ID IS NULL;","             Name
+  Bayview Stadium
+     Hampden Park
+Forthbank Stadium
+    Gayfield Park"
+29,What are the names of the stadiums without any concerts?,"SELECT stadium.Name
+FROM stadium
+LEFT JOIN concert ON stadium.Stadium_ID = concert.Stadium_ID
+WHERE concert.Stadium_ID IS NULL;","             Name
+  Bayview Stadium
+     Hampden Park
+Forthbank Stadium
+    Gayfield Park"
+30,Show countries where a singer above age 40 and a singer below 30 are from.,"SELECT DISTINCT s1.Country
+FROM singer s1
+JOIN singer s2 ON s1.Country = s2.Country
+WHERE s1.Age > 40 AND s2.Age < 30","Country
+ France"
+31,Show names for all stadiums except for stadiums having a concert in year 2014.,"SELECT stadium.Name
+FROM stadium
+WHERE stadium.Stadium_ID NOT IN (
+    SELECT concert.Stadium_ID
+    FROM concert
+    WHERE concert.Year = '2014'
+)","             Name
+  Bayview Stadium
+     Hampden Park
+Forthbank Stadium
+    Gayfield Park
+  Recreation Park
+          Balmoor"
+32,What are the names of all stadiums that did not have a concert in 2014?,"SELECT stadium.Name
+FROM stadium
+WHERE stadium.Stadium_ID NOT IN (
+    SELECT concert.Stadium_ID
+    FROM concert
+    WHERE concert.Year = '2014'
+)","             Name
+  Bayview Stadium
+     Hampden Park
+Forthbank Stadium
+    Gayfield Park
+  Recreation Park
+          Balmoor"
+33,Show the name and theme for all concerts and the number of singers in each concert.,"SELECT concert.concert_Name, concert.Theme, COUNT(singer_in_concert.Singer_ID) AS Number_of_Singers
+FROM concert
+LEFT JOIN singer_in_concert ON concert.concert_ID = singer_in_concert.concert_ID
+GROUP BY concert.concert_ID;","  concert_Name           Theme  Number_of_Singers
+     Auditions     Free choice                  3
+Super bootcamp   Free choice 2                  2
+   Home Visits   Bleeding Love                  1
+        Week 1      Wide Awake                  1
+        Week 1   Happy Tonight                  2
+        Week 2 Party All Night                  1"
+34,"What are the names , themes , and number of singers for every concert ?","SELECT concert.concert_Name, concert.Theme, COUNT(singer_in_concert.Singer_ID) AS Number_of_Singers
+FROM concert
+JOIN singer_in_concert ON concert.concert_ID = singer_in_concert.concert_ID
+GROUP BY concert.concert_ID;","  concert_Name           Theme  Number_of_Singers
+     Auditions     Free choice                  3
+Super bootcamp   Free choice 2                  2
+   Home Visits   Bleeding Love                  1
+        Week 1      Wide Awake                  1
+        Week 1   Happy Tonight                  2
+        Week 2 Party All Night                  1"
+35,List singer names and number of concerts for each singer.,"SELECT singer.Name, COUNT(singer_in_concert.concert_ID) AS Number_of_Concerts
+FROM singer
+JOIN singer_in_concert ON singer.Singer_ID = singer_in_concert.Singer_ID
+GROUP BY singer.Name;","        Name  Number_of_Concerts
+John Nizinik                   2
+Justin Brown                   3
+  Rose White                   1
+   Timbaland                   2
+ Tribal King                   2"
+36,What are the names of the singers and number of concerts for each person?,"SELECT singer.Name, COUNT(concert_ID) AS Number_of_Concerts
+FROM singer
+JOIN singer_in_concert ON singer.Singer_ID = singer_in_concert.Singer_ID
+GROUP BY singer.Name;","        Name  Number_of_Concerts
+John Nizinik                   2
+Justin Brown                   3
+  Rose White                   1
+   Timbaland                   2
+ Tribal King                   2"
+37,List all singer names in concerts in year 2014.,"SELECT singer.Name
+FROM singer
+JOIN singer_in_concert ON singer.Singer_ID = singer_in_concert.Singer_ID
+JOIN concert ON singer_in_concert.concert_ID = concert.concert_ID
+WHERE concert.Year = '2014';","        Name
+   Timbaland
+Justin Brown
+John Nizinik
+Justin Brown
+ Tribal King
+  Rose White"
+38,What are the names of the singers who performed in a concert in 2014?,"SELECT singer.Name
+FROM singer
+JOIN singer_in_concert ON singer.Singer_ID = singer_in_concert.Singer_ID
+JOIN concert ON singer_in_concert.concert_ID = concert.concert_ID
+WHERE concert.Year = '2014';","        Name
+   Timbaland
+Justin Brown
+John Nizinik
+Justin Brown
+ Tribal King
+  Rose White"
+39,what is the name and nation of the singer who have a song having 'Hey' in its name?,"SELECT singer.Name, singer.Country
+FROM singer
+WHERE singer.Song_Name LIKE '%Hey%'","        Name Country
+Justin Brown  France"
+40,What is the name and country of origin of every singer who has a song with the word 'Hey' in its title?,"SELECT singer.Name, singer.Country 
+FROM singer 
+WHERE singer.Song_Name LIKE '%Hey%'","        Name Country
+Justin Brown  France"
+41,Find the name and location of the stadiums which some concerts happened in the years of both 2014 and 2015.,"SELECT stadium.Name, stadium.Location
+FROM stadium
+WHERE stadium.Stadium_ID IN (
+    SELECT concert.Stadium_ID
+    FROM concert
+    WHERE concert.Year = '2014'
+) AND stadium.Stadium_ID IN (
+    SELECT concert.Stadium_ID
+    FROM concert
+    WHERE concert.Year = '2015'
+)","         Name   Location
+Somerset Park Ayr United"
+42,What are the names and locations of the stadiums that had concerts that occurred in both 2014 and 2015?,"SELECT stadium.Name, stadium.Location
+FROM stadium
+JOIN concert ON stadium.Stadium_ID = concert.Stadium_ID
+WHERE concert.Year IN ('2014', '2015')
+GROUP BY stadium.Stadium_ID
+HAVING COUNT(DISTINCT concert.Year) = 2;","         Name   Location
+Somerset Park Ayr United"
+43,Find the number of concerts happened in the stadium with the highest capacity .,"SELECT COUNT(*) 
+FROM concert 
+WHERE Stadium_ID = (
+  SELECT Stadium_ID 
+  FROM stadium 
+  ORDER BY Capacity DESC 
+  LIMIT 1
+);"," COUNT(*)
+        0"
+44,What are the number of concerts that occurred in the stadium with the largest capacity ?,"SELECT COUNT(concert_ID) 
+FROM concert 
+WHERE Stadium_ID = (
+  SELECT Stadium_ID 
+  FROM stadium 
+  ORDER BY Capacity DESC 
+  LIMIT 1
+)"," COUNT(concert_ID)
+                 0"

@@ -1,0 +1,26 @@
+Here is the first row of all tables in the database:
+
+Table: station
+
+First row: (2, 'San Jose Diridon Caltrain Station', 37.329732, -121.901782, 27, 'San Jose', '8/6/2013')
+
+----------------------------------------
+
+Table: status
+
+First row: (3, 12, 3, '2015-06-02 12:46:02')
+
+----------------------------------------
+
+Table: trip
+
+First row: (900504, 384, '8/21/2015 17:03', 'Howard at 2nd', 63, '8/21/2015 17:10', 'San Francisco Caltrain 2 (330 Townsend)', 69, 454, 'Subscriber', 94041)
+
+----------------------------------------
+
+Table: weather
+
+First row: ('8/29/2013', 74, 68, 61, 61, 58, 56, 93, 75, 57, 30.07, 30.02, 29.97, 10, 10, 10, 23, 11, 28, 0, 4, '', 286, 94107)
+
+----------------------------------------
+

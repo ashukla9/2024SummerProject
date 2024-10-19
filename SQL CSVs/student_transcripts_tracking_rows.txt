@@ -1,0 +1,68 @@
+Here is the first row of all tables in the database:
+
+Table: Addresses
+
+First row: (1, '2294 Grant Square Apt. 235', 'Apt. 370', None, 'Port Chelsea', '148', 'Virginia', 'Iceland', None)
+
+----------------------------------------
+
+Table: Courses
+
+First row: (1, 'ds', 'p', None)
+
+----------------------------------------
+
+Table: Departments
+
+First row: (1, 'computer science', 'error', None)
+
+----------------------------------------
+
+Table: Degree_Programs
+
+First row: (1, 13, 'Master', 'architecto', None)
+
+----------------------------------------
+
+Table: Sections
+
+First row: (1, 9, 'a', 'non', None)
+
+----------------------------------------
+
+Table: Semesters
+
+First row: (1, 'spring 2010', 'x', None)
+
+----------------------------------------
+
+Table: Students
+
+First row: (1, 10, 15, 'Timmothy', 'Anna', 'Ward', '(096)889-8954x524', 'erwin.zboncak@example.com', '965', '1971-02-05 07:28:23', '1971-05-17 19:28:49', 'quia')
+
+----------------------------------------
+
+Table: Student_Enrolment
+
+First row: (1, 12, 13, 14, None)
+
+----------------------------------------
+
+Table: Student_Enrolment_Courses
+
+First row: (0, 6, 2)
+
+----------------------------------------
+
+Table: Transcripts
+
+First row: (1, '1988-04-30 01:19:47', None)
+
+----------------------------------------
+
+Table: Transcript_Contents
+
+First row: (0, 2)
+
+----------------------------------------
+

@@ -1,0 +1,126 @@
+Here is the schema of the database:
+
+Table: Document_Types
+Columns:
+  - document_type_code (VARCHAR(10))
+  - document_description (VARCHAR(255))
+Primary Keys:
+  - document_type_code
+Foreign Keys:
+
+Table: Documents
+Columns:
+  - document_id (INTEGER)
+  - document_type_code (VARCHAR(10))
+  - grant_id (INTEGER)
+  - sent_date (DATETIME)
+  - response_received_date (DATETIME)
+  - other_details (VARCHAR(255))
+Primary Keys:
+  - document_id
+Foreign Keys:
+  - grant_id references Grants(grant_id)
+  - document_type_code references Document_Types(document_type_code)
+
+Table: Grants
+Columns:
+  - grant_id (INTEGER)
+  - organisation_id (INTEGER)
+  - grant_amount (DECIMAL(19,4))
+  - grant_start_date (DATETIME)
+  - grant_end_date (DATETIME)
+  - other_details (VARCHAR(255))
+Primary Keys:
+  - grant_id
+Foreign Keys:
+  - organisation_id references Organisations(organisation_id)
+
+Table: Organisation_Types
+Columns:
+  - organisation_type (VARCHAR(10))
+  - organisation_type_description (VARCHAR(255))
+Primary Keys:
+  - organisation_type
+Foreign Keys:
+
+Table: Organisations
+Columns:
+  - organisation_id (INTEGER)
+  - organisation_type (VARCHAR(10))
+  - organisation_details (VARCHAR(255))
+Primary Keys:
+  - organisation_id
+Foreign Keys:
+  - organisation_type references Organisation_Types(organisation_type)
+
+Table: Project_Outcomes
+Columns:
+  - project_id (INTEGER)
+  - outcome_code (VARCHAR(10))
+  - outcome_details (VARCHAR(255))
+Primary Keys:
+Foreign Keys:
+  - outcome_code references Research_Outcomes(outcome_code)
+  - project_id references Projects(project_id)
+
+Table: Project_Staff
+Columns:
+  - staff_id (DOUBLE)
+  - project_id (INTEGER)
+  - role_code (VARCHAR(10))
+  - date_from (DATETIME)
+  - date_to (DATETIME)
+  - other_details (VARCHAR(255))
+Primary Keys:
+  - staff_id
+Foreign Keys:
+  - role_code references Staff_Roles(role_code)
+  - project_id references Projects(project_id)
+
+Table: Projects
+Columns:
+  - project_id (INTEGER)
+  - organisation_id (INTEGER)
+  - project_details (VARCHAR(255))
+Primary Keys:
+  - project_id
+Foreign Keys:
+  - organisation_id references Organisations(organisation_id)
+
+Table: Research_Outcomes
+Columns:
+  - outcome_code (VARCHAR(10))
+  - outcome_description (VARCHAR(255))
+Primary Keys:
+  - outcome_code
+Foreign Keys:
+
+Table: Research_Staff
+Columns:
+  - staff_id (INTEGER)
+  - employer_organisation_id (INTEGER)
+  - staff_details (VARCHAR(255))
+Primary Keys:
+  - staff_id
+Foreign Keys:
+  - employer_organisation_id references Organisations(organisation_id)
+
+Table: Staff_Roles
+Columns:
+  - role_code (VARCHAR(10))
+  - role_description (VARCHAR(255))
+Primary Keys:
+  - role_code
+Foreign Keys:
+
+Table: Tasks
+Columns:
+  - task_id (INTEGER)
+  - project_id (INTEGER)
+  - task_details (VARCHAR(255))
+  - eg Agree Objectives (VARCHAR(1))
+Primary Keys:
+  - task_id
+Foreign Keys:
+  - project_id references Projects(project_id)
+

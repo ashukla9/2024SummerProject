@@ -1,0 +1,134 @@
+Here is the schema of the database:
+
+Table: Addresses
+Columns:
+  - address_id (INTEGER)
+  - line_1 (VARCHAR(255))
+  - line_2 (VARCHAR(255))
+  - line_3 (VARCHAR(255))
+  - city (VARCHAR(255))
+  - zip_postcode (VARCHAR(20))
+  - state_province_county (VARCHAR(255))
+  - country (VARCHAR(255))
+  - other_address_details (VARCHAR(255))
+Primary Keys:
+  - address_id
+Foreign Keys:
+
+Table: Courses
+Columns:
+  - course_id (INTEGER)
+  - course_name (VARCHAR(255))
+  - course_description (VARCHAR(255))
+  - other_details (VARCHAR(255))
+Primary Keys:
+  - course_id
+Foreign Keys:
+
+Table: Departments
+Columns:
+  - department_id (INTEGER)
+  - department_name (VARCHAR(255))
+  - department_description (VARCHAR(255))
+  - other_details (VARCHAR(255))
+Primary Keys:
+  - department_id
+Foreign Keys:
+
+Table: Degree_Programs
+Columns:
+  - degree_program_id (INTEGER)
+  - department_id (INTEGER)
+  - degree_summary_name (VARCHAR(255))
+  - degree_summary_description (VARCHAR(255))
+  - other_details (VARCHAR(255))
+Primary Keys:
+  - degree_program_id
+Foreign Keys:
+  - department_id references Departments(department_id)
+
+Table: Sections
+Columns:
+  - section_id (INTEGER)
+  - course_id (INTEGER)
+  - section_name (VARCHAR(255))
+  - section_description (VARCHAR(255))
+  - other_details (VARCHAR(255))
+Primary Keys:
+  - section_id
+Foreign Keys:
+  - course_id references Courses(course_id)
+
+Table: Semesters
+Columns:
+  - semester_id (INTEGER)
+  - semester_name (VARCHAR(255))
+  - semester_description (VARCHAR(255))
+  - other_details (VARCHAR(255))
+Primary Keys:
+  - semester_id
+Foreign Keys:
+
+Table: Students
+Columns:
+  - student_id (INTEGER)
+  - current_address_id (INTEGER)
+  - permanent_address_id (INTEGER)
+  - first_name (VARCHAR(80))
+  - middle_name (VARCHAR(40))
+  - last_name (VARCHAR(40))
+  - cell_mobile_number (VARCHAR(40))
+  - email_address (VARCHAR(40))
+  - ssn (VARCHAR(40))
+  - date_first_registered (DATETIME)
+  - date_left (DATETIME)
+  - other_student_details (VARCHAR(255))
+Primary Keys:
+  - student_id
+Foreign Keys:
+  - permanent_address_id references Addresses(address_id)
+  - current_address_id references Addresses(address_id)
+
+Table: Student_Enrolment
+Columns:
+  - student_enrolment_id (INTEGER)
+  - degree_program_id (INTEGER)
+  - semester_id (INTEGER)
+  - student_id (INTEGER)
+  - other_details (VARCHAR(255))
+Primary Keys:
+  - student_enrolment_id
+Foreign Keys:
+  - student_id references Students(student_id)
+  - semester_id references Semesters(semester_id)
+  - degree_program_id references Degree_Programs(degree_program_id)
+
+Table: Student_Enrolment_Courses
+Columns:
+  - student_course_id (INTEGER)
+  - course_id (INTEGER)
+  - student_enrolment_id (INTEGER)
+Primary Keys:
+  - student_course_id
+Foreign Keys:
+  - student_enrolment_id references Student_Enrolment(student_enrolment_id)
+  - course_id references Courses(course_id)
+
+Table: Transcripts
+Columns:
+  - transcript_id (INTEGER)
+  - transcript_date (DATETIME)
+  - other_details (VARCHAR(255))
+Primary Keys:
+  - transcript_id
+Foreign Keys:
+
+Table: Transcript_Contents
+Columns:
+  - student_course_id (INTEGER)
+  - transcript_id (INTEGER)
+Primary Keys:
+Foreign Keys:
+  - transcript_id references Transcripts(transcript_id)
+  - student_course_id references Student_Enrolment_Courses(student_course_id)
+

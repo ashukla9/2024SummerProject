@@ -1,0 +1,121 @@
+,Natural Language Query,Generated SQL Query,Result
+0,What is the most common status across all cities?,"SELECT city, COUNT(city) AS city_count
+FROM Addresses
+GROUP BY city
+ORDER BY city_count DESC
+LIMIT 1;","       city  city_count
+Terencetown           1"
+1,List the official names of cities that have not held any competition.,"SELECT The schema provided does not contain any information or tables related to competitions. Therefore, it is not possible to write an SQL query based on the provided schema to list the official names of cities that have not held any competition.","An error occurred: Execution failed on sql 'SELECT The schema provided does not contain any information or tables related to competitions. Therefore, it is not possible to write an SQL query based on the provided schema to list the official names of cities that have not held any competition.': near ""provided"": syntax error"
+2,What are the official names of cities that have not hosted a farm competition?,"SELECT The provided schema does not contain any information or tables related to ""farm competition"". Therefore, it's impossible to write a SQL query based on the provided schema to answer the question ""What are the official names of cities that have not hosted a farm competition?"".","An error occurred: Execution failed on sql 'SELECT The provided schema does not contain any information or tables related to ""farm competition"". Therefore, it's impossible to write a SQL query based on the provided schema to answer the question ""What are the official names of cities that have not hosted a farm competition?"".': near ""schema"": syntax error"
+3,Show the status shared by cities with population bigger than 1500 and smaller than 500.,SELECT Your query seems to have a logical contradiction. A city cannot have a population bigger than 1500 and smaller than 500 at the same time. Please revise your query.,"An error occurred: Execution failed on sql 'SELECT Your query seems to have a logical contradiction. A city cannot have a population bigger than 1500 and smaller than 500 at the same time. Please revise your query.': near ""seems"": syntax error"
+4,Which statuses correspond to both cities that have a population over 1500 and cities that have a population lower than 500?,SELECT Your query seems to be missing some information. The provided schema does not include a table or columns related to city populations or statuses. Could you please provide the correct information or clarify your request?,"An error occurred: Execution failed on sql 'SELECT Your query seems to be missing some information. The provided schema does not include a table or columns related to city populations or statuses. Could you please provide the correct information or clarify your request?': near ""seems"": syntax error"
+5,Find the official names of cities with population bigger than 1500 or smaller than 500.,"SELECT The provided schema does not contain information about city populations, so it's impossible to write a SQL query based on the provided schema that would answer the question.","An error occurred: Execution failed on sql 'SELECT The provided schema does not contain information about city populations, so it's impossible to write a SQL query based on the provided schema that would answer the question.': near ""schema"": syntax error"
+6,What are the official names of cities that have population over 1500 or less than 500?,"SELECT The provided schema does not contain information about city populations, so it's impossible to write a SQL query based on the provided schema that would answer the question.","An error occurred: Execution failed on sql 'SELECT The provided schema does not contain information about city populations, so it's impossible to write a SQL query based on the provided schema that would answer the question.': near ""schema"": syntax error"
+7,"Show the census ranking of cities whose status are not ""Village"".",SELECT The provided schema does not contain information about the census ranking or the status of cities. Please provide the correct schema.,"An error occurred: Execution failed on sql 'SELECT The provided schema does not contain information about the census ranking or the status of cities. Please provide the correct schema.': near ""schema"": syntax error"
+8,"What are the census rankings of cities that do not have the status ""Village""?",SELECT The provided schema does not contain any information related to census rankings or the status of cities. Please provide the correct schema to generate the SQL query.,"An error occurred: Execution failed on sql 'SELECT The provided schema does not contain any information related to census rankings or the status of cities. Please provide the correct schema to generate the SQL query.': near ""schema"": syntax error"
+9,which course has most number of registered students?,"SELECT course_id, COUNT(student_id) AS student_count
+FROM Student_Course_Registrations
+GROUP BY course_id
+ORDER BY student_count DESC
+LIMIT 1;"," course_id  student_count
+       301              4"
+10,What is the name of the course with the most registered students?,"SELECT course_name 
+FROM Courses 
+WHERE course_id = (
+  SELECT course_id 
+  FROM Student_Course_Registrations 
+  GROUP BY course_id 
+  ORDER BY COUNT(student_id) DESC 
+  LIMIT 1
+)","course_name
+ statistics"
+11,what is id of students who registered some courses but the least number of courses in these students?,"SELECT student_id
+FROM Student_Course_Registrations
+GROUP BY student_id
+HAVING COUNT(course_id) = (
+  SELECT MIN(course_count)
+  FROM (
+    SELECT COUNT(course_id) as course_count
+    FROM Student_Course_Registrations
+    GROUP BY student_id
+  ) AS subquery
+)"," student_id
+        111
+        131
+        151
+        161
+        171"
+12,What are the ids of the students who registered for some courses but had the least number of courses for all students?,"SELECT student_id
+FROM Student_Course_Registrations
+GROUP BY student_id
+HAVING COUNT(course_id) = (
+    SELECT MIN(course_count)
+    FROM (
+        SELECT COUNT(course_id) AS course_count
+        FROM Student_Course_Registrations
+        GROUP BY student_id
+    ) AS subquery
+)"," student_id
+        111
+        131
+        151
+        161
+        171"
+13,what are the first name and last name of all candidates?,"SELECT first_name, last_name 
+FROM People 
+WHERE person_id IN (SELECT candidate_id FROM Candidates);","first_name  last_name
+   Shannon     Senger
+  Virginie   Hartmann
+   Dariana     Bednar
+     Verna      Grant
+      Hoyt Wintheiser
+     Mayra   Hartmann
+    Lizeth Bartoletti
+      Nova      Feest"
+14,What are the first and last names of all the candidates?,"SELECT first_name, last_name 
+FROM People 
+WHERE person_id IN (SELECT candidate_id FROM Candidates);","first_name  last_name
+   Shannon     Senger
+  Virginie   Hartmann
+   Dariana     Bednar
+     Verna      Grant
+      Hoyt Wintheiser
+     Mayra   Hartmann
+    Lizeth Bartoletti
+      Nova      Feest"
+15,List the id of students who never attends courses?,"SELECT student_id 
+FROM Students 
+WHERE student_id NOT IN (SELECT student_id FROM Student_Course_Attendance)"," student_id
+        131
+        181"
+16,What are the  ids of every student who has never attended a course?,"SELECT student_id 
+FROM Students 
+WHERE student_id NOT IN (SELECT student_id FROM Student_Course_Attendance)"," student_id
+        131
+        181"
+17,List the id of students who attended some courses?,"SELECT student_id 
+FROM Student_Course_Attendance 
+GROUP BY student_id;"," student_id
+        111
+        121
+        141
+        151
+        161
+        171"
+18,What are the ids of all students who have attended at least one course?,"SELECT student_id 
+FROM Student_Course_Attendance 
+GROUP BY student_id 
+HAVING COUNT(course_id) >= 1;"," student_id
+        111
+        121
+        141
+        151
+        161
+        171"
+19,What are the ids of all students for courses and what are the names of those courses?,"SELECT student_id, course_name 
+FROM Students 
+JOIN Student_Course_Registrations ON Students.student_id = Student_Course_Registrations.student_id 
+JOIN Courses ON Student_Course_Registrations.course_id = Courses.course_id;","An error occurred: Execution failed on sql 'SELECT student_id, course_name 
+FROM Students 
+JOIN Student_Course_Registrations ON Students.student_id = Student_Course_Registrations.student_id 
+JOIN Courses ON Student_Course_Registrations.course_id = Courses.course_id;': ambiguous column name: student_id"

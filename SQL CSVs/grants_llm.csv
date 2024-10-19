@@ -1,0 +1,767 @@
+,Natural Language Query,Generated SQL Query,Result
+0,What are the distinct grant amount for the grants where the documents were sent before '1986-08-26 20:49:27' and grant were ended after '1989-03-16 18:27:16'?,"SELECT DISTINCT g.grant_amount
+FROM Grants g
+JOIN Documents d ON g.grant_id = d.grant_id
+WHERE d.sent_date < '1986-08-26 20:49:27' AND g.grant_end_date > '1989-03-16 18:27:16';"," grant_amount
+  608413.3291
+       1.9848"
+1,What are the different grant amounts for documents sent before '1986-08-26 20:49:27' and after the grant ended on '1989-03-16 18:27:16'?,"SELECT DISTINCT grant_amount 
+FROM Grants 
+JOIN Documents ON Grants.grant_id = Documents.grant_id 
+WHERE sent_date < '1986-08-26 20:49:27' AND grant_end_date > '1989-03-16 18:27:16';"," grant_amount
+  608413.3291
+       1.9848"
+2,List the project details of the project both producing patent and paper as outcomes.,"SELECT Projects.project_id, Projects.project_details
+FROM Projects
+WHERE Projects.project_id IN (
+    SELECT Project_Outcomes.project_id
+    FROM Project_Outcomes
+    WHERE Project_Outcomes.outcome_code IN (
+        SELECT Research_Outcomes.outcome_code
+        FROM Research_Outcomes
+        WHERE Research_Outcomes.outcome_description = 'patent'
+    )
+)
+AND Projects.project_id IN (
+    SELECT Project_Outcomes.project_id
+    FROM Project_Outcomes
+    WHERE Project_Outcomes.outcome_code IN (
+        SELECT Research_Outcomes.outcome_code
+        FROM Research_Outcomes
+        WHERE Research_Outcomes.outcome_description = 'paper'
+    )
+);","Empty DataFrame
+Columns: [project_id, project_details]
+Index: []"
+3,What are the details of the project that is producing both patents and papers as outcomes?,"SELECT Projects.project_details
+FROM Projects
+INNER JOIN Project_Outcomes ON Projects.project_id = Project_Outcomes.project_id
+INNER JOIN Research_Outcomes ON Project_Outcomes.outcome_code = Research_Outcomes.outcome_code
+WHERE Research_Outcomes.outcome_description IN ('patents', 'papers')
+GROUP BY Projects.project_id, Projects.project_details
+HAVING COUNT(DISTINCT Research_Outcomes.outcome_description) = 2;","Empty DataFrame
+Columns: [project_details]
+Index: []"
+4,What is the total grant amount of the organisations described as research?,"SELECT SUM(Grants.grant_amount)
+FROM Grants
+JOIN Organisations ON Grants.organisation_id = Organisations.organisation_id
+JOIN Organisation_Types ON Organisations.organisation_type = Organisation_Types.organisation_type
+WHERE Organisation_Types.organisation_type_description = 'research';","SUM(Grants.grant_amount)
+                    None"
+5,What is the total amount of grant money for research?,"SELECT SUM(grant_amount) 
+FROM Grants;"," SUM(grant_amount)
+      1.228097e+08"
+6,List from which date and to which date these staff work: project staff of the project which hires the most staffs,"SELECT project_id, date_from, date_to
+FROM Project_Staff
+WHERE project_id = (
+  SELECT project_id
+  FROM Project_Staff
+  GROUP BY project_id
+  ORDER BY COUNT(staff_id) DESC
+  LIMIT 1
+)"," project_id           date_from             date_to
+          2 1981-10-04 22:44:50 1985-05-30 22:26:30
+          2 1981-10-09 21:32:53 2004-12-16 13:03:36
+          2 1973-12-12 11:46:28 1971-07-19 22:49:05"
+7,From what date and to what date do the staff work on a project that has the most staff and has staff in a leader role?,"SELECT the_project.project_id, MIN(date_from) AS start_date, MAX(date_to) AS end_date
+FROM (
+  SELECT project_id, COUNT(DISTINCT staff_id) AS staff_count
+  FROM Project_Staff
+  GROUP BY project_id
+  ORDER BY staff_count DESC
+  LIMIT 1
+) AS the_project
+JOIN Project_Staff ON the_project.project_id = Project_Staff.project_id
+WHERE role_code IN (
+  SELECT role_code
+  FROM Staff_Roles
+  WHERE role_description LIKE '%leader%'
+)
+GROUP BY the_project.project_id;"," project_id          start_date            end_date
+          2 1981-10-04 22:44:50 1985-05-30 22:26:30"
+8,Find the organisation ids and details of the organisations which are involved in,"SELECT organisation_id, organisation_details 
+FROM Organisations;"," organisation_id organisation_details
+               1                   et
+               2                 eius
+               3              impedit
+               4                  eos
+               5              tenetur
+               6              dolorem
+               7               itaque
+               8              aperiam
+               9                    a
+              10             officiis
+              11              eveniet
+              12               itaque
+              13             voluptas
+              14                  quo
+              15         consequuntur"
+9,What are the ids and details for all organizations that have grants of more than 6000 dollars?,"SELECT Organisations.organisation_id, Organisations.organisation_details
+FROM Organisations
+INNER JOIN Grants ON Organisations.organisation_id = Grants.organisation_id
+WHERE Grants.grant_amount > 6000;"," organisation_id organisation_details
+              14                  quo
+               2                 eius
+               7               itaque
+              10             officiis
+              12               itaque
+               9                    a"
+10,What is the organisation type and id of the organisation which has the most number of research staff?,"SELECT organisation_type, organisation_id
+FROM Organisations
+WHERE organisation_id = (
+  SELECT employer_organisation_id
+  FROM Research_Staff
+  GROUP BY employer_organisation_id
+  ORDER BY COUNT(*) DESC
+  LIMIT 1
+)","organisation_type  organisation_id
+             SPON                5"
+11,What is the type and id of the organization that has the most research staff?,"SELECT organisation_type, organisation_id
+FROM Organisations
+WHERE organisation_id IN (
+  SELECT employer_organisation_id
+  FROM Research_Staff
+  GROUP BY employer_organisation_id
+  ORDER BY COUNT(*) DESC
+  LIMIT 1
+)","organisation_type  organisation_id
+             SPON                5"
+12,Which organisation type hires most research staff?,"SELECT organisation_type, COUNT(*) as staff_count
+FROM Research_Staff
+JOIN Organisations ON Research_Staff.employer_organisation_id = Organisations.organisation_id
+GROUP BY organisation_type
+ORDER BY staff_count DESC
+LIMIT 1;","organisation_type  staff_count
+              RES            9"
+13,What is the type of the organization with the most research staff?,"SELECT organisation_type 
+FROM Organisations 
+WHERE organisation_id = (
+    SELECT employer_organisation_id 
+    FROM Research_Staff 
+    GROUP BY employer_organisation_id 
+    ORDER BY COUNT(staff_id) DESC 
+    LIMIT 1
+)","organisation_type
+             SPON"
+14,Find out the send dates of the documents with the grant amount of more than 5000 were granted by organisation type described,"SELECT Documents.sent_date
+FROM Documents
+JOIN Grants ON Documents.grant_id = Grants.grant_id
+JOIN Organisations ON Grants.organisation_id = Organisations.organisation_id
+JOIN Organisation_Types ON Organisations.organisation_type = Organisation_Types.organisation_type
+WHERE Grants.grant_amount > 5000;","          sent_date
+1986-11-30 07:56:35
+1979-07-04 08:54:23
+2001-06-18 06:35:49
+2002-07-26 15:50:28
+1993-02-19 16:31:12
+2000-06-06 01:03:46
+1981-08-06 14:56:55"
+15,What are the send dates for all documents that have a grant amount of more than 5000 and are involved in research?,"SELECT Documents.sent_date
+FROM Documents
+JOIN Grants ON Documents.grant_id = Grants.grant_id
+WHERE Grants.grant_amount > 5000;","          sent_date
+1986-11-30 07:56:35
+1979-07-04 08:54:23
+2001-06-18 06:35:49
+2002-07-26 15:50:28
+1993-02-19 16:31:12
+2000-06-06 01:03:46
+1981-08-06 14:56:55"
+16,What are the response received dates for the documents described as 'Regular' or granted with more than 100?,"SELECT Documents.response_received_date
+FROM Documents
+JOIN Document_Types ON Documents.document_type_code = Document_Types.document_type_code
+JOIN Grants ON Documents.grant_id = Grants.grant_id
+WHERE Document_Types.document_description = 'Regular' OR Grants.grant_amount > 100;","response_received_date
+   1977-12-01 02:18:53
+   1995-09-12 13:13:48
+   1986-05-23 07:17:59
+   1976-10-04 22:13:27
+   1986-05-18 01:54:56
+   1987-10-29 15:35:50
+   1994-03-13 01:52:45
+   1977-01-27 07:14:11
+   1971-08-28 11:20:56
+   1999-06-01 18:41:00"
+17,What is the response received date for the document described as Regular that was granted more than 100 dollars?,"SELECT Documents.response_received_date
+FROM Documents
+JOIN Document_Types ON Documents.document_type_code = Document_Types.document_type_code
+JOIN Grants ON Documents.grant_id = Grants.grant_id
+WHERE Document_Types.document_description = 'Regular' AND Grants.grant_amount > 100;","response_received_date
+   1976-10-04 22:13:27
+   1987-10-29 15:35:50
+   1994-03-13 01:52:45"
+18,List the project details of the projects which did not hire any staff for a researcher role.,"SELECT P.project_id, P.project_details
+FROM Projects P
+WHERE P.project_id NOT IN (
+    SELECT PS.project_id
+    FROM Project_Staff PS
+    INNER JOIN Staff_Roles SR ON PS.role_code = SR.role_code
+    WHERE SR.role_description = 'researcher'
+)"," project_id project_details
+          1           porro
+          2              et
+          3            sint
+          4      doloremque
+          5             vel
+          6        deserunt
+          7        deleniti
+          8              ad
+          9             sed
+         10     consectetur
+         11         impedit
+         12           omnis
+         13             non
+         14          beatae
+         15         dolorem"
+19,What are the details for all projects that did not hire any staff in a research role?,"SELECT P.project_id, P.organisation_id, P.project_details
+FROM Projects P
+WHERE P.project_id NOT IN (
+    SELECT PS.project_id
+    FROM Project_Staff PS
+    INNER JOIN Staff_Roles SR ON PS.role_code = SR.role_code
+    WHERE SR.role_description = 'Research'
+)"," project_id  organisation_id project_details
+          1               15           porro
+          2               11              et
+          3                7            sint
+          4                4      doloremque
+          5               11             vel
+          6               10        deserunt
+          7                3        deleniti
+          8                1              ad
+          9                4             sed
+         10                4     consectetur
+         11               13         impedit
+         12               12           omnis
+         13                3             non
+         14                1          beatae
+         15                5         dolorem"
+20,"What are the task details, task id and project id for the projects which are detailed as 'omnis' or  have more than 2 outcomes?","SELECT Tasks.task_details, Tasks.task_id, Tasks.project_id
+FROM Tasks
+INNER JOIN Projects ON Tasks.project_id = Projects.project_id
+WHERE Projects.project_details = 'omnis'
+OR Projects.project_id IN (
+    SELECT Project_Outcomes.project_id
+    FROM Project_Outcomes
+    GROUP BY Project_Outcomes.project_id
+    HAVING COUNT(Project_Outcomes.outcome_code) > 2
+)","task_details  task_id  project_id
+           r        7           7
+           m       12          12"
+21,"What are the task details, task ids, and project ids for the progrects that are detailed as 'omnis' or have at least 3 outcomes?","SELECT Tasks.task_details, Tasks.task_id, Tasks.project_id
+FROM Tasks
+JOIN Projects ON Tasks.project_id = Projects.project_id
+JOIN Project_Outcomes ON Projects.project_id = Project_Outcomes.project_id
+WHERE Projects.project_details = 'omnis'
+OR Projects.project_id IN (
+    SELECT Project_Outcomes.project_id
+    FROM Project_Outcomes
+    GROUP BY Project_Outcomes.project_id
+    HAVING COUNT(Project_Outcomes.outcome_code) >= 3
+)","task_details  task_id  project_id
+           r        7           7
+           r        7           7
+           r        7           7
+           m       12          12"
+22,"When do all the researcher role staff start to work, and when do they stop working?","SELECT Project_Staff.date_from, Project_Staff.date_to
+FROM Project_Staff
+INNER JOIN Staff_Roles ON Project_Staff.role_code = Staff_Roles.role_code
+WHERE Staff_Roles.role_description = 'researcher';","Empty DataFrame
+Columns: [date_from, date_to]
+Index: []"
+23,When did researchers start and stop working?,"SELECT date_from, date_to 
+FROM Project_Staff;","          date_from             date_to
+1981-10-04 22:44:50 1985-05-30 22:26:30
+2003-04-19 15:06:20 2010-12-08 11:55:36
+1981-10-09 21:32:53 2004-12-16 13:03:36
+1983-02-07 17:55:59 2004-07-28 03:11:47
+2004-11-01 23:52:38 1988-03-04 19:30:05
+1991-01-11 16:57:50 1993-06-09 12:44:28
+2005-01-13 11:49:48 1973-07-19 04:51:26
+1970-03-25 06:18:11 1985-12-05 12:00:58
+1972-01-17 19:42:16 2016-03-15 00:33:18
+1970-04-06 15:50:21 1983-03-19 16:06:31
+2000-08-28 11:49:17 2007-02-02 17:26:02
+1989-04-24 23:51:54 2002-03-19 18:00:36
+1999-10-21 22:07:15 2008-09-25 20:06:28
+1970-01-02 15:35:05 1985-09-22 09:06:08
+1973-12-12 11:46:28 1971-07-19 22:49:05"
+24,How many kinds of roles are there for the staff?,SELECT COUNT(DISTINCT role_code) FROM Staff_Roles;," COUNT(DISTINCT role_code)
+                         2"
+25,How many different roles are there on the project staff?,SELECT COUNT(DISTINCT role_code) FROM Project_Staff;," COUNT(DISTINCT role_code)
+                         2"
+26,What is the total amount of grants given by each organisations? Also list the organisation id.,"SELECT organisation_id, SUM(grant_amount) as total_grant_amount
+FROM Grants
+GROUP BY organisation_id;"," organisation_id  total_grant_amount
+               2        6.084380e+05
+               3        2.812446e+02
+               5        6.107004e+02
+               7        7.697781e+07
+               8        4.280610e+01
+               9        2.531351e+04
+              10        3.867950e+07
+              11        3.306339e+02
+              12        2.001349e+06
+              14        4.516014e+06"
+27,What is the total amount of grant money given to each organization and what is its id?,"SELECT organisation_id, SUM(grant_amount) as total_grant_amount
+FROM Grants
+GROUP BY organisation_id;"," organisation_id  total_grant_amount
+               2        6.084380e+05
+               3        2.812446e+02
+               5        6.107004e+02
+               7        7.697781e+07
+               8        4.280610e+01
+               9        2.531351e+04
+              10        3.867950e+07
+              11        3.306339e+02
+              12        2.001349e+06
+              14        4.516014e+06"
+28,List the project details of the projects with the research outcome described with the substring 'Published'.,"SELECT Projects.project_details
+FROM Projects
+JOIN Project_Outcomes ON Projects.project_id = Project_Outcomes.project_id
+JOIN Research_Outcomes ON Project_Outcomes.outcome_code = Research_Outcomes.outcome_code
+WHERE Research_Outcomes.outcome_description LIKE '%Published%';","project_details
+     doloremque
+            sed
+       deserunt
+        impedit
+         beatae
+            non
+       deleniti
+       deleniti
+            non
+       deleniti"
+29,What are the details for the project whose research has been published?,"SELECT Projects.project_id, Projects.organisation_id, Projects.project_details
+FROM Projects
+INNER JOIN Project_Outcomes ON Projects.project_id = Project_Outcomes.project_id
+WHERE Project_Outcomes.outcome_code IN (SELECT outcome_code FROM Research_Outcomes WHERE outcome_description = 'Published');","Empty DataFrame
+Columns: [project_id, organisation_id, project_details]
+Index: []"
+30,How many staff does each project has? List the project id and the number in an ascending order.,"SELECT project_id, COUNT(staff_id) AS staff_count
+FROM Project_Staff
+GROUP BY project_id
+ORDER BY staff_count ASC;"," project_id  staff_count
+          3            1
+          4            1
+          7            1
+          8            1
+          9            1
+         15            1
+          1            2
+          5            2
+         11            2
+          2            3"
+31,"For each project id, how many staff does it have? List them in increasing order.","SELECT project_id, COUNT(staff_id) AS staff_count
+FROM Project_Staff
+GROUP BY project_id
+ORDER BY staff_count ASC;"," project_id  staff_count
+          3            1
+          4            1
+          7            1
+          8            1
+          9            1
+         15            1
+          1            2
+          5            2
+         11            2
+          2            3"
+32,What is the complete description of the researcher role.,"SELECT role_description 
+FROM Staff_Roles 
+WHERE role_code = 'researcher';","  role_description
+Project Researcher"
+33,What is the complete description of the job of a researcher?,"SELECT role_description 
+FROM Staff_Roles 
+WHERE role_code = 'researcher';","  role_description
+Project Researcher"
+34,When did the first staff for the projects started working?,"SELECT MIN(date_from) 
+FROM Project_Staff;","     MIN(date_from)
+1970-01-02 15:35:05"
+35,When did the first staff member start working?,SELECT MIN(date_from) FROM Project_Staff;,"     MIN(date_from)
+1970-01-02 15:35:05"
+36,Which project made the most number of outcomes? List the project details and the project id.,"SELECT project_id, project_details
+FROM Projects
+WHERE project_id IN (
+  SELECT project_id
+  FROM Project_Outcomes
+  GROUP BY project_id
+  ORDER BY COUNT(outcome_code) DESC
+  LIMIT 1
+)"," project_id project_details
+          7        deleniti"
+37,What are the details and id of the project with the most outcomes?,"SELECT p.project_id, p.project_details
+FROM Projects p
+JOIN Project_Outcomes po ON p.project_id = po.project_id
+GROUP BY p.project_id, p.project_details
+ORDER BY COUNT(po.outcome_code) DESC
+LIMIT 1;"," project_id project_details
+          7        deleniti"
+38,Which projects have no outcome? List the project details.,"SELECT Projects.project_id, Projects.project_details
+FROM Projects
+LEFT JOIN Project_Outcomes ON Projects.project_id = Project_Outcomes.project_id
+WHERE Project_Outcomes.project_id IS NULL;"," project_id project_details
+          1           porro
+          2              et
+          8              ad
+         10     consectetur
+         15         dolorem"
+39,What are the details of the project with no outcomes?,"SELECT Projects.project_id, Projects.organisation_id, Projects.project_details
+FROM Projects
+LEFT JOIN Project_Outcomes ON Projects.project_id = Project_Outcomes.project_id
+WHERE Project_Outcomes.outcome_code IS NULL;"," project_id  organisation_id project_details
+          1               15           porro
+          2               11              et
+          8                1              ad
+         10                4     consectetur
+         15                5         dolorem"
+40,"Which organisation hired the most number of research staff? List the organisation id, type and detail.","SELECT organisation_id, organisation_type, organisation_details
+FROM Organisations
+WHERE organisation_id IN (
+  SELECT employer_organisation_id
+  FROM Research_Staff
+  GROUP BY employer_organisation_id
+  ORDER BY COUNT(staff_id) DESC
+  LIMIT 1
+)"," organisation_id organisation_type organisation_details
+               5              SPON              tenetur"
+41,"What are the ids, types, and details of the organization with the most research staff?","SELECT Organisations.organisation_id, Organisations.organisation_type, Organisations.organisation_details
+FROM Organisations
+JOIN Research_Staff
+ON Organisations.organisation_id = Research_Staff.employer_organisation_id
+GROUP BY Organisations.organisation_id, Organisations.organisation_type, Organisations.organisation_details
+HAVING COUNT(Research_Staff.staff_id) = 
+(
+  SELECT MAX(staff_count)
+  FROM 
+  (
+    SELECT COUNT(Research_Staff.staff_id) AS staff_count
+    FROM Research_Staff
+    GROUP BY Research_Staff.employer_organisation_id
+  ) AS subquery
+)"," organisation_id organisation_type organisation_details
+               2               RES                 eius
+               3               RES              impedit
+               5              SPON              tenetur"
+42,Show the role description and the id of the project staff involved in most number of project outcomes?,"SELECT role_description, project_id
+FROM Project_Staff ps
+JOIN Staff_Roles sr ON ps.role_code = sr.role_code
+JOIN Project_Outcomes po ON ps.project_id = po.project_id
+GROUP BY role_description, project_id
+ORDER BY COUNT(*) DESC
+LIMIT 1;","An error occurred: Execution failed on sql 'SELECT role_description, project_id
+FROM Project_Staff ps
+JOIN Staff_Roles sr ON ps.role_code = sr.role_code
+JOIN Project_Outcomes po ON ps.project_id = po.project_id
+GROUP BY role_description, project_id
+ORDER BY COUNT(*) DESC
+LIMIT 1;': ambiguous column name: project_id"
+43,"For each staff id, what is the description of the role that is involved with the most number of projects?","SELECT staff_id, role_description
+FROM Project_Staff ps
+JOIN Staff_Roles sr ON ps.role_code = sr.role_code
+GROUP BY staff_id
+HAVING COUNT(DISTINCT project_id) = (
+  SELECT MAX(project_count)
+  FROM (
+    SELECT COUNT(DISTINCT project_id) AS project_count
+    FROM Project_Staff
+    GROUP BY staff_id
+  ) AS subquery
+)","  staff_id   role_description
+       0.0     Project Leader
+       3.0 Project Researcher
+      29.0 Project Researcher
+      37.0 Project Researcher
+      45.0 Project Researcher
+      56.0     Project Leader
+     779.0 Project Researcher
+    6572.0 Project Researcher
+  674810.0     Project Leader
+ 3100031.0 Project Researcher
+ 5137097.0 Project Researcher
+ 5353407.0     Project Leader
+ 6065505.0     Project Leader
+13739108.0 Project Researcher
+49698449.0     Project Leader"
+44,Which document type is described with the prefix 'Initial'?,"SELECT document_type_code, document_description 
+FROM Document_Types 
+WHERE document_description LIKE 'Initial%';","document_type_code document_description
+               APP  Initial Application"
+45,What is the type of the document whose description starts with the word 'Initial'?,"SELECT document_type_code 
+FROM Document_Types 
+WHERE document_description LIKE 'Initial%';","document_type_code
+               APP"
+46,"For grants with both documents described as 'Regular' and documents described as 'Initial Application', list its start date.","SELECT G.grant_start_date
+FROM Grants G
+WHERE EXISTS (
+    SELECT 1
+    FROM Documents D
+    JOIN Document_Types DT ON D.document_type_code = DT.document_type_code
+    WHERE D.grant_id = G.grant_id AND DT.document_description = 'Regular'
+) AND EXISTS (
+    SELECT 1
+    FROM Documents D
+    JOIN Document_Types DT ON D.document_type_code = DT.document_type_code
+    WHERE D.grant_id = G.grant_id AND DT.document_description = 'Initial Application'
+);","   grant_start_date
+1979-10-29 07:44:22
+2004-11-10 02:26:01
+1982-04-07 00:07:43"
+47,"For grants that have descriptions of Regular and Initial Applications, what are their start dates?","SELECT grant_start_date 
+FROM Grants 
+WHERE grant_id IN (
+    SELECT grant_id 
+    FROM Documents 
+    WHERE document_type_code IN (
+        SELECT document_type_code 
+        FROM Document_Types 
+        WHERE document_description IN ('Regular', 'Initial Applications')
+    )
+);","   grant_start_date
+1979-10-29 07:44:22
+2015-12-14 13:02:11
+1986-08-26 20:49:27
+2004-11-10 02:26:01
+1982-04-07 00:07:43"
+48,How many documents can one grant have at most? List the grant id and number.,"SELECT grant_id, COUNT(document_id) AS number_of_documents
+FROM Documents
+GROUP BY grant_id
+ORDER BY number_of_documents DESC
+LIMIT 1;"," grant_id  number_of_documents
+       13                    5"
+49,"For each grant id, how many documents does it have, and which one has the most?","SELECT grant_id, COUNT(document_id) AS document_count, MAX(document_id) AS max_document_id
+FROM Documents
+GROUP BY grant_id
+ORDER BY document_count DESC, max_document_id DESC;"," grant_id  document_count  max_document_id
+       13               5               13
+       15               3               14
+        5               2                6
+        8               1               15
+        7               1               10
+        6               1                9
+       11               1                5
+       10               1                3"
+50,Find the organisation type description of the organisation detailed as 'quo'.,"SELECT Organisation_Types.organisation_type_description
+FROM Organisations
+JOIN Organisation_Types ON Organisations.organisation_type = Organisation_Types.organisation_type
+WHERE Organisations.organisation_details = 'quo';","organisation_type_description
+                     Research"
+51,What is the type description of the organization whose detail is listed as 'quo'?,"SELECT Organisation_Types.organisation_type_description
+FROM Organisations
+JOIN Organisation_Types ON Organisations.organisation_type = Organisation_Types.organisation_type
+WHERE Organisations.organisation_details = 'quo';","organisation_type_description
+                     Research"
+52,What are all the details of the organisations described as 'Sponsor'? Sort the result in an ascending order.,"SELECT * FROM Organisations
+JOIN Organisation_Types ON Organisations.organisation_type = Organisation_Types.organisation_type
+WHERE Organisation_Types.organisation_type_description = 'Sponsor'
+ORDER BY Organisations.organisation_id ASC;"," organisation_id organisation_type organisation_details organisation_type organisation_type_description
+               4              SPON                  eos              SPON                       Sponsor
+               5              SPON              tenetur              SPON                       Sponsor
+               8              SPON              aperiam              SPON                       Sponsor
+              10              SPON             officiis              SPON                       Sponsor
+              11              SPON              eveniet              SPON                       Sponsor
+              13              SPON             voluptas              SPON                       Sponsor
+              15              SPON         consequuntur              SPON                       Sponsor"
+53,What are the details of all organizations that are described as Sponsors and sort the results in ascending order?,"SELECT Organisations.organisation_id, Organisations.organisation_details
+FROM Organisations
+INNER JOIN Organisation_Types ON Organisations.organisation_type = Organisation_Types.organisation_type
+WHERE Organisation_Types.organisation_type_description = 'Sponsors'
+ORDER BY Organisations.organisation_details ASC;","Empty DataFrame
+Columns: [organisation_id, organisation_details]
+Index: []"
+54,How many Patent outcomes are generated from all the projects?,"SELECT COUNT(*) 
+FROM Project_Outcomes 
+JOIN Research_Outcomes 
+ON Project_Outcomes.outcome_code = Research_Outcomes.outcome_code 
+WHERE Research_Outcomes.outcome_description = 'Patent';"," COUNT(*)
+        0"
+55,How many patents outcomes were listed for all the projects?,"SELECT COUNT(*)
+FROM Project_Outcomes
+WHERE outcome_code IN (SELECT outcome_code FROM Research_Outcomes WHERE outcome_description = 'Patents');"," COUNT(*)
+        0"
+56,How many project staff worked as leaders or started working before '1989-04-24 23:51:54'?,"SELECT COUNT(DISTINCT staff_id) 
+FROM Project_Staff 
+WHERE role_code = 'leader' OR date_from < '1989-04-24 23:51:54';"," COUNT(DISTINCT staff_id)
+                       11"
+57,How many project members were leaders or started working before '1989-04-24 23:51:54'?,"SELECT COUNT(DISTINCT ps.staff_id)
+FROM Project_Staff ps
+JOIN Staff_Roles sr ON ps.role_code = sr.role_code
+WHERE sr.role_description = 'Leader' OR ps.date_from < '1989-04-24 23:51:54';"," COUNT(DISTINCT ps.staff_id)
+                           8"
+58,What is the last date of the staff leaving the projects?,SELECT MAX(date_to) AS last_date_staff_left FROM Project_Staff;,"last_date_staff_left
+ 2016-03-15 00:33:18"
+59,What is the last date that a staff member left a project?,SELECT MAX(date_to) AS last_date_left FROM Project_Staff;,"     last_date_left
+2016-03-15 00:33:18"
+60,What are the result description of the project whose detail is 'sint'?,"SELECT outcome_description 
+FROM Research_Outcomes 
+WHERE outcome_code IN (
+    SELECT outcome_code 
+    FROM Project_Outcomes 
+    WHERE project_id IN (
+        SELECT project_id 
+        FROM Projects 
+        WHERE project_details = 'sint'
+    )
+);","outcome_description
+    Research Patent"
+61,What is the description for the results whose project detail is 'sint'?,"SELECT outcome_description 
+FROM Research_Outcomes 
+WHERE outcome_code IN (
+    SELECT outcome_code 
+    FROM Project_Outcomes 
+    WHERE project_id IN (
+        SELECT project_id 
+        FROM Projects 
+        WHERE project_details = 'sint'
+    )
+);","outcome_description
+    Research Patent"
+62,"List the organisation id with the maximum outcome count, and the count.","SELECT organisation_id, COUNT(*) as outcome_count
+FROM Project_Outcomes
+JOIN Projects ON Project_Outcomes.project_id = Projects.project_id
+GROUP BY organisation_id
+ORDER BY outcome_count DESC
+LIMIT 1;"," organisation_id  outcome_count
+               3              5"
+63,What is the id of the organization with the maximum number of outcomes and how many outcomes are there?,"SELECT organisation_id, COUNT(outcome_code) AS num_outcomes
+FROM Project_Outcomes
+JOIN Projects ON Project_Outcomes.project_id = Projects.project_id
+GROUP BY organisation_id
+ORDER BY num_outcomes DESC
+LIMIT 1;"," organisation_id  num_outcomes
+               3             5"
+64,List the project details of the projects launched by the organisation,"SELECT Projects.project_details
+FROM Projects
+INNER JOIN Organisations ON Projects.organisation_id = Organisations.organisation_id;","project_details
+          porro
+             et
+           sint
+     doloremque
+            vel
+       deserunt
+       deleniti
+             ad
+            sed
+    consectetur
+        impedit
+          omnis
+            non
+         beatae
+        dolorem"
+65,What are the details for the projects which were launched by the organization with the most projects?,"SELECT P.project_id, P.organisation_id, P.project_details
+FROM Projects P
+WHERE P.organisation_id = (
+    SELECT O.organisation_id
+    FROM Organisations O
+    JOIN Projects P ON O.organisation_id = P.organisation_id
+    GROUP BY O.organisation_id
+    ORDER BY COUNT(P.project_id) DESC
+    LIMIT 1
+)"," project_id  organisation_id project_details
+          4                4      doloremque
+          9                4             sed
+         10                4     consectetur"
+66,"List the research staff details, and order in ascending order.","SELECT staff_id, staff_details 
+FROM Research_Staff 
+ORDER BY staff_details ASC;"," staff_id staff_details
+       13            ab
+       14     accusamus
+        7         animi
+        3    aspernatur
+        6   consequatur
+        8   consequatur
+       15         dicta
+        4         dolor
+        5     doloribus
+        2           est
+       10          iure
+       12         nulla
+        1           quo
+        9          sint
+       11  voluptatibus"
+67,What details are there on the research staff? List the result in ascending alphabetical order.,"SELECT staff_id, employer_organisation_id, staff_details 
+FROM Research_Staff 
+ORDER BY staff_details ASC;"," staff_id  employer_organisation_id staff_details
+       13                         2            ab
+       14                         3     accusamus
+        7                         3         animi
+        3                         5    aspernatur
+        6                         5   consequatur
+        8                         5   consequatur
+       15                         2         dicta
+        4                         3         dolor
+        5                         2     doloribus
+        2                         4           est
+       10                         8          iure
+       12                        10         nulla
+        1                         1           quo
+        9                         6          sint
+       11                         9  voluptatibus"
+68,How many tasks are there in total?,SELECT COUNT(*) FROM Tasks;," COUNT(*)
+       15"
+69,How many tasks are there?,SELECT COUNT(*) FROM Tasks;," COUNT(*)
+       15"
+70,How many tasks does each project have? List the task count and the project detail.,"SELECT project_id, project_details, COUNT(task_id) AS task_count
+FROM Projects
+LEFT JOIN Tasks ON Projects.project_id = Tasks.project_id
+GROUP BY project_id, project_details;","An error occurred: Execution failed on sql 'SELECT project_id, project_details, COUNT(task_id) AS task_count
+FROM Projects
+LEFT JOIN Tasks ON Projects.project_id = Tasks.project_id
+GROUP BY project_id, project_details;': ambiguous column name: project_id"
+71,"For each project id, how many tasks are there?","SELECT project_id, COUNT(task_id) AS task_count
+FROM Tasks
+GROUP BY project_id;"," project_id  task_count
+          1           1
+          2           1
+          3           1
+          4           1
+          5           1
+          6           1
+          7           1
+          8           1
+          9           1
+         10           1
+         11           1
+         12           1
+         13           1
+         14           1
+         15           1"
+72,What are the staff roles of the staff who,SELECT Your question seems to be incomplete. Could you please provide the full details of the query?,"An error occurred: Execution failed on sql 'SELECT Your question seems to be incomplete. Could you please provide the full details of the query?': near ""seems"": syntax error"
+73,What roles did staff members play between '2003-04-19 15:06:20' and '2016-03-15 00:33:18'?,"SELECT role_code 
+FROM Project_Staff 
+WHERE date_from >= '2003-04-19 15:06:20' AND date_to <= '2016-03-15 00:33:18';"," role_code
+    leader
+    leader
+researcher"
+74,What are the descriptions of all the project outcomes?,"SELECT outcome_description 
+FROM Research_Outcomes;","     outcome_description
+Published Research Paper
+         Research Patent"
+75,List the description of the outcomes for all projects.,"SELECT outcome_description 
+FROM Research_Outcomes 
+JOIN Project_Outcomes ON Research_Outcomes.outcome_code = Project_Outcomes.outcome_code;","     outcome_description
+Published Research Paper
+         Research Patent
+Published Research Paper
+Published Research Paper
+         Research Patent
+Published Research Paper
+         Research Patent
+Published Research Paper
+Published Research Paper
+         Research Patent
+Published Research Paper
+         Research Patent
+Published Research Paper
+Published Research Paper
+Published Research Paper"
+76,Which role is most common for the staff?,"SELECT role_code
+FROM Project_Staff
+GROUP BY role_code
+ORDER BY COUNT(*) DESC
+LIMIT 1;"," role_code
+researcher"
+77,What is the most common role for the staff?,"SELECT role_code
+FROM Project_Staff
+GROUP BY role_code
+ORDER BY COUNT(*) DESC
+LIMIT 1;"," role_code
+researcher"
