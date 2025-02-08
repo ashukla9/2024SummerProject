@@ -1,11 +1,13 @@
 # **Part #1: Statistical Analysis & Prediction Models**
 
 **The first goal of my project was to determine “gold standard” statistical analysis pipelines for multi-table datasets.** Throughout this section of the project, I researched various statistical tools and predictive modeling techniques. I also compared my findings to those of various LLMs (GPT, Copilot, etc.) and found that LLMs often did not analyze data correctly. I pre-processed and worked with multi-table datasets I found online. A summary document can be found under “Statistics Summary.docx”, and my code (giving examples of each test I researched) can be found in "exploratory_data_analysis.py", "statistical_tests.py", and "regression_boosting.py". 
+
 First, I focused on tests to analyze continuous and categorical distributions. I researched the Shapiro-Wilk, Anderson-Darling, and Kolmogorov-Smirnov tests; I then generated data from various distributions at different sample sizes and ran these tests to better understand their accuracy. 
 
 Second, I researched various statistical tests (t-tests, ANOVA, etc.) for both parametric and non-parametric datasets. 
 
 Third, we wanted to understand which variables had the greatest influence on an outcome. I researched regression and boosting algorithms for this purpose. I spent the most time on multivariate regression because of the model’s coefficient interpretability; I discussed the various types of regression models (elastic net, lasso, ridge, vanilla) and the conditions under which we would use each. We decided to use elastic net regression in the product as it was the most multipurpose but noted that different models may perform better under certain circumstances. I also researched methods for encoding categorical variables. 
+
 We noted that models like CatBoost had higher predictive accuracy (and didn’t require pre-processing of categorical variables) but had lower coefficient interpretability. We also explored PCA and K-means clustering, though we noted these methods were more exploratory and unstable. Finally, I did a bit of time-series analysis. 
 
 # **Part #2: Natural Language to SQL Benchmarking**
