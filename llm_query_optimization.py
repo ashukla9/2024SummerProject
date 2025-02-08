@@ -4,8 +4,6 @@ Created on Mon Aug 5
 
 @author: anyas
 
-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
-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
 """
 #%%
 #initial imports
@@ -13,14 +11,14 @@ import pandas as pd
 import openai
 import sqlite3
 import requests
-openai.api_key = "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"
+openai.api_key = "XYZ"
 #%%
 database_path = r"C:\Users\anyas\Downloads\database\database\episodes\schema.db"
 
 def connect_db():
     return sqlite3.connect(database_path)
 
-## Get the schemas for each database
+## GET SCHEMAS FOR EACH DATABASE ##
 def fetch_schema():
     conn = connect_db()
     cursor = conn.cursor()
@@ -72,38 +70,7 @@ def fetch_schema():
 
 fetch_schema()
 #%%
-# database_path = r"C:\Users\anyas\Downloads\database\database\tracking_grants_for_research\schema.db"
-# conn = sqlite3.connect(database_path)
-# cursor = conn.cursor()
-
-# cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
-# tables = cursor.fetchall()
-
-# table_str = "Here is the first row of all tables in the database:\n\n"
-
-# for table in tables:
-#     table_name = table[0]
-#     try:
-#         cursor.execute(f"SELECT * FROM {table_name} LIMIT 1;")
-#         first_row = cursor.fetchone()
-        
-#         table_str += (f"Table: {table_name}\n\n")
-#         if first_row:
-#             table_str += (f"First row: {first_row}\n\n")
-#         else:
-#             table_str += ("Table is empty")
-#         table_str += ("-" * 40)
-#         table_str += ("\n\n")
-#     except sqlite3.Error as e:
-#         print(f"An error occurred while processing table {table_name}: {e}")
-        
-# conn.close()
-
-# file_path = r"C:\Users\anyas\Desktop\Summer Project\SQL CSVs\tracking_grants_for_research_rows.txt"
-# with open(file_path, "w") as file:
-#     file.write(table_str)
-#%%
-## Convert benchmark CSV to JSON
+## CONVERT BENCHMARK CSV TO JSON ##
 import csv
 import json
 import random
@@ -127,8 +94,9 @@ print(f"CSV data has been successfully converted to JSON and saved to {json_file
 #%%
 import json
 from openai import OpenAI
-client = OpenAI(api_key="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")
+client = OpenAI(api_key= "XYZ")
 
+##EXECUTE QUERY ON DATASET ##
 def execute_query(database, query):
     if database == 'california_schools' or database == 'card_games':
         database_path = "C:\\Users\\anyas\\Downloads\\database\\database\\" + database + "\\" + database + ".sqlite"
@@ -140,6 +108,9 @@ def execute_query(database, query):
     conn.close()
     return df
 
+## PASS THE NL QUERY INTO LLM AND ASK TO RETURN WHETHER QUERY IS CORRECT OR INCORRECT
+## BASELINE VARIABLE REPRESENTS DIFFERENT PROMPT ENGINEERING APPROACHES
+## JUST FOR EXPERIMENTING - BEST PROMPTS ARE DOWN BELOW ##
 def translate_to_sql(database, natural_language_query, llm_sql, schema_str, baseline, model):
     
     if baseline=="baseline":
@@ -159,7 +130,6 @@ def translate_to_sql(database, natural_language_query, llm_sql, schema_str, base
         messages=[
             {"role": "system", "content": "You are an expert SQL translator and verifier."},
             {"role": "system", "content": "First, determine whether the SQL query is correct or incorrect. Second, provide an explanation as to why."},
-            #{"role": "system", "content": "Assume all SQL queries are correctly formatted and there are no syntax errors."},
             {"role": "user", "content": f"Here is the schema of the database: {schema_str}"},
             {"role": "user", "content": f"Here is a natural language query {natural_language_query}. It has been translated to SQL as follows: {llm_sql}. Here is the first 500 characters of the SQL query result when executed against the database: {truncated_result_str}."},
             {"role": "user", "content": "TRUE or FALSE (and give an explanation): does the SQL response correctly answer the natural language query?"}
@@ -207,6 +177,8 @@ def translate_to_sql(database, natural_language_query, llm_sql, schema_str, base
     sql_query = response.choices[0].message.content
     return sql_query
 #%%
+## ASK LLM TO THINK ABOUT WHAT THIS QUERY IS QUERYING FOR BEFORE DETERMINING IF ANSWER IS TRUE OR FALSE
+## JUST FOR EXPERIMENTING - BEST PROMPTS ARE DOWN BELOW ##
 def conversation_to_sql(database, natural_language_query, llm_sql, schema_str, model):
     messages = [
         {"role": "system", "content": "You are an expert SQL translator and verifier."},
@@ -234,6 +206,7 @@ def conversation_to_sql(database, natural_language_query, llm_sql, schema_str, m
     sql_query = response.choices[0].message.content
     return query_result, sql_query
 #%%
+## EXTRACT SQL FROM LLM RESPONSE ##
 def extract_sql_code(text):
     start_marker = '```sql'
     start_pos = text.find(start_marker)
@@ -251,6 +224,7 @@ def extract_sql_code(text):
     
     return text[start_pos:end_pos].strip()
 #%%
+## BEST PROMPT FOR GPT-4O WHEN ASKING IT TO DETERMINE WHETHER A SQL QUERY IS CORRECT OR INCORRECT ##
 def gpt_4o_optimization(database, natural_language_query, llm_sql, schema_str, model="gpt-4o"):
     try:
         result = execute_query(database, llm_sql)
@@ -264,7 +238,6 @@ def gpt_4o_optimization(database, natural_language_query, llm_sql, schema_str, m
         {"role": "system", "content": "The following is very important: my career depends on it. Assume all SQL queries are syntactically correct but may or may not be logically correct. All queries are written for SQLite."},
         {"role": "user", "content": f"{schema_str}"},
         {"role": "user", "content": f"Here is a natural language query: {natural_language_query}. It has been translated to SQL as follows: {llm_sql}. Here is the first 500 characters of the SQL query when executed against the database: {truncated_result_str}. "},
-        # {"role": "user", "content": "TRUE or FALSE (and if FALSE, give the corrected query): does the SQL response correctly answer the natural language query?"}
         {"role": "user", "content": "TRUE or FALSE (and give an explanation): does the SQL response correctly answer the natural language query?"}
     ]
     
@@ -276,26 +249,27 @@ def gpt_4o_optimization(database, natural_language_query, llm_sql, schema_str, m
     )
     
     sql_query = response.choices[0].message.content
-    # sql_result = extract_sql_code(sql_query)
-    # if sql_result is not None and 'FALSE' in sql_query:
-    #     try:
-    #         second_result = execute_query(database, sql_result)
-    #         second_result_str = second_result.to_string(index=False)
-    #         second_truncated_result_str = second_result_str[:500]
-    #     except Exception as e:
-    #         second_truncated_result_str = f"An error occurred: {e}" 
-    #     messages.append({"role": "assistant", "content": sql_query})
-    #     messages.append({"role": "assistant", "content": f"Here is the first 500 characters of your SQL query when executed against the database: {second_truncated_result_str}. Now with this updated information, TRUE or FALSE (and if FALSE give an explanation): did the ORIGINAL SQL query correctly answer the natural language query?"})
-    #     response = openai.ChatCompletion.create(
-    #         model=model,
-    #         messages=messages,
-    #         temperature = 0.0,
-    #         max_tokens=150
-    #     )
+    sql_result = extract_sql_code(sql_query)
+    if sql_result is not None and 'FALSE' in sql_query:
+        try:
+            second_result = execute_query(database, sql_result)
+            second_result_str = second_result.to_string(index=False)
+            second_truncated_result_str = second_result_str[:500]
+        except Exception as e:
+            second_truncated_result_str = f"An error occurred: {e}" 
+        messages.append({"role": "assistant", "content": sql_query})
+        messages.append({"role": "assistant", "content": f"Here is the first 500 characters of your SQL query when executed against the database: {second_truncated_result_str}. Now with this updated information, TRUE or FALSE (and if FALSE give an explanation): did the ORIGINAL SQL query correctly answer the natural language query?"})
+        response = openai.ChatCompletion.create(
+            model=model,
+            messages=messages,
+            temperature = 0.0,
+            max_tokens=150
+        )
     
-    #     sql_query = response['choices'][0]['message']['content'].strip()
+        sql_query = response['choices'][0]['message']['content'].strip()
     return sql_query
 #%%
+## BEST PROMPT FOR GPT-4 WHEN ASKING IT TO DETERMINE WHETHER A SQL QUERY IS CORRECT OR INCORRECT ##
 def gpt_4_optimization(database, natural_language_query, llm_sql, schema_str, row_str, model="gpt-4"):
     try:
         result = execute_query(database, llm_sql)
@@ -340,6 +314,7 @@ def gpt_4_optimization(database, natural_language_query, llm_sql, schema_str, ro
         sql_query = response.choices[0].message.content
     return sql_query
 #%%
+## EXPERIMENTING WITH CODELLAMA ##
 from openai import OpenAI
 
 def code_llama(database, natural_language_query, llm_sql, schema_str):
@@ -358,10 +333,6 @@ def code_llama(database, natural_language_query, llm_sql, schema_str):
     chat_completion = client.chat.completions.create(
     	model="tgi",
         
-    	# messages=[
-     #            {"role": "system", "content": "You are an expert SQL translator and verifier. First, determine whether the SQL query is correct or incorrect. If it is incorrect, provide only the corrected SQL query. The following is very important: my career depends on it. Assume all SQL queries are syntactically correct but may or may not be logically correct. All queries are written for SQLite."},
-     #            {"role": "user", "content": f"{schema_str}. Here is a natural language query: {natural_language_query}. It has been translated to SQL as follows: {llm_sql}. Here is the first 500 characters of the SQL query when executed against the database: {truncated_result_str}. TRUE or FALSE (and give an explanation): does the SQL response correctly answer the natural language query?"}
-     #        ],
     	messages=[
                 {"role": "system", "content": "You are an expert SQL translator and verifier."},
                 {"role": "user", "content": f"{schema_str}. Here is a natural language query: {natural_language_query}. It has been translated to SQL as follows: {llm_sql}. TRUE or FALSE (and give an explanation): does the SQL response correctly answer the natural language query?"}
@@ -377,6 +348,7 @@ def code_llama(database, natural_language_query, llm_sql, schema_str):
         
     return final_string
 #%%
+## RUNS LLM ON EVERY QUERY IN DATASET ##
 results = []
 
 json_file_path = r"C:\Users\anyas\Desktop\Summer Project\SQL CSVs\Benchmark_Official.json"
@@ -402,26 +374,18 @@ for query in data:
         "LLM SQL Query": llm_query,
         "LLM Explanation": sql_query
     })
-    
-    # query_result, sql_query = conversation_to_sql(database, natural_language, llm_query, schema_str, model="gpt-4")
-
-    # results.append({
-    #     "Database": database,
-    #     "Natural Language Query": query,
-    #     "LLM SQL Query": llm_query,
-    #     "LLM SQL Query Understanding": query_result,
-    #     "LLM Explanation": sql_query
-    # })
 #%%
+## STORING DATASET TO PANDAS DATAFRAME ##
 llm_results_df = pd.DataFrame(results)
 #%%
+## CLASSIFYING RESULTS AS CORRECT/INCORRECT, PRINTING RESULTS ##
 llm_results_df['Correct'] = ""
 for i in range(len(llm_results_df)):
     if 'false' in llm_results_df['LLM Explanation'][i].lower() or 'no' in llm_results_df['LLM Explanation'][i].lower() or 'does not answer' in llm_results_df['LLM Explanation'][i] or 'incorrect' in llm_results_df['LLM Explanation'][i]or 'does not accurately answer' in llm_results_df['LLM Explanation'][i]:
         llm_results_df['Correct'][i] = 'FALSE'
     elif 'true' in llm_results_df['LLM Explanation'][i].lower() or 'yes' in llm_results_df['LLM Explanation'][i].lower() or 'will correctly answer' in llm_results_df['LLM Explanation'][i] or 'correct' in llm_results_df['LLM Explanation'][i] or 'correctly answers' in llm_results_df['LLM Explanation'][i]:
         llm_results_df['Correct'][i] = 'TRUE'
-#%%
+
 correct = 0
 false_positives = 0
 false_negatives = 0
@@ -438,23 +402,17 @@ for i in range(len(llm_results_df)):
         false_positives += 1
     elif llm_results_df['Correct'][i] == 'FALSE':
         false_negatives += 1
-#%%
-# print("Correct: ", correct, "/ 49")
-# print("False positives:", false_positives, "/ 49")
-# print("False negatives:", false_negatives, "/ 49")
-# print("Accuracy: ", correct/49)
+
 print("Correct: ", correct, "/ 73")
 print("False positives:", false_positives, "/ 73")
 print("False negatives:", false_negatives, "/ 73")
 print("Accuracy: ", correct/73)
 #%%
-print(llm_results_df['LLM Explanation'])
-#%%
+## SEND RESULTS BACK TO FILE ##
 json_file_path = r"C:\Users\anyas\Desktop\Summer Project\SQL CSVs\benchmark_gpt4o_6.json"
 
 for i in range(len(llm_results_df)):
     data[i]['GPT Response'] = llm_results_df['Correct'][i]
-    #data[i]['SQL Query Understanding'] = llm_results_df['LLM SQL Query Understanding'][i]
     data[i]['LLM Explanation'] = llm_results_df['LLM Explanation'][i]
 # Save the modified JSON data back to the file
 with open(json_file_path, 'w', encoding='utf-8') as file:

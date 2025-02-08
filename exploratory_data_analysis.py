@@ -3,6 +3,8 @@
 Created on Wed Jun 26 08:04:22 2024
 
 @author: anyas
+
+Tests to determine distribution of data along with basic exploratory data analysis.
 """
 
 #%%
@@ -11,118 +13,118 @@ import pandas as pd
 from scipy.stats import norm, expon, uniform, gamma, beta, chi2, logistic, pareto, weibull_min, t
 
 ## CREATING SIMULATED DISTRIBUTIONS FOR USE IN TESTING ##
-# num_bins = 10
-# num_draws = 15
+num_bins = 10
+num_draws = 15
 
-# data15 = {
-#     'Normal': norm.rvs(size=num_draws),
-#     'Exponential': expon.rvs(size=num_draws),
-#     'Uniform': uniform.rvs(size=num_draws),
-#     'Gamma': gamma.rvs(a=2, size=num_draws),
-#     'Beta': beta.rvs(a=2, b=5, size=num_draws),
-#     'Chi-squared': chi2.rvs(df=2, size=num_draws),
-#     'Logistic': logistic.rvs(loc=0, scale=0.954, size=num_draws),
-#     'Pareto': pareto.rvs(b=2.62, size=num_draws),
-#     'Weibull': weibull_min.rvs(c=1.5, size=num_draws),
-#     'Student\'s t': t.rvs(df=10, size=num_draws)
-# }
+data15 = {
+    'Normal': norm.rvs(size=num_draws),
+    'Exponential': expon.rvs(size=num_draws),
+    'Uniform': uniform.rvs(size=num_draws),
+    'Gamma': gamma.rvs(a=2, size=num_draws),
+    'Beta': beta.rvs(a=2, b=5, size=num_draws),
+    'Chi-squared': chi2.rvs(df=2, size=num_draws),
+    'Logistic': logistic.rvs(loc=0, scale=0.954, size=num_draws),
+    'Pareto': pareto.rvs(b=2.62, size=num_draws),
+    'Weibull': weibull_min.rvs(c=1.5, size=num_draws),
+    'Student\'s t': t.rvs(df=10, size=num_draws)
+}
 
-# df15 = pd.DataFrame(data15)
+df15 = pd.DataFrame(data15)
 
-# hist_data15 = {dist: np.histogram(data15[dist], bins=num_bins) for dist in data15}
-# observed_frequencies15 = {dist: hist_data15[dist][0] for dist in hist_data15}
-# num_draws = 100
+hist_data15 = {dist: np.histogram(data15[dist], bins=num_bins) for dist in data15}
+observed_frequencies15 = {dist: hist_data15[dist][0] for dist in hist_data15}
+num_draws = 100
 
-# data100 = {
-#     'Normal': norm.rvs(size=num_draws),
-#     'Exponential': expon.rvs(size=num_draws),
-#     'Uniform': uniform.rvs(size=num_draws),
-#     'Gamma': gamma.rvs(a=2, size=num_draws),
-#     'Beta': beta.rvs(a=2, b=5, size=num_draws),
-#     'Chi-squared': chi2.rvs(df=2, size=num_draws),
-#     'Logistic': logistic.rvs(loc=0, scale=0.954, size=num_draws),
-#     'Pareto': pareto.rvs(b=2.62, size=num_draws),
-#     'Weibull': weibull_min.rvs(c=1.5, size=num_draws),
-#     'Student\'s t': t.rvs(df=10, size=num_draws)
-# }
+data100 = {
+    'Normal': norm.rvs(size=num_draws),
+    'Exponential': expon.rvs(size=num_draws),
+    'Uniform': uniform.rvs(size=num_draws),
+    'Gamma': gamma.rvs(a=2, size=num_draws),
+    'Beta': beta.rvs(a=2, b=5, size=num_draws),
+    'Chi-squared': chi2.rvs(df=2, size=num_draws),
+    'Logistic': logistic.rvs(loc=0, scale=0.954, size=num_draws),
+    'Pareto': pareto.rvs(b=2.62, size=num_draws),
+    'Weibull': weibull_min.rvs(c=1.5, size=num_draws),
+    'Student\'s t': t.rvs(df=10, size=num_draws)
+}
 
-# df100 = pd.DataFrame(data100)
-# hist_data100 = {dist: np.histogram(data100[dist], bins=num_bins) for dist in data100}
-# observed_frequencies100 = {dist: hist_data100[dist][0] for dist in hist_data100}
-# num_draws = 1000
+df100 = pd.DataFrame(data100)
+hist_data100 = {dist: np.histogram(data100[dist], bins=num_bins) for dist in data100}
+observed_frequencies100 = {dist: hist_data100[dist][0] for dist in hist_data100}
+num_draws = 1000
 
-# data1000 = {
-#     'Normal': norm.rvs(size=num_draws),
-#     'Exponential': expon.rvs(size=num_draws),
-#     'Uniform': uniform.rvs(size=num_draws),
-#     'Gamma': gamma.rvs(a=2, size=num_draws),
-#     'Beta': beta.rvs(a=2, b=5, size=num_draws),
-#     'Chi-squared': chi2.rvs(df=2, size=num_draws),
-#     'Logistic': logistic.rvs(loc=0, scale=0.954, size=num_draws),
-#     'Pareto': pareto.rvs(b=2.62, size=num_draws),
-#     'Weibull': weibull_min.rvs(c=1.5, size=num_draws),
-#     'Student\'s t': t.rvs(df=10, size=num_draws)
-# }
+data1000 = {
+    'Normal': norm.rvs(size=num_draws),
+    'Exponential': expon.rvs(size=num_draws),
+    'Uniform': uniform.rvs(size=num_draws),
+    'Gamma': gamma.rvs(a=2, size=num_draws),
+    'Beta': beta.rvs(a=2, b=5, size=num_draws),
+    'Chi-squared': chi2.rvs(df=2, size=num_draws),
+    'Logistic': logistic.rvs(loc=0, scale=0.954, size=num_draws),
+    'Pareto': pareto.rvs(b=2.62, size=num_draws),
+    'Weibull': weibull_min.rvs(c=1.5, size=num_draws),
+    'Student\'s t': t.rvs(df=10, size=num_draws)
+}
 
-# df1000 = pd.DataFrame(data1000)
-# hist_data1000 = {dist: np.histogram(data1000[dist], bins=num_bins) for dist in data1000}
-# observed_frequencies1000 = {dist: hist_data1000[dist][0] for dist in hist_data1000}
+df1000 = pd.DataFrame(data1000)
+hist_data1000 = {dist: np.histogram(data1000[dist], bins=num_bins) for dist in data1000}
+observed_frequencies1000 = {dist: hist_data1000[dist][0] for dist in hist_data1000}
 #%%
 import matplotlib.pyplot as plt
 
 ## PLOTTING HISTOGRAMS OF GDP DATA ##
 gdp = pd.read_csv(r"C:\Users\anyas\Desktop\Summer Project\Modified CSV Files\GDP_in_current_prices_millions_of_US_dollars.csv")
 
-# def histogram(col):
-#         plt.figure(figsize=(8, 6))
-#         plt.hist(col, bins=30, edgecolor='black')
-#         plt.title(f'Histogram of {col}')
-#         plt.xlabel('Value')
-#         plt.ylabel('Frequency')
-#         plt.grid(True)
-#         plt.show()
+def histogram(col):
+        plt.figure(figsize=(8, 6))
+        plt.hist(col, bins=30, edgecolor='black')
+        plt.title(f'Histogram of {col}')
+        plt.xlabel('Value')
+        plt.ylabel('Frequency')
+        plt.grid(True)
+        plt.show()
         
-# histogram(gdp['GDP in current prices (millions of US dollars)'])
-# health_expenditure = pd.read_csv(r"C:\Users\anyas\Desktop\Summer Project\Modified CSV Files\Current_health_expenditure_percent_of_GDP.csv")
-# histogram(health_expenditure['Current health expenditure (% of GDP)'])
-# #%%
+histogram(gdp['GDP in current prices (millions of US dollars)'])
+health_expenditure = pd.read_csv(r"C:\Users\anyas\Desktop\Summer Project\Modified CSV Files\Current_health_expenditure_percent_of_GDP.csv")
+histogram(health_expenditure['Current health expenditure (% of GDP)'])
+#%%
 
-# ## PLOTTING HISTOGRAMS OF SIMULATED DATA ##
-# def create_histograms(df):
-#     for column in df.columns:
-#         plt.figure(figsize=(8, 6))
-#         plt.hist(df[column], bins=30, edgecolor='black')
-#         plt.title(f'Histogram of {column}')
-#         plt.xlabel('Value')
-#         plt.ylabel('Frequency')
-#         plt.grid(True)
-#         plt.show()
+## PLOTTING HISTOGRAMS OF SIMULATED DATA ##
+def create_histograms(df):
+    for column in df.columns:
+        plt.figure(figsize=(8, 6))
+        plt.hist(df[column], bins=30, edgecolor='black')
+        plt.title(f'Histogram of {column}')
+        plt.xlabel('Value')
+        plt.ylabel('Frequency')
+        plt.grid(True)
+        plt.show()
 
-# create_histograms(df15)
-# create_histograms(df100)
-# create_histograms(df1000)
+create_histograms(df15)
+create_histograms(df100)
+create_histograms(df1000)
 #%%
 
 ## PLOTTING HISTOGRAM OF SIMULATED CATEGORICAL DATA ##
-# def plot_categorical_histograms(df):
-#     for dist, freq in df.items():
-#         plt.figure(figsize=(8, 6))
-#         plt.bar(range(len(df)), freq, edgecolor='black')
-#         plt.title(f'Histogram of {dist}')
-#         plt.xlabel('Bins')
-#         plt.ylabel('Frequency')
-#         plt.grid(True)
-#         plt.show()
+def plot_categorical_histograms(df):
+    for dist, freq in df.items():
+        plt.figure(figsize=(8, 6))
+        plt.bar(range(len(df)), freq, edgecolor='black')
+        plt.title(f'Histogram of {dist}')
+        plt.xlabel('Bins')
+        plt.ylabel('Frequency')
+        plt.grid(True)
+        plt.show()
 
-# plot_categorical_histograms(observed_frequencies15)
-# plot_categorical_histograms(observed_frequencies100)
-# plot_categorical_histograms(observed_frequencies1000)
+plot_categorical_histograms(observed_frequencies15)
+plot_categorical_histograms(observed_frequencies100)
+plot_categorical_histograms(observed_frequencies1000)
 #%%
 
 ## INITIALIZING DISTRIBUTIONS ##
 from scipy.stats import shapiro, anderson, kstest
 
-#dfs = [df15, df100, df1000]
+dfs = [df15, df100, df1000]
 
 dists = ['norm', 'expon', 'uniform', 'gamma', 
          'beta', 'chi2', 'logistic', 'pareto', 
@@ -193,35 +195,11 @@ def find_dist(dataframe):
         else:
             print("No distributions match the data for column.")
 #%%
-# find_dist(dfs[0])
-# find_dist(dfs[1])
-# find_dist(dfs[2])
-#%%
-from scipy.stats import gamma, kstest
+## EXAMPLES ##
 
-## BOOTSTRAPPING EXAMPLE ##
-
-# Good at estimating the actual distribution but bad
-# at knowing when the distribution is something different
-
-# shape, loc, scale = gamma.fit(df1000['Gamma'])
-# n_bootstrap = 1000
-# bootstrap_statistics = []
-
-# for _ in range(n_bootstrap):
-#     resample = np.random.choice(df1000['Gamma'], size=len(df1000['Gamma']), replace=True)
-#     b_shape, b_loc, b_scale = gamma.fit(resample)
-#     simulated_data = gamma.rvs(b_shape, b_loc, b_scale, size=len(df100['Gamma']))
-#     stat, _ = kstest(simulated_data, 'gamma', args=(b_shape, b_loc, b_scale))
-#     bootstrap_statistics.append(stat)
-    
-# ks_stat, pvalue = kstest(df1000['Gamma'], 'gamma', args=(shape, loc, scale))
-
-# empirical_p_value = np.mean(np.array(bootstrap_statistics) >= ks_stat)
-
-# print("K-S Statistic:", ks_stat)
-# print(pvalue)
-# print("Empirical P-Value:", empirical_p_value)
+find_dist(dfs[0])
+find_dist(dfs[1])
+find_dist(dfs[2])
 #%%
 country_counts = gdp['Country'].value_counts().to_frame()
 country_counts_array = country_counts.values
@@ -248,15 +226,6 @@ def find_cat1_dist(dataframe):
             output.append(
                 p_value > 0.05
             )
-            
-            # plt.figure()
-            # plt.bar(range(len(observed_counts)), observed_counts, alpha=0.5, label='Observed')
-            # plt.plot(range(len(expected_counts)), expected_counts, 'r-', label='Expected')
-            # plt.title(f'{dist.name} distribution fit')
-            # plt.xlabel('Bins')
-            # plt.ylabel('Counts')
-            # plt.legend()
-            # plt.show()
                 
         if any(output):
             true_indices = [dist_names[index] for index, value in enumerate(output) if value]
@@ -264,10 +233,11 @@ def find_cat1_dist(dataframe):
         else:
             print("No distributions match the data.")
 #%%
-# find_cat1_dist(observed_frequencies15['Normal'])
-# find_cat1_dist(observed_frequencies100['Uniform'])
-# find_cat1_dist(observed_frequencies1000['Gamma'])
-# find_cat1_dist(country_counts)
+## EXAMPLES ##
+find_cat1_dist(observed_frequencies15['Normal'])
+find_cat1_dist(observed_frequencies100['Uniform'])
+find_cat1_dist(observed_frequencies1000['Gamma'])
+find_cat1_dist(country_counts)
 #%%
 ## DESCRIPTION OF CONTINUOUS DATASET ##
 from scipy.stats import skew, kurtosis

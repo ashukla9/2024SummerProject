@@ -26,8 +26,6 @@ for col in merged_df.columns:
         if merged_df[col[:-10]].equals(merged_df[col]):
             merged_df.drop(columns=col, inplace=True)
 
-# airbnb_df = merged_df.select_dtypes(include=[int, float])
-#airbnb_df = airbnb_df.dropna(subset=['price_duplicate'])
 airbnb_df = merged_df.dropna(subset=['price_duplicate'])
 mean_A = airbnb_df['host_response_rate'].mean()
 mean_B = airbnb_df['host_acceptance_rate'].mean()
@@ -43,14 +41,12 @@ airbnb_df = airbnb_df.drop(columns={'name', 'neighborhood_overview', 'picture_ur
 airbnb_df['host_since'] = pd.to_datetime(airbnb_df['host_since']).dt.year.astype(str)
 airbnb_df['first_review'] = pd.to_datetime(airbnb_df['first_review']).dt.year.astype(str)
 airbnb_df['last_review'] = pd.to_datetime(airbnb_df['last_review']).dt.year.astype(str)
-# airbnb_df.drop(columns='price').to_csv(r'C:\Users\anyas\Desktop\Summer Project\listings1.csv', index=False)
-# airbnb_df.to_csv(r'C:\Users\anyas\Desktop\Summer Project\listings2.csv', columns=['id', 'price'], index=False)
-## Adding indirect variables ##
+
+## ADDING INDIRECT VARIABLES ##
 
 cairbnb_df = airbnb_df.copy()
 cairbnb_df['Rating per Review'] = cairbnb_df['review_scores_rating'] / cairbnb_df['number_of_reviews']
 cairbnb_df['Location and Value Combo'] = cairbnb_df['review_scores_location'] * cairbnb_df['review_scores_value']
-# don't expect this to do well as it's a linear combo of existing variables
 cairbnb_df['Nights available'] = cairbnb_df['maximum_nights'] - cairbnb_df['minimum_nights']
 cairbnb_df['Host Rating'] = cairbnb_df.groupby('host_id')['review_scores_rating'].transform('mean')
 cairbnb_df['Host Availability 30'] = cairbnb_df.groupby('host_id')['availability_30'].transform('mean')
@@ -149,97 +145,17 @@ merged_pets = merged_pets.drop(columns={'Outcome Subtype'})
 merged_pets['Intake Name'] = merged_pets['Intake Name'].fillna('None')
 merged_pets = merged_pets.dropna()
 #%%
-from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords
 
-import gensim.downloader as api
-
-# Using smallest model for my machine but there are much larger models available
-model = api.load('glove-wiki-gigaword-100')
-
-# Check the dimension of word vectors
-print("Vector size:", model.vector_size)
-#%%
-airbnb_df['description'] = airbnb_df['description'].fillna('')
-stop_words = set(stopwords.words('english'))
-
-def preprocess(text):
-    text = text.lower()
-    doc = word_tokenize(text)
-    doc = [word for word in doc if word not in stop_words]
-    doc = [word for word in doc if word.isalpha()]
-    return doc
-
-# Function to check if document has vector representation
-def has_vector_representation(word2vec_model, doc):
-    """Check if at least one word of the document is in the word2vec dictionary."""
-    return any(word in word2vec_model.key_to_index for word in doc)
-
-# Function to compute the document vector
-def document_vector(word2vec_model, doc):
-    # Remove out-of-vocabulary words
-    doc = [word for word in doc if word in word2vec_model.key_to_index]
-    return np.mean(word2vec_model[doc], axis=0)
-
-# Preprocess descriptions
-airbnb_df['processed_descriptions'] = airbnb_df['description'].apply(preprocess)
-
-# Filter out descriptions with no vector representations
-filtered_indices = [i for i, doc in enumerate(airbnb_df['processed_descriptions']) if has_vector_representation(model, doc)]
-
-# Compute document vectors for each description
-filtered_docs = [airbnb_df['processed_descriptions'].iloc[i] for i in filtered_indices]
-document_vectors = np.array([document_vector(model, doc) for doc in filtered_docs])
-
-# Create a DataFrame with the document vectors
-doc_vec_df = pd.DataFrame(document_vectors, index=filtered_indices)
-
-# Initialize a DataFrame with the same index as airbnb_df and fill with NaNs
-doc_vec_full_df = pd.DataFrame(index=airbnb_df.index, columns=range(document_vectors.shape[1]))
-
-# Insert the computed document vectors into the appropriate rows
-doc_vec_full_df.iloc[filtered_indices] = doc_vec_df.values
-# Concatenate the document vectors DataFrame with the original DataFrame
-airbnb_df = pd.concat([airbnb_df, doc_vec_full_df], axis=1)
-airbnb_df.columns = airbnb_df.columns.astype(str)
-# Optionally drop the 'processed_descriptions' column
-airbnb_df.drop(columns=['processed_descriptions', 'description'], inplace=True)
-#%%
-from scipy.stats import chi2_contingency
-import math
-
+## IF CORRELATIONS BETWEEN TWO CONTINUOUS VARIABLES ARE HIGH, OUTPUT VARIABLES ##
 def find_correlations(target_df, threshold=0.5):
     target_df = target_df.select_dtypes(['float', 'int'])
 
     correlations = target_df.corrwith(target_df[target_column])
     correlations = correlations[(correlations.abs() > threshold)]
     print(correlations)
-    
-    # cat_features = target_df.select_dtypes(exclude=['float', 'int']).columns
-
-    # for col in cat_features:
-    #     contingency_table = pd.crosstab(target_df[col], target_df[target_column])
-    #     chi2, p, dof, ex = chi2_contingency(contingency_table)
-    
-    #     n = contingency_table.sum().sum()
-    #     min_dim = min(contingency_table.shape) - 1
-    #     cramers_v = math.sqrt(chi2 / (n * min_dim))
-        
-    #     alpha = 0.05
-    #     if p < alpha:
-    #         print("Reject the null hypothesis. There is an association between Outcome_Type and", col)
-    #         if cramers_v < .3:
-    #             print("There is a weak association.")
-    #             print(f"Cramer's V: {cramers_v}")
-    #         elif cramers_v < .5:
-    #             print("There is a moderate association.")
-    #             print(f"Cramer's V: {cramers_v}")
-    #         else:
-    #             print("There is a strong association.")
-    #             print(f"Cramer's V: {cramers_v}")
-    #     else:
-    #         print("Fail to reject the null hypothesis. There is no association between Outcome_Type and", col)
 #%%
+
+## FUNCTIONS TO CALCULATE MULTICOLLINEARITY ##
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 
 def calculate_vif(df):
@@ -264,6 +180,8 @@ def vif_delete(X_train, X_test):
         
     return X_train, X_test
 #%%
+
+## DETECT OUTLIERS AND DETECT ANOMALIES ##
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score, confusion_matrix
@@ -301,6 +219,7 @@ def anomaly_detection(X_train, y_train):
 
     return X_train_clean, y_train_clean
 
+## REMOVE COLUMNS WITH CONSTANT VARIANCE ##
 def remove_constant_columns(X_train, X_test):
     constant_columns = [col for col in X_train.columns if X_train[col].nunique() <= 1]
     X_train = X_train.drop(columns=constant_columns)
@@ -308,24 +227,9 @@ def remove_constant_columns(X_train, X_test):
     print(f'Removed constant columns: {constant_columns}')
     return X_train, X_test
 
+## ENCODE CATEGORICAL VARIABLES - CATBOOSTENCODER ##
 def cat_encoding(X_train, X_test, y_train):
     from category_encoders import CatBoostEncoder
-
-    ## Grouping variables into an other category can be helpful
-    ## But better for larger datasets
-    
-    # This can be modified depending on threshold
-    # threshold = 1
-    
-    # def replace_rare_categories(df, column, rare_categories):
-    #     df[column] = df[column].apply(lambda x: 'other' if x in rare_categories else x)
-    #     return df
-    
-    # for col in X_train.select_dtypes(exclude=['float', 'int']).columns:
-    #     category_counts = X_train[col].value_counts()
-    #     rare_categories = category_counts[category_counts <= threshold].index
-    #     X_train = replace_rare_categories(X_train, col, rare_categories)
-    #     X_test = replace_rare_categories(X_test, col, rare_categories)
 
     cat_features = X_train.select_dtypes(include=['object', 'category']).columns.tolist()
     
@@ -335,24 +239,9 @@ def cat_encoding(X_train, X_test, y_train):
     X_test_encoded = encoder.transform(X_test)
     return X_train_encoded, X_test_encoded
 
+## ENCODE CATEGORICAL VARIABLES - TARGET ENCODER ##
 def target_encoding(X_train, X_test, y_train):
     from sklearn.preprocessing import TargetEncoder
-
-    ## Grouping variables into an other category can be helpful
-    ## But better for larger datasets
-    
-    # This can be modified depending on threshold
-    # threshold = 1
-    
-    # def replace_rare_categories(df, column, rare_categories):
-    #     df[column] = df[column].apply(lambda x: 'other' if x in rare_categories else x)
-    #     return df
-    
-    # for col in X_train.select_dtypes(exclude=['float', 'int']).columns:
-    #     category_counts = X_train[col].value_counts()
-    #     rare_categories = category_counts[category_counts <= threshold].index
-    #     X_train = replace_rare_categories(X_train, col, rare_categories)
-    #     X_test = replace_rare_categories(X_test, col, rare_categories)
 
     encoder = TargetEncoder(smooth=0.1, target_type = 'multiclass')
     X_train_encoded = encoder.fit_transform(X_train, y_train)
@@ -374,6 +263,7 @@ def target_encoding(X_train, X_test, y_train):
 
     return X_train_encoded_df, X_test_encoded_df
 
+## PREPROCESSING AND SCALING ##
 def preprocessing(df, target_column, outliers=False, category = None):
     X = df.drop(columns=target_column)
     y = df[target_column]
@@ -412,6 +302,7 @@ def preprocessing(df, target_column, outliers=False, category = None):
     
     return X_train, X_test, y_train, y_test
 
+## FUNCTION TO PLOT RESIDUALS ##
 def plot_residuals(y_train, y_test, y_train_pred, y_test_pred, model_name):
     plt.figure(figsize=(10, 6))
     plt.scatter(y_train, y_train_pred, label='Training Data', alpha=0.6)
@@ -437,6 +328,7 @@ def plot_residuals(y_train, y_test, y_train_pred, y_test_pred, model_name):
     plt.legend()
     plt.show()
 
+## FUNCTION TO RUN LINEAR REGRESSION AND OUTPUT RESULTS - CONTINUOUS OUTCOME ##
 def model_results(model, X_train, y_train, y_test, y_train_pred, y_test_pred, model_name, extra_model = None):
     
     coefficients = model.coef_
@@ -492,6 +384,7 @@ def model_results(model, X_train, y_train, y_test, y_train_pred, y_test_pred, mo
     
     plot_residuals(y_train, y_test, y_train_pred, y_test_pred, model_name)
 
+## CATEGORICAL OUTCOME - PRINTS RESULTS ##
 def cat_model_results(model, X_train, y_train, y_test, y_train_pred, y_test_pred, model_name):
     train_accuracy = accuracy_score(y_train, y_train_pred)
     test_accuracy = accuracy_score(y_test, y_test_pred)
@@ -525,6 +418,7 @@ def cat_model_results(model, X_train, y_train, y_test, y_train_pred, y_test_pred
     print("Top features most associated with the target outcome based on absolute value of coefficient:")
     print(top_10_features)
     
+## DIFFERENT TYPES OF LINEAR REGRESSION MODELS ##
 def lin_reg(X_train, X_test, y_train, y_test, vif=False):
     
     if vif == True:
@@ -583,6 +477,7 @@ def huber(X_train, X_test, y_train, y_test, vif = False):
     
     model_results(best_model, X_train, y_train, y_test, y_train_pred, y_test_pred, 'Huber Regression')
 
+## LOGISTIC REGRESSION MODEL ##
 from sklearn.linear_model import LogisticRegressionCV
 
 def logistic_regression_cv(X_train, X_test, y_train, y_test):
@@ -593,6 +488,7 @@ def logistic_regression_cv(X_train, X_test, y_train, y_test):
     
     cat_model_results(best_model, X_train, y_train, y_test, y_train_pred, y_test_pred, 'Logistic Regression CV')
 
+## CATBOOST MODEL ##
 from catboost import CatBoostRegressor, CatBoostClassifier
 import shap
 from sklearn.metrics import classification_report, accuracy_score
@@ -687,14 +583,8 @@ def catboost(df, target_column, cat_model):
         shap_values_transposed = shap_values.transpose(1, 0, 2)
         
         shap.summary_plot(list(shap_values_transposed[:,:,:-1]), features=X, class_names=y.unique(), plot_type='bar')
-        
-        # # Plot SHAP dependency for specific categorical features for each class
-        # for cat_feature in cat_features:
-        #     for i, class_name in enumerate(model.classes_):
-        #         print(f"SHAP dependency plot for feature '{cat_feature}' and class '{class_name}':")
-        #         shap.dependence_plot(cat_feature, shap_values_transposed[:,:,:-1][i], X_test, interaction_index=None)
-
 #%%
+## EXAMPLES - AIRBNB, GDP, AND PETS DATA ##
 target_column = 'price'
 find_correlations(airbnb_df)
 catboost(airbnb_df, target_column, 'Regressor')
@@ -726,7 +616,7 @@ ridge(X_train, X_test, y_train, y_test)
 huber(X_train.copy(), X_test.copy(), y_train, y_test, vif = True)
 #%%
 target_column = 'Outcome_Type'
-# find_correlations(merged_pets)
+find_correlations(merged_pets)
 catboost(merged_pets, target_column, 'Classifier')
 X_train, X_test, y_train, y_test = preprocessing(merged_pets, target_column, outliers = True, category="log")
 logistic_regression_cv(X_train, X_test, y_train, y_test)

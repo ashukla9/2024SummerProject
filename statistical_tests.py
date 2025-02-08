@@ -2,6 +2,9 @@
 """
 Spyder Editor
 
+Exploratory data analysis - examples of questions asked by users and 
+associated statistical tests.
+
 """
 #%%
 #initial imports
@@ -10,7 +13,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 #%%
-#read in data
+## READ IN DATA ##
 def read_csv_files_in_directory(directory_path):
     imputed_dfs = {}
     
@@ -406,22 +409,6 @@ columns=['Country', 'Year',
 ]
 gdp_2015_data = gdp_2015_data.drop(columns=columns)
 
-# Values greater than 10 are generally seen as collinear
-from statsmodels.stats.outliers_influence import variance_inflation_factor
-from statsmodels.tools.tools import add_constant
-
-df = pd.DataFrame(gdp_2015_data)
-
-X = add_constant(df)
-
-# Calculate VIF for each predictor
-vif_data = pd.DataFrame()
-vif_data['Feature'] = X.columns
-vif_data['VIF'] = [variance_inflation_factor(X.values, i) for i in range(X.shape[1])]
-
-# Print VIF data
-print(vif_data)
-
 #%%
 from sklearn.preprocessing import MinMaxScaler
 
@@ -435,73 +422,6 @@ gdp_2015_copy[numerical_cols] = scaler.fit_transform(gdp_2015_copy[numerical_col
 kscaled_df = pd.DataFrame(gdp_2015_copy, columns = cols)
 
 target_variable = gdp_2015_data['GDP in current prices (millions of US dollars)']
-#%%
-## Is the number of women in parliament (can be any variable) statistically significant 
-## in determining whether a country will have a high GDP? ##
-# Univariate Linear Regression example
-
-print('')
-print('Is the number of women in parliament statistically significant in determining whether a country will have a high GDP in 2015?')
-print('')
-
-import statsmodels.api as sm
-
-X = scaled_df['Seats held by women in national parliament, as of February (%)']
-y = target_variable
-X = sm.add_constant(X)
-
-model = sm.OLS(y, X).fit()
-
-summary = model.summary()
-print(summary)
-print('The R squared value of this summary shows that this variable is insignificant.')
-#%%
-target_column = 'GDP in current prices (millions of US dollars)'
-predictors = scaled_df.columns.drop(target_column)
-#%%
-## What variables are most significant in determining a country’s GDP? ##
-## Suppose a country wanted to improve its GDP. What variables should it focus on? ##
-# Multivariate Linear Regression example
-
-import pandas as pd
-import itertools
-import statsmodels.api as sm
-
-# Function to calculate AIC for different combinations of features
-def calculate_aic(df, target_column):
-    best_aic = float('inf')
-    best_model = None
-    best_features = None
-    
-    # Iterate over all combinations of predictors
-    # best model uses 4 predictors
-    # takes a long time to run over all the features
-    # CHANGE VALUE
-    for i in range(1, 5):
-        for combo in itertools.combinations(predictors, i):
-            X = df[list(combo)]
-            y = df[target_column]
-            
-            X = sm.add_constant(X)
-            
-            model = sm.OLS(y, X).fit()
-            aic = model.aic
-            
-            if aic < best_aic:
-                best_aic = aic
-                best_model = model
-                best_features = combo
-
-    return best_model, best_aic, best_features
-
-best_model, best_aic, best_features = calculate_aic(scaled_df, target_column)
-
-print(f"Best model features: {best_features}")
-print(f"Best AIC: {best_aic}")
-if best_model:
-    print(best_model.summary())
-else:
-    print("No valid model found.")
 #%%
 ## Suppose we were to cluster these countries. What variables would define each cluster? ##
 
