@@ -17,4 +17,4 @@ To do this, we first created a benchmark of 50 natural-language queries from the
 
 I tried different prompt engineering strategies and models and eventually got the accuracy up to 88%. 
 
-Then, I added more complex queries from a synthetic dataset. The accuracy dropped to 60%. I found that most of the classification errors could be resolved in Playground after some back-and-forth with the model, but I couldn’t figure out a way to standardize this in my prompt. The highest accuracy I could get after prompt engineering was 70%. 
+Then, I added more complex queries from a synthetic dataset. The accuracy dropped to 60%. I found that most of the classification errors could be resolved in ChatGPT's Playground after some back-and-forth with the model, but I couldn’t figure out a way to standardize this in my prompt. The highest accuracy I could get after prompt engineering was 70%. 
