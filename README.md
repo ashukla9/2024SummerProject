@@ -16,7 +16,7 @@ We noted that models like CatBoost had higher predictive accuracy (and didn’t 
 
 To do this, we first created a benchmark of 50 natural-language queries from the [Spider] (https://yale-lily.github.io/spider) and [BIRD] (https://bird-bench.github.io/) datasets, as well as the corresponding LLM-generated SQL queries. About half of these queries were correct and the other half were incorrect. With a vanilla prompt and GPT-4, we had an accuracy of 69%.
 
-| Test                              | Accuracy | 
+| Test                              | Accuracy (%) | 
 | --------------------------------- | -------- |
 | GPT-4 baseline                    | .69      |
 | GPT-4o baseline                   | .75      | 
@@ -27,7 +27,7 @@ I tried different prompt engineering strategies and models and eventually got th
 
 Then, I added more complex queries from a synthetic dataset. Unfortunately, the  baseline GPT-4o accuracy dropped to 60%. I found that most of the classification errors could be resolved in ChatGPT's Playground after some back-and-forth with the model, but I couldn’t figure out a way to standardize this in my prompt.
 
-| Test                              | Accuracy | 
+| Test                              | Accuracy (%) | 
 | --------------------------------- | -------- |
 | GPT-4o baseline                   | .60      |
 | Results after prompt engineering  | .70      | 
