@@ -14,7 +14,7 @@ We noted that models like CatBoost had higher predictive accuracy (and didn’t 
 
 **The second goal of my project was to improve LLM classification of SQL queries.** In the broader project, we used LLM-generated SQL code. However, sometimes this code wouldn’t return the right data or return no data at all. We wanted to see if GPT models could classify LLM-generated SQL queries as correct or incorrect and generate the correct SQL queries for incorrect responses. A summary document can be found under “LLM Queries Summary.pdf” and my code can be found in “llm_query_optimization.py”.
 
-To do this, we first created a benchmark of 50 natural-language queries from the [Spider] (https://yale-lily.github.io/spider) and [BIRD] (https://bird-bench.github.io/) datasets, as well as the corresponding LLM-generated SQL queries. About half of these queries were correct and the other half were incorrect. With a vanilla prompt and GPT-4, we had an accuracy of 69%.
+To do this, we first created a benchmark of 50 natural-language queries from the [Spider](https://yale-lily.github.io/spider) and [BIRD](https://bird-bench.github.io/) datasets, as well as the corresponding LLM-generated SQL queries. About half of these queries were correct and the other half were incorrect. With a vanilla prompt and GPT-4, we had an accuracy of 69%.
 
 | Test                              | Accuracy (%) | 
 | --------------------------------- | -------- |
