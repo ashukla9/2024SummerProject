@@ -146,11 +146,11 @@ def translate_to_sql(database, natural_language_query, llm_sql, schema_str, base
             {"role": "system", "content": "First, determine whether the SQL query is correct or incorrect. Second, provide an explanation as to why."},
             
             {"role": "system", "content": f"Here is the schema of the database: {schema_str_1}."},
-            {"role": "system", "content": "Here is a natural language query: For each stadium, how many concerts play there? It has been translated to SQL as follows: SELECT T2.name ,  count(*) FROM concert AS T1 JOIN stadium AS T2 ON T1.stadium_id  =  T2.stadium_id GROUP BY T1.stadium_id."},
+            {"role": "user", "content": "Here is a natural language query: For each stadium, how many concerts play there? It has been translated to SQL as follows: SELECT T2.name ,  count(*) FROM concert AS T1 JOIN stadium AS T2 ON T1.stadium_id  =  T2.stadium_id GROUP BY T1.stadium_id."},
             {"role": "assistant", "content": "TRUE. This SQL query correctly returns the stadium names and concert counts by first joining the concert and stadium dataframes and then grouping by the stadium ID. As the stadium ID corresponds to the stadium name, this correctly provides the concert counts for each stadium."},
             
             {"role": "system", "content": f"Here is the schema of the database: {schema_str_1}."},
-            {"role": "system", "content": "Here is a natural language query: What are the days that had the smallest temperature range, and what was that range? It has been translated to SQL as follows: SELECT date, (max_temperature_f - min_temperature_f) AS temperature_range FROM weather ORDER BY temperature_range ASC."},
+            {"role": "user", "content": "Here is a natural language query: What are the days that had the smallest temperature range, and what was that range? It has been translated to SQL as follows: SELECT date, (max_temperature_f - min_temperature_f) AS temperature_range FROM weather ORDER BY temperature_range ASC."},
             {"role": "assistant", "content": "FALSE. This SQL query correctly orders each day by the temperature range, but it does not limit the number of days in any way. This results in all the days being returned. The query should first find the smallest temperature range in the dataset, then return only the days with that temperature range. "},
             
             {"role": "user", "content": f"Here is the schema of the database: {schema_str}"},
