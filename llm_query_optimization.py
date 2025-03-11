@@ -391,10 +391,10 @@ false_positives = 0
 false_negatives = 0
 
 for i in range(len(llm_results_df)):
-    if 'TRUE' in llm_results_df['Correct'][i]:
-        llm_results_df['Correct'][i] = 'TRUE'
-    elif 'FALSE' in llm_results_df['Correct'][i]:
-        llm_results_df['Correct'][i] = 'FALSE'
+    #if 'TRUE' in llm_results_df['Correct'][i]:
+        #llm_results_df['Correct'][i] = 'TRUE'
+    #elif 'FALSE' in llm_results_df['Correct'][i]:
+        #llm_results_df['Correct'][i] = 'FALSE'
         
     if llm_results_df['Correct'][i] == data[i]['Correct']:
         correct += 1
